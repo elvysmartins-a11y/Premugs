@@ -979,7 +979,7 @@ function renderDimBars(rows) {
 
     return `
       <div class="dim-row"
-           onclick="showDimensionDetails('${key}')">
+           onclick="('${key}')">
 
         <div class="dim-label">
           ${cfg.label}
@@ -1291,17 +1291,17 @@ function showDimensionIndicators(dimKey){
     modal.style.display = 'block';
 }
 
-
 function showDimensionDetails(dimKey){
 
-	console.log("Dimensão clicada:", dimKey);
-	console.log("Colunas encontradas:", cols);
-	
+    console.log("Dimensão clicada:", dimKey);
+
     const rows = getFiltered();
 
     const cols = numericCols.filter(
         c => c.dim === dimKey
     );
+
+    console.log("Colunas encontradas:", cols);
 
     document.getElementById('modalTitle').textContent =
         DIMS[dimKey].label;
@@ -1337,12 +1337,8 @@ function showDimensionDetails(dimKey){
 
         return `
             <tr>
-                <td>
-                    ${getIndicadorNome(col.label)}
-                </td>
-                <td>
-                    <strong>${media}</strong>
-                </td>
+                <td>${getIndicadorNome(col.label)}</td>
+                <td><strong>${media}</strong></td>
             </tr>
         `;
 
