@@ -602,6 +602,7 @@ const COL_CICLO  = '__auto__';
 ========================== */
 
 const INDICADORES = {
+
     pedagogica: [
         {
             codigo: "Índice de Evolução de Aprendizado",
@@ -623,7 +624,6 @@ const INDICADORES = {
             codigo: "Índice de Acompanhamento Pedagógico",
             pergunta: "O acompanhamento pedagógico no programa é adequado para o desenvolvimento dos residentes?"
         }
-
     ],
 
     relacional: [
@@ -633,7 +633,7 @@ const INDICADORES = {
         },
         {
             codigo: "Índice de Relação Tutor-Residente",
-            pergunta: "Os tutores demonstram disponibilidade, escuta e apoio no acompanhamento pedagógico? "
+            pergunta: "Os tutores demonstram disponibilidade, escuta e apoio no acompanhamento pedagógico?"
         },
         {
             codigo: "Índice Relação Multiprofissional",
@@ -656,7 +656,7 @@ const INDICADORES = {
             pergunta: "Sinto-me integrado(a) e apoiado(a) institucionalmente no programa?"
         }
     ],
-	
+
     organizacional: [
         {
             codigo: "Índice de Comunicação Institucional",
@@ -678,8 +678,8 @@ const INDICADORES = {
             codigo: "Índice de Clima Organizacional",
             pergunta: "Você se sente seguro e confortável para expressar opiniões contrárias, sugerir melhorias operacionais ou relatar falhas sem receio de julgamentos?"
         }
-    ],	
-	
+    ],
+
     governanca: [
         {
             codigo: "Índice de Transparência Institucional",
@@ -691,7 +691,7 @@ const INDICADORES = {
         },
         {
             codigo: "Índice de Monitoramento Institucional",
-            pergunta: "O programa utiliza dados e evidências para monitorar e aprimorar continuamente suas atividades formativas e assistenciais? "
+            pergunta: "O programa utiliza dados e evidências para monitorar e aprimorar continuamente suas atividades formativas e assistenciais?"
         },
         {
             codigo: "Índice de Cultura Avaliativa",
@@ -699,9 +699,9 @@ const INDICADORES = {
         },
         {
             codigo: "Grau de participação coletiva na gestão",
-            pergunta: "O quanto você sente que as suas ideias, sugestões e vivências práticas são efetivamente levadas em consideração pela coordenação na hora de tomar decisões importantes para o programa? "
+            pergunta: "O quanto você sente que as suas ideias, sugestões e vivências práticas são efetivamente levadas em consideração pela coordenação na hora de tomar decisões importantes para o programa?"
         }
-    ],	
+    ],
 
     sustentabilidade: [
         {
@@ -724,7 +724,7 @@ const INDICADORES = {
             codigo: "Relação custo-efetividade operacional do PREMUGS",
             pergunta: "Os recursos investidos no PREMUGS são proporcionais aos resultados formativos e operacionais alcançados pelo programa?"
         }
-    ],	
+    ],
 
     avaliacao_geral: [
         {
@@ -735,8 +735,8 @@ const INDICADORES = {
             codigo: "Índice de Utilidade Percebida no PREMUGS Avalia",
             pergunta: "Quão útil você considera esta ferramenta de avaliação (PREMUGS Avalia) para a SMS de Florianópolis?"
         }
+    ]
 
-    ]	
 };
 
 let allRows = [];
@@ -792,43 +792,96 @@ function detectColumns() {
   cicloColIdx  = -1;
 
   headers.forEach((h, i) => {
-    const hl = h.toLowerCase();
-    if (hl.includes('perfil') || hl.includes('função') || hl.includes('você é'))
-      perfilColIdx = i;
-    if (hl.includes('ciclo') || hl.includes('período'))
-      cicloColIdx = i;
-  });
 
-  /* Numeric Likert columns: any col where most values are 1-4 */
-  headers.forEach((h, i) => {
-    if (i === 0) return; /* skip timestamp */
-    if (i === perfilColIdx || i === cicloColIdx) return;
-    const vals = allRows.map(r => parseFloat(r[i])).filter(v => !isNaN(v));
-    if (vals.length > 0 && vals.every(v => v >= 1 && v <= 4)) {
-      const dim = getDimensionFromQuestion(h);
-      numericCols.push({ idx: i, label: h, dim });
+    if (i === 0) return;
+
+    if (i === perfilColIdx) return;
+
+    if (i === cicloColIdx) return;
+
+    const vals = allRows
+        .map(r => parseFloat(r[i]))
+        .filter(v => !isNaN(v));
+
+    if (
+        vals.length >= Math.max(1, allRows.length * 0.5) &&
+        vals.every(v => v >= 1 && v <= 4)
+    ) {
+
+        const dim = getDimensionFromQuestion(h);
+
+        numericCols.push({
+            idx: i,
+            label: h,
+            dim
+        });
     }
-  });
+ });
 }
 
-function getDimensionFromQuestion(label){
+function normalizarTexto(txt) {
 
-    const texto = label.trim().toLowerCase();
+    if (!txt) return '';
 
-    for(const [dim, indicadores] of Object.entries(INDICADORES)){
+    return txt
+        .toString()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+}
 
-        const encontrou = indicadores.some(ind =>
-            texto.includes(
-                ind.pergunta.trim().toLowerCase()
-            )
-        );
+function getDimensionFromQuestion(label) {
 
-        if(encontrou){
+    const texto = normalizarTexto(label);
+
+    for (const [dim, indicadores] of Object.entries(INDICADORES)) {
+
+        const encontrou = indicadores.some(ind => {
+
+            const pergunta = normalizarTexto(ind.pergunta);
+
+            return (
+                texto === pergunta ||
+                texto.includes(pergunta) ||
+                pergunta.includes(texto)
+            );
+        });
+
+        if (encontrou) {
             return dim;
         }
     }
 
+    console.warn(
+        "Pergunta não mapeada:",
+        label
+    );
+
     return 'avaliacao_geral';
+}
+
+function getIndicadorNome(pergunta) {
+
+    const texto = normalizarTexto(pergunta);
+
+    for (const indicadores of Object.values(INDICADORES)) {
+
+        const item = indicadores.find(ind => {
+
+            return (
+                normalizarTexto(ind.pergunta) === texto
+            );
+
+        });
+
+        if (item) {
+            return item.codigo;
+        }
+    }
+
+    return pergunta;
 }
 
 /* ── Filters ── */
@@ -1025,13 +1078,50 @@ function renderLikert(rows) {
   /* custom legend */
   const colors = ['#00876A','#4DB89A','#F0A500','#D8482F'];
   const lbls   = ['4 – Ótimo','3 – Bom','2 – Regular','1 – Insuficiente'];
-  document.getElementById('likert-section').querySelector('.chart-sub').insertAdjacentHTML('afterend',
-    `<div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px;font-size:11px;color:var(--text-muted)">
-      ${colors.map((c,i)=>`<span style="display:flex;align-items:center;gap:4px">
-        <span style="width:10px;height:10px;border-radius:2px;background:${c}"></span>${lbls[i]}
-      </span>`).join('')}
-    </div>`
-  );
+
+const oldLegend =
+    document.getElementById('likertLegend');
+
+if(oldLegend){
+    oldLegend.remove();
+}  
+  
+document.getElementById('likert-section')
+.querySelector('.chart-sub')
+.insertAdjacentHTML(
+'afterend',
+`
+<div id="likertLegend"
+     style="display:flex;
+            gap:16px;
+            flex-wrap:wrap;
+            margin-bottom:10px;
+            font-size:11px;
+            color:var(--text-muted)">
+
+    ${colors.map((c,i)=>`
+
+        <span style="display:flex;
+                     align-items:center;
+                     gap:4px">
+
+            <span style="
+                width:10px;
+                height:10px;
+                border-radius:2px;
+                background:${c}">
+            </span>
+
+            ${lbls[i]}
+
+        </span>
+
+    `).join('')}
+
+</div>
+`
+);  
+  
 }
 
 /* ── Perfil charts ── */
@@ -1149,7 +1239,7 @@ document.getElementById('filter-ciclo').addEventListener('change', render);
 
 function showDimensionIndicators(dimKey){
 
-    const modal = document.getElementById('dimensionModal');
+    const modal = document.getElementById('dimModal');
     const title = document.getElementById('modalTitle');
     const body  = document.getElementById('modalBody');
 
@@ -1183,29 +1273,36 @@ function showDimensionIndicators(dimKey){
     modal.style.display = 'block';
 }
 
-function closeModal(){
-    document.getElementById('dimensionModal').style.display = 'none';
-}
-
-window.onclick = function(event){
-
-    const modal = document.getElementById('dimensionModal');
-
-    if(event.target === modal){
-        modal.style.display = 'none';
-    }
-}
 
 function showDimensionDetails(dimKey){
 
     const rows = getFiltered();
 
-    const cols = numericCols.filter(c => c.dim === dimKey);
+    const cols = numericCols.filter(
+        c => c.dim === dimKey
+    );
 
     document.getElementById('modalTitle').textContent =
         DIMS[dimKey].label;
 
-    const tbody = document.getElementById('modalBody');
+    const tbody =
+        document.getElementById('modalBody');
+
+    if(!cols.length){
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="2">
+                    Nenhum indicador encontrado.
+                </td>
+            </tr>
+        `;
+
+        document.getElementById('dimModal').style.display =
+            'block';
+
+        return;
+    }
 
     tbody.innerHTML = cols.map(col => {
 
@@ -1213,54 +1310,51 @@ function showDimensionDetails(dimKey){
             .map(r => parseFloat(r[col.idx]))
             .filter(v => !isNaN(v));
 
-        const media =
-            vals.length
+        const media = vals.length
             ? avg_(vals).toFixed(2)
             : "0.00";
 
         return `
             <tr>
-                <td>${col.label}</td>
-                <td><strong>${media}</strong></td>
+                <td>
+                    ${getIndicadorNome(col.label)}
+                </td>
+                <td>
+                    <strong>${media}</strong>
+                </td>
             </tr>
         `;
+
     }).join('');
 
-    document.getElementById('dimModal').style.display = 'block';
+    document.getElementById('dimModal').style.display =
+        'block';
 }
 
 function closeModal(){
     document.getElementById('dimModal').style.display = 'none';
 }
 
-window.onclick = function(event){
+window.addEventListener(
+    'click',
+    function(event){
 
-    const modal =
-        document.getElementById('dimModal');
+        const modal =
+            document.getElementById('dimModal');
 
-    if(event.target === modal){
-        modal.style.display = 'none';
+        if(event.target === modal){
+
+            modal.style.display =
+                'none';
+        }
     }
-}
+);
 
 /* ── Boot ── */
 loadData();
 </script>
 
 <!-- MODAL DAS DIMENSÕES -->
-
-<div id="dimensionModal" class="modal">
-    <div class="modal-content">
-
-        <div class="modal-header">
-            <h2 id="modalTitle">Dimensão</h2>
-            <span class="close-modal" onclick="closeModal()">&times;</span>
-        </div>
-
-        <div id="modalBody"></div>
-
-    </div>
-</div>
 
 <!-- MODAL DIMENSÕES -->
 <div id="dimModal" class="modal">
