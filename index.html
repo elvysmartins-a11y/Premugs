@@ -300,6 +300,142 @@
     margin-top: 20px;
   }
   footer a { color: var(--sms-blue-light); text-decoration: none; }
+  
+
+/* ==========================
+   MODAL DIMENSÕES
+========================== */
+
+.dim-row{
+    cursor:pointer;
+    transition:.2s;
+}
+
+.dim-row:hover{
+    background:#f5f8fc;
+    border-radius:8px;
+    padding:4px;
+}
+
+.modal{
+    display:none;
+    position:fixed;
+    z-index:9999;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.55);
+}
+
+.modal-content{
+    background:#fff;
+    width:90%;
+    max-width:900px;
+    margin:50px auto;
+    border-radius:12px;
+    padding:25px;
+    max-height:80vh;
+    overflow-y:auto;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+    border-bottom:1px solid #ddd;
+    padding-bottom:10px;
+}
+
+.modal-header h2{
+    margin:0;
+    color:var(--sms-blue);
+}
+
+.close-modal{
+    font-size:28px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.indicador-item{
+    padding:10px;
+    margin-bottom:8px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    background:#fafafa;
+}
+
+.indicador-item strong{
+    display:block;
+    margin-bottom:5px;
+    color:#004B87;
+}  
+
+/* MODAL */
+
+.modal{
+    display:none;
+    position:fixed;
+    z-index:9999;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.55);
+}
+
+.modal-content{
+    background:#fff;
+    width:90%;
+    max-width:900px;
+    margin:50px auto;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+    max-height:80vh;
+    overflow:auto;
+}
+
+.close-modal{
+    float:right;
+    font-size:32px;
+    cursor:pointer;
+    color:#666;
+}
+
+.close-modal:hover{
+    color:#000;
+}
+
+.modal-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+.modal-table th,
+.modal-table td{
+    border:1px solid #ddd;
+    padding:10px;
+    text-align:left;
+}
+
+.modal-table th{
+    background:#f4f7fb;
+}
+
+.dim-row{
+    cursor:pointer;
+    transition:.2s;
+}
+
+.dim-row:hover{
+    transform:translateX(3px);
+}  
+  
 </style>
 </head>
 <body>
@@ -613,19 +749,38 @@ function renderKPIs(rows) {
 
 /* ── Dimension bars ── */
 function renderDimBars(rows) {
+
   const scores = dimScores(rows);
+
   const el = document.getElementById('dim-bars');
+
   el.innerHTML = Object.entries(DIMS).map(([key, cfg]) => {
+
     const s = scores[key] || 0;
     const pct = (s / 4 * 100).toFixed(1);
+
     return `
-      <div class="dim-row">
-        <div class="dim-label">${cfg.label}</div>
-        <div class="dim-bar-bg">
-          <div class="dim-bar-fill" style="width:${pct}%;background:${cfg.color}"></div>
+      <div class="dim-row"
+           onclick="showDimensionDetails('${key}')">
+
+        <div class="dim-label">
+          ${cfg.label}
         </div>
-        <div class="dim-score" style="color:${cfg.color}">${s.toFixed(2)}</div>
-      </div>`;
+
+        <div class="dim-bar-bg">
+          <div class="dim-bar-fill"
+               style="width:${pct}%;
+               background:${cfg.color}">
+          </div>
+        </div>
+
+        <div class="dim-score"
+             style="color:${cfg.color}">
+          ${s.toFixed(2)}
+        </div>
+
+      </div>
+    `;
   }).join('');
 }
 
@@ -845,8 +1000,139 @@ function scoreLabel(v) {
 document.getElementById('filter-perfil').addEventListener('change', render);
 document.getElementById('filter-ciclo').addEventListener('change', render);
 
+function showDimensionIndicators(dimKey){
+
+    const modal = document.getElementById('dimensionModal');
+    const title = document.getElementById('modalTitle');
+    const body  = document.getElementById('modalBody');
+
+    title.textContent = DIMS[dimKey].label;
+
+    const indicadores = numericCols.filter(
+        c => c.dim === dimKey
+    );
+
+    if(!indicadores.length){
+
+        body.innerHTML = `
+            <p>Nenhum indicador encontrado para esta dimensão.</p>
+        `;
+
+    } else {
+
+        body.innerHTML = indicadores.map((ind,i)=>`
+
+            <div class="indicador-item">
+
+                <strong>Indicador ${i+1}</strong>
+
+                ${ind.label}
+
+            </div>
+
+        `).join('');
+    }
+
+    modal.style.display = 'block';
+}
+
+function closeModal(){
+    document.getElementById('dimensionModal').style.display = 'none';
+}
+
+window.onclick = function(event){
+
+    const modal = document.getElementById('dimensionModal');
+
+    if(event.target === modal){
+        modal.style.display = 'none';
+    }
+}
+
+function showDimensionDetails(dimKey){
+
+    const rows = getFiltered();
+
+    const cols = numericCols.filter(c => c.dim === dimKey);
+
+    document.getElementById('modalTitle').textContent =
+        DIMS[dimKey].label;
+
+    const tbody = document.getElementById('modalBody');
+
+    tbody.innerHTML = cols.map(col => {
+
+        const vals = rows
+            .map(r => parseFloat(r[col.idx]))
+            .filter(v => !isNaN(v));
+
+        const media =
+            vals.length
+            ? avg_(vals).toFixed(2)
+            : "0.00";
+
+        return `
+            <tr>
+                <td>${col.label}</td>
+                <td><strong>${media}</strong></td>
+            </tr>
+        `;
+    }).join('');
+
+    document.getElementById('dimModal').style.display = 'block';
+}
+
+function closeModal(){
+    document.getElementById('dimModal').style.display = 'none';
+}
+
+window.onclick = function(event){
+
+    const modal =
+        document.getElementById('dimModal');
+
+    if(event.target === modal){
+        modal.style.display = 'none';
+    }
+}
+
 /* ── Boot ── */
 loadData();
 </script>
+
+<!-- MODAL DAS DIMENSÕES -->
+
+<div id="dimensionModal" class="modal">
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <h2 id="modalTitle">Dimensão</h2>
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+        </div>
+
+        <div id="modalBody"></div>
+
+    </div>
+</div>
+
+<!-- MODAL DIMENSÕES -->
+<div id="dimModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal" onclick="closeModal()">&times;</span>
+
+    <h2 id="modalTitle">Dimensão</h2>
+
+    <table class="modal-table">
+      <thead>
+        <tr>
+          <th>Indicador</th>
+          <th>Média</th>
+        </tr>
+      </thead>
+      <tbody id="modalBody"></tbody>
+    </table>
+  </div>
+</div>
+
 </body>
 </html>
