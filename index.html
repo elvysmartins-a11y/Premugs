@@ -769,6 +769,7 @@ async function loadData() {
     allRows  = parsed.data.slice(1);
 
     detectColumns();
+	console.log("numericCols:", numericCols);
     populateCicloFilter();
     render();
 
@@ -810,6 +811,23 @@ function detectColumns() {
 
         const dim = getDimensionFromQuestion(h);
 
+		const hNorm = normalizarTexto(h);
+
+		if(
+			hNorm.includes('perfil')
+		){
+			perfilColIdx = i;
+			return;
+		}
+
+		if(
+			hNorm.includes('ciclo')
+		){
+			cicloColIdx = i;
+			return;
+		}
+
+
         numericCols.push({
             idx: i,
             label: h,
@@ -817,6 +835,13 @@ function detectColumns() {
         });
     }
  });
+
+console.table(
+    numericCols.map(c => ({
+        pergunta: c.label,
+        dimensao: c.dim
+    }))
+); 
 }
 
 function normalizarTexto(txt) {
@@ -832,32 +857,25 @@ function normalizarTexto(txt) {
         .trim();
 }
 
-function getDimensionFromQuestion(label) {
+function getDimensionFromQuestion(label){
 
     const texto = normalizarTexto(label);
 
-    for (const [dim, indicadores] of Object.entries(INDICADORES)) {
+    for(const [dim, indicadores] of Object.entries(INDICADORES)){
 
-        const encontrou = indicadores.some(ind => {
+        for(const ind of indicadores){
 
-            const pergunta = normalizarTexto(ind.pergunta);
+            const pergunta =
+                normalizarTexto(ind.pergunta);
 
-            return (
-                texto === pergunta ||
+            if(
                 texto.includes(pergunta) ||
                 pergunta.includes(texto)
-            );
-        });
-
-        if (encontrou) {
-            return dim;
+            ){
+                return dim;
+            }
         }
     }
-
-    console.warn(
-        "Pergunta não mapeada:",
-        label
-    );
 
     return 'avaliacao_geral';
 }
@@ -1276,6 +1294,9 @@ function showDimensionIndicators(dimKey){
 
 function showDimensionDetails(dimKey){
 
+	console.log("Dimensão clicada:", dimKey);
+	console.log("Colunas encontradas:", cols);
+	
     const rows = getFiltered();
 
     const cols = numericCols.filter(
