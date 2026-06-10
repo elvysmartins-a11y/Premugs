@@ -597,92 +597,9 @@ const DIMS = {
 const COL_PERFIL = '__auto__';   /* buscado automaticamente */
 const COL_CICLO  = '__auto__';
 
-let allRows = [];
-let headers = [];
-let perfilColIdx = -1;
-let cicloColIdx  = -1;
-let numericCols  = [];    /* {idx, label, dim} */
-
-let radarChartInst = null;
-let likertChartInst = null;
-let perfilChartInst = null;
-let perfilBarInst   = null;
-
-/* ───────────── DATA LOAD ───────────── */
-async function loadData() {
-  document.getElementById('loading-state').style.display = 'flex';
-  document.getElementById('error-state').style.display   = 'none';
-  document.getElementById('dashboard').style.display     = 'none';
-
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
-
-  try {
-    const resp = await fetch(url);
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const csv = await resp.text();
-    const parsed = Papa.parse(csv, { skipEmptyLines: true });
-    if (!parsed.data || parsed.data.length < 2) throw new Error('Planilha vazia ou sem respostas.');
-
-    headers = parsed.data[0];
-    allRows  = parsed.data.slice(1);
-
-    detectColumns();
-    populateCicloFilter();
-    render();
-
-    document.getElementById('last-updated').textContent =
-      'Atualizado em ' + new Date().toLocaleString('pt-BR', { dateStyle:'short', timeStyle:'short' });
-    document.getElementById('loading-state').style.display = 'none';
-    document.getElementById('dashboard').style.display     = 'block';
-
-  } catch (e) {
-    console.error(e);
-    document.getElementById('loading-state').style.display = 'none';
-    document.getElementById('error-state').style.display   = 'flex';
-    document.getElementById('error-msg').textContent       = `Erro: ${e.message}`;
-  }
-}
-
-/* ── Auto-detect key columns ── */
-function detectColumns() {
-  numericCols = [];
-  perfilColIdx = -1;
-  cicloColIdx  = -1;
-
-  headers.forEach((h, i) => {
-    const hl = h.toLowerCase();
-    if (hl.includes('perfil') || hl.includes('função') || hl.includes('você é'))
-      perfilColIdx = i;
-    if (hl.includes('ciclo') || hl.includes('período'))
-      cicloColIdx = i;
-  });
-
-  /* Numeric Likert columns: any col where most values are 1-4 */
-  headers.forEach((h, i) => {
-    if (i === 0) return; /* skip timestamp */
-    if (i === perfilColIdx || i === cicloColIdx) return;
-    const vals = allRows.map(r => parseFloat(r[i])).filter(v => !isNaN(v));
-    if (vals.length > 0 && vals.every(v => v >= 1 && v <= 4)) {
-      const dim = guessDim(h);
-      numericCols.push({ idx: i, label: h, dim });
-    }
-  });
-}
-
-function guessDim(label) {
-  const l = label.toLowerCase();
-  if (l.includes('pedagó') || l.includes('aprendizagem') || l.includes('formação') || l.includes('tutori'))
-    return 'pedagogica';
-  if (l.includes('relacion') || l.includes('comunicação') || l.includes('equipe') || l.includes('colabora'))
-    return 'relacional';
-  if (l.includes('organiz') || l.includes('estrutura') || l.includes('gestão') || l.includes('administr'))
-    return 'organizacional';
-  if (l.includes('governan') || l.includes('govern') || l.includes('controle') || l.includes('monitoramento'))
-    return 'governança';
-  if (l.includes('sustent') || l.includes('continu') || l.includes('futuro'))
-    return 'sustentabilidade';
-  return 'avaliacao_geral';
-}
+/* ==========================
+   MAPEAMENTO OFICIAL
+========================== */
 
 const INDICADORES = {
     pedagogica: [
@@ -823,6 +740,93 @@ const INDICADORES = {
     ]	
 };
 
+let allRows = [];
+let headers = [];
+let perfilColIdx = -1;
+let cicloColIdx  = -1;
+let numericCols  = [];    /* {idx, label, dim} */
+
+let radarChartInst = null;
+let likertChartInst = null;
+let perfilChartInst = null;
+let perfilBarInst   = null;
+
+/* ───────────── DATA LOAD ───────────── */
+async function loadData() {
+  document.getElementById('loading-state').style.display = 'flex';
+  document.getElementById('error-state').style.display   = 'none';
+  document.getElementById('dashboard').style.display     = 'none';
+
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
+
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const csv = await resp.text();
+    const parsed = Papa.parse(csv, { skipEmptyLines: true });
+    if (!parsed.data || parsed.data.length < 2) throw new Error('Planilha vazia ou sem respostas.');
+
+    headers = parsed.data[0];
+    allRows  = parsed.data.slice(1);
+
+    detectColumns();
+    populateCicloFilter();
+    render();
+
+    document.getElementById('last-updated').textContent =
+      'Atualizado em ' + new Date().toLocaleString('pt-BR', { dateStyle:'short', timeStyle:'short' });
+    document.getElementById('loading-state').style.display = 'none';
+    document.getElementById('dashboard').style.display     = 'block';
+
+  } catch (e) {
+    console.error(e);
+    document.getElementById('loading-state').style.display = 'none';
+    document.getElementById('error-state').style.display   = 'flex';
+    document.getElementById('error-msg').textContent       = `Erro: ${e.message}`;
+  }
+}
+
+/* ── Auto-detect key columns ── */
+function detectColumns() {
+  numericCols = [];
+  perfilColIdx = -1;
+  cicloColIdx  = -1;
+
+  headers.forEach((h, i) => {
+    const hl = h.toLowerCase();
+    if (hl.includes('perfil') || hl.includes('função') || hl.includes('você é'))
+      perfilColIdx = i;
+    if (hl.includes('ciclo') || hl.includes('período'))
+      cicloColIdx = i;
+  });
+
+  /* Numeric Likert columns: any col where most values are 1-4 */
+  headers.forEach((h, i) => {
+    if (i === 0) return; /* skip timestamp */
+    if (i === perfilColIdx || i === cicloColIdx) return;
+    const vals = allRows.map(r => parseFloat(r[i])).filter(v => !isNaN(v));
+    if (vals.length > 0 && vals.every(v => v >= 1 && v <= 4)) {
+      const dim = getDimensionFromQuestion(h);
+      numericCols.push({ idx: i, label: h, dim });
+    }
+  });
+}
+
+function getDimensionFromQuestion(label){
+
+    for(const [dim, perguntas] of Object.entries(INDICADORES)){
+
+        const encontrou = perguntas.some(p =>
+            label.trim() === p.trim()
+        );
+
+        if(encontrou){
+            return dim;
+        }
+    }
+
+    return 'avaliacao_geral';
+}
 
 /* ── Filters ── */
 function getFiltered() {
