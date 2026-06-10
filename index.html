@@ -813,10 +813,14 @@ function detectColumns() {
 
 function getDimensionFromQuestion(label){
 
-    for(const [dim, perguntas] of Object.entries(INDICADORES)){
+    const texto = label.trim().toLowerCase();
 
-        const encontrou = perguntas.some(p =>
-            label.trim() === p.trim()
+    for(const [dim, indicadores] of Object.entries(INDICADORES)){
+
+        const encontrou = indicadores.some(ind =>
+            texto.includes(
+                ind.pergunta.trim().toLowerCase()
+            )
         );
 
         if(encontrou){
