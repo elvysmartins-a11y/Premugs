@@ -40,31 +40,86 @@
     line-height: 1.5;
   }
 
-  /* ── HEADER ── */
-  header {
-    background: var(--sms-blue);
-    color: #fff;
-    padding: 0 28px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 60px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 8px rgba(0,0,0,.18);
-  }
-  .header-brand { display: flex; align-items: center; gap: 14px; }
-  .logo-mark {
-    width: 38px; height: 38px; border-radius: 8px;
-    background: rgba(255,255,255,.15);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; font-weight: 700; letter-spacing: -.5px;
-  }
-  .brand-text h1 { font-size: 15px; font-weight: 600; letter-spacing: .2px; }
-  .brand-text p { font-size: 11px; opacity: .7; letter-spacing: .4px; text-transform: uppercase; }
-  .header-meta { font-size: 11px; opacity: .65; text-align: right; }
-  #last-updated { display: block; font-weight: 500; font-size: 12px; opacity: .9; }
+/* ==========================
+   HEADER PREMUGS
+========================== */
+
+.header-premugs{
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    gap:30px;
+
+    background:
+        radial-gradient(circle at 85% 20%, rgba(255,255,255,.15) 0%, transparent 30%),
+        linear-gradient(135deg, #4A90E2 0%, #7EC3FF 100%);
+		
+    color:white;
+
+    min-height:40px;
+    padding:0px 30px;
+}
+
+.header-left{
+    flex:0 0 auto;
+}
+
+.premugs-logo{
+    width:200px;
+    height:auto;
+    filter: drop-shadow(0 2px 4px rgba(255,255,255,.25));
+}
+
+.header-divider{
+    width:2px;
+    height:70px;
+    background:rgba(255,255,255,.6);
+}
+
+.header-center{
+    flex:1;
+    padding-left:10px;
+}
+
+.header-center h1{
+    font-size:1.8rem;
+    margin:0;
+}
+
+.header-center p{
+    font-size:1.3rem;
+    margin-top:6px;
+}
+
+
+/* DATA */
+.header-right{
+    min-width:320px;
+    display:flex;
+    justify-content:flex-end;
+}
+
+.update-box{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.update-box svg{
+    width:42px;
+    height:42px;
+}
+
+.update-box span{
+    display:block;
+    font-size:1rem;
+}
+
+.update-box strong{
+    display:block;
+    font-size:1.8rem;
+    margin-top:4px;
+}
 
   /* ── FILTERS ── */
   .filters-bar {
@@ -249,18 +304,36 @@
 </head>
 <body>
 
-<header>
-  <div class="header-brand">
-    <div class="logo-mark">PA</div>
-    <div class="brand-text">
-      <h1>PREMUGS Avalia</h1>
-      <p>Secretaria Municipal de Saúde · Florianópolis</p>
+<header class="header-premugs">
+
+    <div class="header-left">
+        <img src="logopremugsavalia.png"
+             alt="PREMUGS Avalia"
+             class="premugs-logo">
     </div>
-  </div>
-  <div class="header-meta">
-    Painel Gerencial de Avaliação Institucional
-    <span id="last-updated">Carregando...</span>
-  </div>
+
+    <div class="header-divider"></div>
+
+    <div class="header-center">
+        <h1>Painel Gerencial</h1>
+        <p>PREMUGS Avalia</p>
+    </div>
+
+    <div class="header-right">
+        <div class="update-box">
+
+            <!-- ícone -->
+
+            <div>
+                <span>Última atualização:</span>
+                <strong id="last-updated">
+                    Carregando...
+                </strong>
+            </div>
+
+        </div>
+    </div>
+
 </header>
 
 <div class="filters-bar">
