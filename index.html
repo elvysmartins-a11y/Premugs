@@ -783,8 +783,9 @@ async function loadData() {
     allRows  = parsed.data.slice(1);
 
     detectColumns();
+	populatePerfilFilter();
+	populateCicloFilter();
 	console.log("numericCols:", numericCols);
-    populateCicloFilter();
     render();
 
     document.getElementById('last-updated').textContent =
@@ -952,6 +953,36 @@ function getFiltered() {
   });
 }
 
+function populatePerfilFilter(){
+
+    if(perfilColIdx < 0) return;
+
+    const sel =
+        document.getElementById('filter-perfil');
+
+    sel.innerHTML =
+        '<option value="todos">Todos os perfis</option>';
+
+    const perfis = [
+        ...new Set(
+            allRows
+                .map(r => r[perfilColIdx])
+                .filter(Boolean)
+        )
+    ].sort();
+
+    perfis.forEach(p => {
+
+        const opt =
+            document.createElement('option');
+
+        opt.value = p;
+        opt.textContent = p;
+
+        sel.appendChild(opt);
+    });
+}	
+	
 function populateCicloFilter() {
   if (cicloColIdx < 0) return;
   const sel = document.getElementById('filter-ciclo');
