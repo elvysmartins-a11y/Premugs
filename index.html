@@ -1561,6 +1561,13 @@ function showDimensionDetails(dimKey){
 
     const rows = getFiltered();
 
+    const indicadores = INDICADORES[dimKey];
+
+    document.getElementById('modalTitle').textContent =
+        DIMS[dimKey].label;
+
+    const tbody = document.getElementById('modalBody');	
+
     const cols = numericCols
     .filter(c => c.dim === dimKey)
     .filter((col,index,arr)=>
@@ -1570,11 +1577,6 @@ function showDimensionDetails(dimKey){
                 normalizarTexto(col.label)
         ) === index
     );
-
-    document.getElementById('modalTitle').textContent =
-        DIMS[dimKey].label;
-
-    const tbody = document.getElementById('modalBody');
 
     if (!cols.length) {
         tbody.innerHTML = `
