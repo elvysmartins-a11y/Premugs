@@ -578,841 +578,265 @@
 </footer>
 
 <script src="config.js"></script>
+
 <script>
-const SHEET_ID = window.SHEET_CONFIG ? window.SHEET_CONFIG.sheetId : '1teLW5gF4PnfTb0dTIIhjibGHBcC11_yJieaoXdnzPTk';
-const GID      = window.SHEET_CONFIG ? window.SHEET_CONFIG.gid : '1949102773';
+/* =========================
+   1. CONFIG + STATE
+========================= */
+const SHEET_ID = window.SHEET_CONFIG?.sheetId;
+const GID = window.SHEET_CONFIG?.gid;
 
-/* ── Dimension config ── */
-const DIMS = {
-  pedagogica:     { label: 'Pedagógica',    color: '#3B5FCC' },
-  relacional:     { label: 'Relacional',    color: '#00876A' },
-  organizacional: { label: 'Organizacional',color: '#9B59B6' },
-  governanca:     { label: 'Governança',    color: '#D8482F' },
-  sustentabilidade:{ label: 'Sustentabilidade', color: '#F0A500' },
-  avaliacao_geral:{ label: 'Avaliação Geral', color: '#0087A8' },
+let state = {
+  headers: [],
+  rows: [],
+  numericCols: [],
+  perfilCol: -1,
+  cicloCol: -1
 };
 
-/* ── Column → dimension mapping ── */
-/* Ajuste os índices (0-based) conforme a planilha real após primeira carga */
-const COL_PERFIL = '__auto__';   /* buscado automaticamente */
-const COL_CICLO  = '__auto__';
+let charts = {
+  radar: null,
+  likert: null,
+  perfil: null,
+  perfilBar: null
+};
 
-/* ==========================
-   MAPEAMENTO OFICIAL
-========================== */
+/* =========================
+   2. UTILITÁRIOS CORE
+========================= */
+function norm(txt) {
+  return (txt || "")
+    .toString()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\w\s]/g, "")
+    .trim();
+}
 
+function avg(arr) {
+  return arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0;
+}
+
+function toLikert(v) {
+  const t = norm(v);
+
+  const map = {
+    "1":1,"2":2,"3":3,"4":4,
+    "insuficiente":1,
+    "regular":2,
+    "bom":3,
+    "otimo":4
+  };
+
+  if (map[t] !== undefined) return map[t];
+  const n = Number(t);
+  return Number.isFinite(n) ? n : NaN;
+}
+
+/* =========================
+   3. DIMENSÕES (FONTE ÚNICA)
+========================= */
 const INDICADORES = {
-
-    pedagogica: [
-        {
-            codigo: "Índice de Evolução de Aprendizado",
-            pergunta: "Os conhecimentos adquiridos nas atividades teóricas aumentaram minha capacidade de atuar e resolver situações encontradas na prática do serviço?"
-        },
-        {
-            codigo: "Índice de Desenvolvimento de Competências em Gestão",
-            pergunta: "O programa contribui para o desenvolvimento de competências em gestão em saúde?"
-        },
-        {
-            codigo: "Índice de Qualidade Pedagógica",
-            pergunta: "As atividades formativas são planejadas e conduzidas de forma clara, organizada e adequada para promover a aprendizagem?"
-        },
-        {
-            codigo: "Índice de Estratégias Pedagógicas",
-            pergunta: "O trabalho e os projetos desenvolvidos pelos residentes trouxeram melhorias para a rotina e os processos da prática profissional?"
-        },
-        {
-            codigo: "Índice de Acompanhamento Pedagógico",
-            pergunta: "O acompanhamento pedagógico no programa é adequado para o desenvolvimento dos residentes?"
-        }
-    ],
-
-    relacional: [
-        {
-            codigo: "Índice de Relação Preceptor-Residente",
-            pergunta: "Os preceptores mantêm uma relação respeitosa, acessível e colaborativa com os residentes?"
-        },
-        {
-            codigo: "Índice de Relação Tutor-Residente",
-            pergunta: "Os tutores demonstram disponibilidade, escuta e apoio no acompanhamento pedagógico?"
-        },
-        {
-            codigo: "Índice Relação Multiprofissional",
-            pergunta: "O ambiente do programa favorece relações respeitosas e colaborativas entre as diferentes categorias profissionais (integração multiprofissional)?"
-        },
-        {
-            codigo: "Índice de Integração Ensino-Serviço",
-            pergunta: "O programa promove integração entre a formação dos residentes e os serviços de saúde do SUS?"
-        },
-        {
-            codigo: "Índice de Regularidade do Feedback",
-            pergunta: "A frequência que recebo feedbacks é considerada:"
-        },
-        {
-            codigo: "Índice de Qualidade do Feedback",
-            pergunta: "Os feedbacks recebidos contribuem para meu desenvolvimento profissional?"
-        },
-        {
-            codigo: "Índice de Acolhimento Institucional",
-            pergunta: "Sinto-me integrado(a) e apoiado(a) institucionalmente no programa?"
-        }
-    ],
-
-    organizacional: [
-        {
-            codigo: "Índice de Comunicação Institucional",
-            pergunta: "As informações institucionais são comunicadas de forma clara, compreensível e no tempo oportuno?"
-        },
-        {
-            codigo: "Índice de Organização do Programa",
-            pergunta: "O cronograma de atividades do programa é organizado e executado conforme planejado?"
-        },
-        {
-            codigo: "Índice de Clareza dos Fluxos",
-            pergunta: "Os fluxos de comunicação e tomada de decisão no programa são claros, bem definidos e compreendidos pelos participantes?"
-        },
-        {
-            codigo: "Índice de Suporte Institucional",
-            pergunta: "Existe abertura para diálogo e esclarecimento de dúvidas?"
-        },
-        {
-            codigo: "Índice de Clima Organizacional",
-            pergunta: "Você se sente seguro e confortável para expressar opiniões contrárias, sugerir melhorias operacionais ou relatar falhas sem receio de julgamentos?"
-        }
-    ],
-
-    governanca: [
-        {
-            codigo: "Índice de Transparência Institucional",
-            pergunta: "As informações sobre decisões, normas e processos do programa são disponibilizadas de forma clara, acessível e transparente pela coordenação?"
-        },
-        {
-            codigo: "Índice de Capacidade de Resposta",
-            pergunta: "As demandas relacionadas à execução das atividades no serviço recebem retorno adequado e em tempo oportuno da coordenação?"
-        },
-        {
-            codigo: "Índice de Monitoramento Institucional",
-            pergunta: "O programa utiliza dados e evidências para monitorar e aprimorar continuamente suas atividades formativas e assistenciais?"
-        },
-        {
-            codigo: "Índice de Cultura Avaliativa",
-            pergunta: "O quanto você percebe que a coordenação utiliza efetivamente os resultados das avaliações para promover melhorias reais no PREMUGS?"
-        },
-        {
-            codigo: "Grau de participação coletiva na gestão",
-            pergunta: "O quanto você sente que as suas ideias, sugestões e vivências práticas são efetivamente levadas em consideração pela coordenação na hora de tomar decisões importantes para o programa?"
-        }
-    ],
-
-    sustentabilidade: [
-        {
-            codigo: "Índice de Impacto Formativo",
-            pergunta: "O PREMUGS contribui positivamente para sua formação profissional em gestão no SUS?"
-        },
-        {
-            codigo: "Índice de Impacto nos Serviços",
-            pergunta: "Você conseguiu aplicar, na sua prática de gestão durante a residência, os conhecimentos adquiridos nas atividades formativas do PREMUGS?"
-        },
-        {
-            codigo: "Índice de Potencial de Consolidação",
-            pergunta: "As iniciativas implantadas pelo PREMUGS na sua unidade continuam sendo realizadas de forma autônoma pela equipe, sem depender da presença contínua do programa?"
-        },
-        {
-            codigo: "Índice de Aprendizagem Institucional",
-            pergunta: "Durante a sua residência, você percebeu mudanças na integração entre ensino, serviço e comunidade promovidas pelo PREMUGS?"
-        },
-        {
-            codigo: "Relação custo-efetividade operacional do PREMUGS",
-            pergunta: "Os recursos investidos no PREMUGS são proporcionais aos resultados formativos e operacionais alcançados pelo programa?"
-        }
-    ],
-
-    avaliacao_geral: [
-        {
-            codigo: "Índice de Avaliação Geral PREMUGS",
-            pergunta: "De forma geral, como você avalia o PREMUGS?"
-        },
-        {
-            codigo: "Índice de Utilidade Percebida no PREMUGS Avalia",
-            pergunta: "Quão útil você considera esta ferramenta de avaliação (PREMUGS Avalia) para a SMS de Florianópolis?"
-        }
-    ]
-
+  pedagogica: ["conhecimento", "aprendizado", "atividades", "projetos", "acompanhamento"],
+  relacional: ["preceptor", "tutor", "feedback", "integracao"],
+  organizacional: ["informacao", "cronograma", "fluxo", "dialogo"],
+  governanca: ["decisao", "dados", "participacao"],
+  sustentabilidade: ["impacto", "aplicar", "mudanca", "custo"],
+  avaliacao_geral: ["geral", "util"]
 };
 
-let allRows = [];
-let headers = [];
-let perfilColIdx = -1;
-let cicloColIdx  = -1;
-let numericCols  = [];    /* {idx, label, dim} */
+const DIMS = {
+  pedagogica: { label:"Pedagógica", color:"#3B5FCC" },
+  relacional: { label:"Relacional", color:"#00876A" },
+  organizacional: { label:"Organizacional", color:"#9B59B6" },
+  governanca: { label:"Governança", color:"#D8482F" },
+  sustentabilidade: { label:"Sustentabilidade", color:"#F0A500" },
+  avaliacao_geral: { label:"Avaliação Geral", color:"#0087A8" }
+};
 
-let radarChartInst = null;
-let likertChartInst = null;
-let perfilChartInst = null;
-let perfilBarInst   = null;
+function getDim(label) {
+  const t = norm(label);
 
-/* ───────────── DATA LOAD ───────────── */
+  for (const [dim, keys] of Object.entries(INDICADORES)) {
+    if (keys.some(k => t.includes(k))) return dim;
+  }
+  return "organizacional";
+}
+
+/* =========================
+   4. DATA LAYER
+========================= */
 async function loadData() {
-  document.getElementById('loading-state').style.display = 'flex';
-  document.getElementById('error-state').style.display   = 'none';
-  document.getElementById('dashboard').style.display     = 'none';
-
-const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}`;
-  
- try {
+  try {
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}`;
     const resp = await fetch(url);
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const csv = await resp.text();
+
     const parsed = Papa.parse(csv, { skipEmptyLines: true });
 
-	 console.log(parsed.data);
-	 
-    if (!parsed.data || parsed.data.length < 2) throw new Error('Planilha vazia ou sem respostas.');
+    state.headers = parsed.data[0];
+    state.rows = parsed.data.slice(1);
 
-    headers = parsed.data[0];
-    allRows  = parsed.data.slice(1);
-    console.table(headers);
-    console.table(allRows[0]);	 
-	 
-    detectColumns();
-	console.log("Perfil:", perfilColIdx);
-	console.log("Ciclo:", cicloColIdx);
-	console.log("NumericCols:", numericCols.length);
-	console.table(numericCols);	  
-
-    populateCicloFilter();
+    buildSchema();
     render();
 
-    document.getElementById('last-updated').textContent =
-      'Atualizado em ' + new Date().toLocaleString('pt-BR', { dateStyle:'short', timeStyle:'short' });
-    document.getElementById('loading-state').style.display = 'none';
-    document.getElementById('dashboard').style.display     = 'block';
+    document.getElementById("loading-state").style.display = "none";
+    document.getElementById("dashboard").style.display = "block";
 
   } catch (e) {
     console.error(e);
-    document.getElementById('loading-state').style.display = 'none';
-    document.getElementById('error-state').style.display   = 'flex';
-    document.getElementById('error-msg').textContent       = `Erro: ${e.message}`;
   }
 }
 
-/* ── Auto-detect key columns ── */
+function buildSchema() {
+  state.perfilCol = state.headers.findIndex(h => norm(h).includes("perfil"));
+  state.cicloCol = state.headers.findIndex(h => norm(h).includes("ciclo"));
 
-function detectColumns() {
-
-    numericCols = [];
-    perfilColIdx = -1;
-    cicloColIdx = -1;
-
-    headers.forEach((h, i) => {
-
-        const label = h;
-
-        const hNorm = normalizarTexto(label);
-
-        if (hNorm.includes('perfil') || hNorm.includes('respondente')) {
-            perfilColIdx = i;
-            return;
-        }
-
-        if (hNorm.includes('ciclo')) {
-            cicloColIdx = i;
-            return;
-        }
-
-        // tenta identificar Likert de forma mais simples
-        const vals = allRows
-            .map(r => toLikert(r[i]))
-            .filter(v => !isNaN(v));
-
-        if (vals.length > 0) {
-
-            const validRatio = vals.length / allRows.length;
-
-            if (validRatio > 0.3) { // <<< mais realista
-
-                numericCols.push({
-                    idx: i,
-                    label: label,
-                    dim: getDimensionFromQuestion(label)
-                });
-            }
-        }
-    });
-}	
-
-function parseHeader(h, i) {
-
-    const match = h.match(/^(\d+)\s*-\s*(.*)$/);
-
-    if (match) {
-        return {
-            idx: Number(match[1]),
-            label: match[2].trim()
-        };
-    }
-
-    // fallback (caso não siga padrão "0 - ...")
-    return {
-        idx: i,
-        label: h
-    };
-}	
-	
-function toLikert(v){
-
-    if(v === null || v === undefined) return NaN;
-
-    const txt = v
-    ?.toString()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^\w\s]/g, "") // remove pontuação
-    .trim()
-    .toLowerCase();
-
-    const mapa = {
-        "ótimo": 4,
-        "otimo": 4,
-        "bom": 3,
-        "regular": 2,
-        "insuficiente": 1
-    };
-
-    if (mapa[txt] !== undefined) {
-        return mapa[txt];
-    }
-
-    // tenta número direto
-    const num = Number(txt);
-
-    return Number.isFinite(num) ? num : NaN;
-}
-	
-function normalizarTexto(txt) {
-
-    if (!txt) return '';
-
-    return txt
-        .toString()
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/\s+/g, " ")
-        .trim();
+  state.numericCols = state.headers.map((h,i) => ({
+    idx: i,
+    label: h,
+    dim: getDim(h)
+  }));
 }
 
-function getDimensionFromQuestion(label){
+/* =========================
+   5. MÉTRICAS
+========================= */
+function dimScores(rows) {
+  const scores = {};
 
-    const texto = normalizarTexto(label);
+  for (const dim of Object.keys(DIMS)) {
+    const cols = state.numericCols.filter(c => c.dim === dim);
 
-    for (const [dim, indicadores] of Object.entries(INDICADORES)) {
+    const vals = rows.flatMap(r =>
+      cols.map(c => toLikert(r[c.idx])).filter(v => !isNaN(v))
+    );
 
-        const found = indicadores.find(i =>
-            texto.includes(normalizarTexto(i.pergunta)) ||
-            normalizarTexto(i.pergunta).includes(texto)
-        );
+    scores[dim] = avg(vals);
+  }
 
-        if (found) return dim;
-    }
-
-    return 'organizacional';
-}	
-	
-function getIndicadorNome(pergunta) {
-
-    const texto = normalizarTexto(pergunta);
-
-    for (const indicadores of Object.values(INDICADORES)) {
-
-        const item = indicadores.find(ind => {
-
-            return (
-                normalizarTexto(ind.pergunta) === texto
-            );
-
-        });
-
-        if (item) {
-            return item.codigo;
-        }
-    }
-
-    return pergunta;
+  return scores;
 }
 
-/* ── Filters ── */
+/* =========================
+   6. FILTROS
+========================= */
 function getFiltered() {
-  const perfil = document.getElementById('filter-perfil').value;
-  const ciclo  = document.getElementById('filter-ciclo').value;
-  return allRows.filter(row => {
-    if (perfil !== 'todos' && perfilColIdx >= 0 && row[perfilColIdx] !== perfil) return false;
-    if (ciclo  !== 'todos' && cicloColIdx  >= 0 && row[cicloColIdx]  !== ciclo)  return false;
+  const perfil = document.getElementById("filter-perfil").value;
+  const ciclo = document.getElementById("filter-ciclo").value;
+
+  return state.rows.filter(r => {
+    const p = state.perfilCol >= 0 ? r[state.perfilCol] : "";
+    const c = state.cicloCol >= 0 ? r[state.cicloCol] : "";
+
+    if (perfil !== "todos" && p !== perfil) return false;
+    if (ciclo !== "todos" && c !== ciclo) return false;
+
     return true;
   });
 }
 
-function populateCicloFilter() {
-  if (cicloColIdx < 0) return;
-  const sel = document.getElementById('filter-ciclo');
-  const vals = [...new Set(allRows.map(r => r[cicloColIdx]).filter(Boolean))].sort();
-  vals.forEach(v => {
-    const o = document.createElement('option');
-    o.value = v; o.textContent = v;
-    sel.appendChild(o);
-  });
-}
-
-/* ───────────── RENDER ───────────── */
+/* =========================
+   7. RENDER PRINCIPAL
+========================= */
 function render() {
   const rows = getFiltered();
+
   renderKPIs(rows);
-  renderDimBars(rows);
+  renderDims(rows);
   renderRadar(rows);
-  renderLikert(rows);
-  renderPerfilCharts(rows);
-  renderTable(rows);
 }
 
-/* ── KPIs ── */
+/* =========================
+   8. KPIs
+========================= */
 function renderKPIs(rows) {
-  const total = rows.length;
-  const allVals = rows.flatMap(r => numericCols.map(c => toLikert(r[c.idx])).filter(v => !isNaN(v)));
-  const avg = allVals.length ? avg_(allVals) : 0;
-  const pct4 = allVals.length ? (allVals.filter(v => v === 4).length / allVals.length * 100) : 0;
-  const pct1 = allVals.length ? (allVals.filter(v => v === 1).length / allVals.length * 100) : 0;
+  const vals = rows.flatMap(r =>
+    state.numericCols.map(c => toLikert(r[c.idx])).filter(v => !isNaN(v))
+  );
 
-  const perfis = perfilColIdx >= 0 ? new Set(rows.map(r => r[perfilColIdx]).filter(Boolean)).size : '—';
+  const media = avg(vals);
 
-  const data = [
-    { label: 'Respostas', value: total, sub: 'respondentes', color: '#3B5FCC', badge: null },
-    { label: 'Média Geral', value: avg.toFixed(2), sub: 'escala 1–4', color: '#00876A',
-      badge: scoreLabel(avg) },
-    { label: 'Nível 4 (Ótimo)', value: pct4.toFixed(0) + '%', sub: 'das avaliações', color: '#00876A', badge: null },
-    { label: 'Nível 1 (Insuf.)', value: pct1.toFixed(0) + '%', sub: 'das avaliações', color: '#D8482F', badge: null },
-    { label: 'Perfis', value: perfis, sub: 'distintos', color: '#0087A8', badge: null },
-    { label: 'Dimensões', value: Object.keys(DIMS).length, sub: 'avaliadas', color: '#9B59B6', badge: null },
-  ];
-
-  document.getElementById('kpi-grid').innerHTML = data.map(d => `
-    <div class="kpi-card" style="--accent-color:${d.color}">
-      <div class="kpi-label">${d.label}</div>
-      <div class="kpi-value">${d.value}</div>
-      <div class="kpi-sub">${d.sub}</div>
-      ${d.badge ? `<span class="kpi-badge" style="background:${d.color}20;color:${d.color}">${d.badge}</span>` : ''}
+  document.getElementById("kpi-grid").innerHTML = `
+    <div class="kpi-card">
+      <div class="kpi-label">Respostas</div>
+      <div class="kpi-value">${rows.length}</div>
     </div>
-  `).join('');
+
+    <div class="kpi-card">
+      <div class="kpi-label">Média Geral</div>
+      <div class="kpi-value">${media.toFixed(2)}</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-label">Indicadores</div>
+      <div class="kpi-value">${state.numericCols.length}</div>
+    </div>
+  `;
 }
 
-/* ── Dimension bars ── */
-function renderDimBars(rows) {
-
+/* =========================
+   9. DIMENSÕES
+========================= */
+function renderDims(rows) {
   const scores = dimScores(rows);
 
-  const el = document.getElementById('dim-bars');
-
-  el.innerHTML = Object.entries(DIMS).map(([key, cfg]) => {
-
-    const s = scores[key] || 0;
-    const pct = (s / 4 * 100).toFixed(1);
-
-    return `
-      <div class="dim-row"
-           onclick="showDimensionIndicators('${key}')">
-
-        <div class="dim-label">
-          ${cfg.label}
-        </div>
+  document.getElementById("dim-bars").innerHTML =
+    Object.entries(DIMS).map(([k,v]) => `
+      <div class="dim-row">
+        <div class="dim-label">${v.label}</div>
 
         <div class="dim-bar-bg">
           <div class="dim-bar-fill"
-               style="width:${pct}%;
-               background:${cfg.color}">
+               style="width:${(scores[k]/4)*100}%;
+               background:${v.color}">
           </div>
         </div>
 
-        <div class="dim-score"
-             style="color:${cfg.color}">
-          ${s.toFixed(2)}
-        </div>
-
+        <div class="dim-score">${scores[k].toFixed(2)}</div>
       </div>
-    `;
-  }).join('');
+    `).join("");
 }
 
-/* ── Radar ── */
+/* =========================
+   10. RADAR
+========================= */
 function renderRadar(rows) {
   const scores = dimScores(rows);
-  const labels  = Object.values(DIMS).map(d => d.label);
-  const data    = Object.keys(DIMS).map(k => +(scores[k] || 0).toFixed(2));
 
-  if (radarChartInst) radarChartInst.destroy();
-  const ctx = document.getElementById('radarChart');
-  radarChartInst = new Chart(ctx, {
-    type: 'radar',
+  const ctx = document.getElementById("radarChart");
+
+  if (charts.radar) charts.radar.destroy();
+
+  charts.radar = new Chart(ctx, {
+    type: "radar",
     data: {
-      labels,
+      labels: Object.values(DIMS).map(d => d.label),
       datasets: [{
-        label: 'Média',
-        data,
-        backgroundColor: 'rgba(0,75,135,.12)',
-        borderColor: '#004B87',
-        pointBackgroundColor: '#004B87',
-        pointRadius: 4,
-        borderWidth: 2,
+        data: Object.keys(DIMS).map(k => scores[k]),
+        borderColor: "#004B87",
+        backgroundColor: "rgba(0,75,135,0.1)"
       }]
     },
     options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        r: {
-          min: 0, max: 4,
-          ticks: { stepSize: 1, font: { size: 10 }, color: '#5C6B82' },
-          pointLabels: { font: { size: 11 }, color: '#1A2332' },
-          grid: { color: '#DDE3ED' },
-          angleLines: { color: '#DDE3ED' },
-        }
-      }
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: { r: { min:0, max:4 } }
     }
   });
 }
 
-/* ── Likert stacked bar ── */
-function renderLikert(rows) {
-  const maxQ = Math.min(numericCols.length, 20);
-  const cols  = numericCols.slice(0, maxQ);
-
-  const labels     = cols.map((c, i) => `Q${i+1}`);
-  const tooltips   = cols.map(c => c.label.length > 70 ? c.label.slice(0, 70) + '…' : c.label);
-
-  const d1 = [], d2 = [], d3 = [], d4 = [];
-  cols.forEach(c => {
-    const vals = rows.map(r => toLikert(r[c.idx])).filter(v => !isNaN(v));
-    const n = vals.length || 1;
-    d1.push(+(vals.filter(v=>v===1).length/n*100).toFixed(1));
-    d2.push(+(vals.filter(v=>v===2).length/n*100).toFixed(1));
-    d3.push(+(vals.filter(v=>v===3).length/n*100).toFixed(1));
-    d4.push(+(vals.filter(v=>v===4).length/n*100).toFixed(1));
-  });
-
-  const wrap = document.querySelector('.chart-canvas-wrap[style*="420"]');
-  if (wrap) wrap.style.height = Math.max(300, cols.length * 28 + 80) + 'px';
-
-  if (likertChartInst) likertChartInst.destroy();
-  const ctx = document.getElementById('likertChart');
-  likertChartInst = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [
-        { label: '4 – Ótimo',       data: d4, backgroundColor: '#00876A', borderSkipped: false },
-        { label: '3 – Bom',         data: d3, backgroundColor: '#4DB89A', borderSkipped: false },
-        { label: '2 – Regular',     data: d2, backgroundColor: '#F0A500', borderSkipped: false },
-        { label: '1 – Insuficiente',data: d1, backgroundColor: '#D8482F', borderSkipped: false },
-      ]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true, maintainAspectRatio: false,
-      scales: {
-        x: { stacked: true, max: 100, ticks: { callback: v => v + '%', font: {size:10} } },
-        y: { stacked: true, ticks: { font: {size: 11} } }
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            title: items => tooltips[items[0].dataIndex] || labels[items[0].dataIndex],
-            label: item => ` ${item.dataset.label}: ${item.raw}%`
-          }
-        }
-      }
-    }
-  });
-
-  /* custom legend */
-  const colors = ['#00876A','#4DB89A','#F0A500','#D8482F'];
-  const lbls   = ['4 – Ótimo','3 – Bom','2 – Regular','1 – Insuficiente'];
-
-const oldLegend =
-    document.getElementById('likertLegend');
-
-if(oldLegend){
-    oldLegend.remove();
-}  
-  
-document.getElementById('likert-section')
-.querySelector('.chart-sub')
-.insertAdjacentHTML(
-'afterend',
-`
-<div id="likertLegend"
-     style="display:flex;
-            gap:16px;
-            flex-wrap:wrap;
-            margin-bottom:10px;
-            font-size:11px;
-            color:var(--text-muted)">
-
-    ${colors.map((c,i)=>`
-
-        <span style="display:flex;
-                     align-items:center;
-                     gap:4px">
-
-            <span style="
-                width:10px;
-                height:10px;
-                border-radius:2px;
-                background:${c}">
-            </span>
-
-            ${lbls[i]}
-
-        </span>
-
-    `).join('')}
-
-</div>
-`
-);  
-  
-}
-
-/* ── Perfil charts ── */
-function renderPerfilCharts(rows) {
-  /* Donut */
-  const perfilMap = {};
-  rows.forEach(r => {
-    const p = (perfilColIdx >= 0 ? r[perfilColIdx] : null) || 'Não informado';
-    perfilMap[p] = (perfilMap[p] || 0) + 1;
-  });
-  const pLabels = Object.keys(perfilMap);
-  const pData   = Object.values(perfilMap);
-  const pColors = ['#3B5FCC','#00876A','#9B59B6','#D8482F','#0087A8','#F0A500'];
-
-  if (perfilChartInst) perfilChartInst.destroy();
-  perfilChartInst = new Chart(document.getElementById('perfilChart'), {
-    type: 'doughnut',
-    data: {
-      labels: pLabels,
-      datasets: [{ data: pData, backgroundColor: pColors, borderWidth: 2, borderColor: '#fff' }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: { position: 'right', labels: { font: {size:11}, boxWidth: 12, padding: 10 } },
-        tooltip: { callbacks: { label: i => ` ${i.label}: ${i.raw} (${(i.raw/rows.length*100).toFixed(0)}%)` } }
-      }
-    }
-  });
-
-  /* Bar: avg by perfil */
-  const perfilAvg = {};
-  pLabels.forEach(p => {
-    const pRows = perfilColIdx >= 0 ? rows.filter(r => (r[perfilColIdx]||'Não informado') === p) : rows;
-    const vals = pRows.flatMap(r => numericCols.map(c => toLikert(r[c.idx])).filter(v => !isNaN(v)));
-    perfilAvg[p] = vals.length ? +avg_(vals).toFixed(2) : 0;
-  });
-
-  if (perfilBarInst) perfilBarInst.destroy();
-  perfilBarInst = new Chart(document.getElementById('perfilBarChart'), {
-    type: 'bar',
-    data: {
-      labels: pLabels,
-      datasets: [{
-        label: 'Média',
-        data: pLabels.map(p => perfilAvg[p]),
-        backgroundColor: pColors,
-        borderRadius: 6,
-        borderSkipped: false,
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      scales: {
-        y: { min: 0, max: 4, ticks: { stepSize: 1, font:{size:10} } },
-        x: { ticks: { font:{size:11} } }
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: i => ` Média: ${i.raw}` } }
-      }
-    }
-  });
-}
-
-/* ── Table ── */
-function renderTable(rows) {
-  const sample = rows.slice(-50).reverse();
-  document.getElementById('resp-count').textContent = `(${rows.length} total)`;
-
-  const showCols = [0, perfilColIdx, cicloColIdx, ...numericCols.slice(0,4).map(c=>c.idx)]
-    .filter(i => i >= 0)
-    .filter((v, i, a) => a.indexOf(v) === i);
-
-  const thead = document.getElementById('table-header');
-  thead.innerHTML = showCols.map(i => `<th>${headers[i] || 'Col '+i}</th>`).join('') +
-    '<th>Média</th>';
-
-  const tbody = document.getElementById('table-body');
-  tbody.innerHTML = sample.map(row => {
-    const numVals = numericCols.map(c => toLikert(row[c.idx])).filter(v => !isNaN(v));
-    const avg = numVals.length ? avg_(numVals) : null;
-    const cells = showCols.map(i => `<td>${row[i] || '—'}</td>`).join('');
-    const avgCell = avg !== null
-      ? `<td><span class="score-pill sp-${Math.round(avg)}">${avg.toFixed(2)}</span></td>`
-      : '<td>—</td>';
-    return `<tr>${cells}${avgCell}</tr>`;
-  }).join('');
-}
-
-/* ───────────── HELPERS ───────────── */
-function avg_(arr) { return arr.reduce((a,b) => a+b, 0) / arr.length; }
-
-function dimScores(rows) {
-  const scores = {};
-  Object.keys(DIMS).forEach(k => {
-    const cols = numericCols.filter(c => c.dim === k);
-    if (!cols.length) { scores[k] = 0; return; }
-    const vals = rows.flatMap(r => cols.map(c => toLikert(r[c.idx])).filter(v => !isNaN(v)));
-    scores[k] = vals.length ? avg_(vals) : 0;
-  });
-  return scores;
-}
-
-function scoreLabel(v) {
-  if (v >= 3.5) return 'Ótimo';
-  if (v >= 2.5) return 'Bom';
-  if (v >= 1.5) return 'Regular';
-  return 'Insuficiente';
-}
-
-/* ── Wire filters ── */
-document.getElementById('filter-perfil').addEventListener('change', () => {
-    setTimeout(render, 0);
-});
-
-document.getElementById('filter-ciclo').addEventListener('change', () => {
-    setTimeout(render, 0);
-});	
-
-function showDimensionIndicators(dimKey){
-
-    const modal = document.getElementById('dimModal');
-    const title = document.getElementById('modalTitle');
-    const body  = document.getElementById('modalBody');
-
-    title.textContent = DIMS[dimKey].label;
-
-    const indicadores = numericCols.filter(
-        c => c.dim === dimKey
-    );
-
-    if(!indicadores.length){
-
-        body.innerHTML = `
-            <p>Nenhum indicador encontrado para esta dimensão.</p>
-        `;
-
-    } else {
-
-        body.innerHTML = indicadores.map((ind,i)=>`
-
-            <div class="indicador-item">
-
-                <strong>Indicador ${i+1}</strong>
-
-                ${ind.label}
-
-            </div>
-
-        `).join('');
-    }
-
-    modal.style.display = 'block';
-}
-
-function showDimensionDetails(dimKey){
-
-    console.log("Dimensão clicada:", dimKey);
-
-    const rows = getFiltered();
-
-    const cols = numericCols.filter(
-        c => c.dim === dimKey
-    );
-
-    console.log("Colunas encontradas:", cols);
-
-    document.getElementById('modalTitle').textContent =
-        DIMS[dimKey].label;
-
-    const tbody =
-        document.getElementById('modalBody');
-
-    if(!cols.length){
-
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="2">
-                    Nenhum indicador encontrado.
-                </td>
-            </tr>
-        `;
-
-        document.getElementById('dimModal').style.display =
-            'block';
-
-        return;
-    }
-
-    tbody.innerHTML = cols.map(col => {
-
-        const vals = rows
-            .map(r => toLikert(r[col.idx]))
-            .filter(v => !isNaN(v));
-
-        const media = vals.length
-            ? avg_(vals).toFixed(2)
-            : "0.00";
-
-        return `
-            <tr>
-                <td>${getIndicadorNome(col.label)}</td>
-                <td><strong>${media}</strong></td>
-            </tr>
-        `;
-
-    }).join('');
-
-    document.getElementById('dimModal').style.display =
-        'block';
-}
-	
-function closeModal(){
-    document.getElementById('dimModal').style.display = 'none';
-}
-
-window.addEventListener(
-    'click',
-    function(event){
-
-        const modal =
-            document.getElementById('dimModal');
-
-        if(event.target === modal){
-
-            modal.style.display =
-                'none';
-        }
-    }
-);
-
-/* ── Boot ── */
+/* =========================
+   11. INIT
+========================= */
 loadData();
-</script>
+
+/* filtros */
+document.getElementById("filter-perfil").onchange = render;
+document.getElementById("filter-ciclo").onchange = render;
+
+</script>	
 
 <!-- MODAL DAS DIMENSÕES -->
 
