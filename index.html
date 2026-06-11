@@ -800,36 +800,63 @@ const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:
 function detectColumns() {
 
     numericCols = [];
-
-    // FIXO pela sua planilha
-    cicloColIdx  = 1;
-    perfilColIdx = 2;
+    perfilColIdx = -1;
+    cicloColIdx = -1;
 
     headers.forEach((h, i) => {
 
-        if (i <= 4) return; // ignora metadados
+        const parsed = parseHeader(h, i);
+        const hNorm = normalizarTexto(parsed.label);
 
+        // PERFIL
+        if (hNorm.includes('perfil') || hNorm.includes('respondente')) {
+            perfilColIdx = parsed.idx;
+            return;
+        }
+
+        // CICLO
+        if (hNorm.includes('ciclo')) {
+            cicloColIdx = parsed.idx;
+            return;
+        }
+
+        // detectar Likert automaticamente
         const vals = allRows
-            .map(r => toLikert(r[i]))
+            .map(r => toLikert(r[parsed.idx]))
             .filter(v => !isNaN(v));
 
-        if (
-            vals.length >= 3 &&
-            vals.every(v => v >= 1 && v <= 4)
-        ) {
+        const isLikert =
+            vals.length >= allRows.length * 0.5 &&
+            vals.every(v => v >= 1 && v <= 4);
+
+        if (isLikert) {
             numericCols.push({
-                idx: i,
-                label: h,
-                dim: getDimensionFromQuestion(h)
+                idx: parsed.idx,
+                label: parsed.label,
+                dim: getDimensionFromQuestion(parsed.label)
             });
         }
     });
-
-    console.log("Perfil:", perfilColIdx);
-    console.log("Ciclo:", cicloColIdx);
-    console.log("Perguntas:", numericCols.length);
 }	
 
+function parseHeader(h, i) {
+
+    const match = h.match(/^(\d+)\s*-\s*(.*)$/);
+
+    if (match) {
+        return {
+            idx: Number(match[1]),
+            label: match[2].trim()
+        };
+    }
+
+    // fallback (caso não siga padrão "0 - ...")
+    return {
+        idx: i,
+        label: h
+    };
+}	
+	
 function toLikert(v){
 
     if(!v) return NaN;
