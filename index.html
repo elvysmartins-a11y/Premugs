@@ -527,6 +527,20 @@
         </div>
       </div>
     </div>
+	
+	<p class="section-title">Comparação entre Ciclos</p>
+	<div class="chart-card">
+		<div class="chart-title">
+			Média Geral por Ciclo
+		</div>
+		<div class="chart-sub">
+			Comparativo dos ciclos identificados na planilha
+		</div>
+		<div class="chart-canvas-wrap"
+			 style="height:300px">
+			<canvas id="cicloChart"></canvas>
+		</div>
+	</div>	
 
     <p class="section-title">Distribuição das Respostas</p>
 
@@ -787,62 +801,91 @@ async function loadData() {
 }
 
 /* ── Auto-detect key columns ── */
-function detectColumns() {
-  numericCols = [];
-  perfilColIdx = -1;
-  cicloColIdx  = -1;
+function detectColumns(){
 
-  headers.forEach((h, i) => {
+    numericCols = [];
+    perfilColIdx = -1;
+    cicloColIdx = -1;
 
-    if (i === 0) return;
+    headers.forEach((h,i)=>{
 
-    if (i === perfilColIdx) return;
+        const hNorm = normalizarTexto(h);
 
-    if (i === cicloColIdx) return;
+        if(
+            hNorm.includes("perfil")
+        ){
+            perfilColIdx = i;
+            return;
+        }
 
-    const vals = allRows
-        .map(r => parseFloat(r[i]))
-        .filter(v => !isNaN(v));
+        if(
+            hNorm.includes("ciclo")
+        ){
+            cicloColIdx = i;
+            return;
+        }
 
-    if (
-        vals.length >= Math.max(1, allRows.length * 0.5) &&
-        vals.every(v => v >= 1 && v <= 4)
-    ) {
+        const vals = allRows
+            .map(r => parseLikert(r[i]))
+            .filter(v => !isNaN(v));
 
-        const dim = getDimensionFromQuestion(h);
+        if(
+            vals.length >= allRows.length * 0.5 &&
+            vals.every(v => v >= 1 && v <= 4)
+        ){
 
-		const hNorm = normalizarTexto(h);
+            numericCols.push({
+                idx:i,
+                label:h,
+                dim:getDimensionFromQuestion(h)
+            });
 
-		if(
-			hNorm.includes('perfil')
-		){
-			perfilColIdx = i;
-			return;
-		}
+        }
 
-		if(
-			hNorm.includes('ciclo')
-		){
-			cicloColIdx = i;
-			return;
-		}
+    });
 
-
-        numericCols.push({
-            idx: i,
-            label: h,
-            dim
-        });
-    }
- });
-
-console.table(
-    numericCols.map(c => ({
-        pergunta: c.label,
-        dimensao: c.dim
-    }))
-); 
 }
+
+function similarity(a,b){
+
+    const wordsA = new Set(a.split(" "));
+    const wordsB = new Set(b.split(" "));
+
+    let common = 0;
+
+    wordsA.forEach(w=>{
+        if(wordsB.has(w)) common++;
+    });
+
+    return common / Math.max(wordsA.size, wordsB.size);
+}
+
+let bestScore = 0;
+let bestDim = null;
+
+for(const [dim, indicadores] of Object.entries(INDICADORES)){
+
+    indicadores.forEach(ind=>{
+
+        const score = similarity(
+            texto,
+            normalizarTexto(ind.pergunta)
+        );
+
+        if(score > bestScore){
+
+            bestScore = score;
+            bestDim = dim;
+
+        }
+
+    });
+
+}
+
+return bestScore >= 0.50
+    ? bestDim
+    : null;
 
 function normalizarTexto(txt) {
 
@@ -859,25 +902,37 @@ function normalizarTexto(txt) {
 
 function getDimensionFromQuestion(label){
 
-    const texto = normalizarTexto(label);
+    const texto =
+        normalizarTexto(label);
+
+    let bestScore = 0;
+    let bestDim = null;
 
     for(const [dim, indicadores] of Object.entries(INDICADORES)){
 
-        for(const ind of indicadores){
+        indicadores.forEach(ind=>{
 
-            const pergunta =
-                normalizarTexto(ind.pergunta);
+            const score = similarity(
+                texto,
+                normalizarTexto(
+                    ind.pergunta
+                )
+            );
 
-            if(
-                texto.includes(pergunta) ||
-                pergunta.includes(texto)
-            ){
-                return dim;
+            if(score > bestScore){
+
+                bestScore = score;
+                bestDim = dim;
+
             }
-        }
+
+        });
+
     }
 
-    return 'avaliacao_geral';
+    return bestScore >= 0.35
+        ? bestDim
+        : 'avaliacao_geral';
 }
 
 function getIndicadorNome(pergunta) {
@@ -932,27 +987,60 @@ function render() {
   renderRadar(rows);
   renderLikert(rows);
   renderPerfilCharts(rows);
+  renderCicloChart(rows);
   renderTable(rows);
 }
 
 /* ── KPIs ── */
 function renderKPIs(rows) {
   const total = rows.length;
-  const allVals = rows.flatMap(r => numericCols.map(c => parseFloat(r[c.idx])).filter(v => !isNaN(v)));
+  const allVals = rows.flatMap(r => numericCols.map(c => parseLikert(r[c.idx])).filter(v => !isNaN(v)));
   const avg = allVals.length ? avg_(allVals) : 0;
   const pct4 = allVals.length ? (allVals.filter(v => v === 4).length / allVals.length * 100) : 0;
   const pct1 = allVals.length ? (allVals.filter(v => v === 1).length / allVals.length * 100) : 0;
 
   const perfis = perfilColIdx >= 0 ? new Set(rows.map(r => r[perfilColIdx]).filter(Boolean)).size : '—';
 
+	const dimensoesAtivas = new Set();
+
+	numericCols.forEach(col => {
+
+		const possuiDados = rows.some(r => {
+
+			const valor =
+				parseLikert(r[col.idx]);
+
+			return !isNaN(valor);
+
+		});
+
+		if(possuiDados){
+			dimensoesAtivas.add(col.dim);
+		}
+
+	});
+
+	const scores = dimScores(rows);
+
+	const scoreGeral =
+	(
+		(scores.pedagogica || 0) +
+		(scores.relacional || 0) +
+		(scores.organizacional || 0) +
+		(scores.governanca || 0) +
+		(scores.sustentabilidade || 0) +
+		(scores.avaliacao_geral || 0)
+	) / 6;
+
   const data = [
     { label: 'Respostas', value: total, sub: 'respondentes', color: '#3B5FCC', badge: null },
     { label: 'Média Geral', value: avg.toFixed(2), sub: 'escala 1–4', color: '#00876A',
       badge: scoreLabel(avg) },
+    { label: 'Score Geral PREMUGS', value: scoreGeral.toFixed(2), sub: 'índice executivo', color: '#004B87', badge: scoreLabel(scoreGeral)},	  
     { label: 'Nível 4 (Ótimo)', value: pct4.toFixed(0) + '%', sub: 'das avaliações', color: '#00876A', badge: null },
     { label: 'Nível 1 (Insuf.)', value: pct1.toFixed(0) + '%', sub: 'das avaliações', color: '#D8482F', badge: null },
     { label: 'Perfis', value: perfis, sub: 'distintos', color: '#0087A8', badge: null },
-    { label: 'Dimensões', value: Object.keys(DIMS).length, sub: 'avaliadas', color: '#9B59B6', badge: null },
+    { label: 'Dimensões', value: dimensoesAtivas.size, sub: 'detectadas', color: '#9B59B6', badge: null },
   ];
 
   document.getElementById('kpi-grid').innerHTML = data.map(d => `
@@ -1029,7 +1117,7 @@ function renderRadar(rows) {
       plugins: { legend: { display: false } },
       scales: {
         r: {
-          min: 0, max: 4,
+          min: 1, max: 4,
           ticks: { stepSize: 1, font: { size: 10 }, color: '#5C6B82' },
           pointLabels: { font: { size: 11 }, color: '#1A2332' },
           grid: { color: '#DDE3ED' },
@@ -1042,15 +1130,33 @@ function renderRadar(rows) {
 
 /* ── Likert stacked bar ── */
 function renderLikert(rows) {
-  const maxQ = Math.min(numericCols.length, 20);
-  const cols  = numericCols.slice(0, maxQ);
+  const maxQ = Math.min(
+      numericCols.length,
+      20
+  );
 
-  const labels     = cols.map((c, i) => `Q${i+1}`);
-  const tooltips   = cols.map(c => c.label.length > 70 ? c.label.slice(0, 70) + '…' : c.label);
+  const cols = numericCols.slice(
+      0,
+      maxQ
+  );
+
+	const labels = cols.map(c => {
+
+		const nome =
+			getIndicadorNome(c.label);
+
+		return nome.length > 35
+			? nome.slice(0,35) + "..."
+			: nome;
+	});  
+
+  const tooltips = cols.map(
+      c => c.label
+  );
 
   const d1 = [], d2 = [], d3 = [], d4 = [];
   cols.forEach(c => {
-    const vals = rows.map(r => parseFloat(r[c.idx])).filter(v => !isNaN(v));
+    const vals = rows.map(r => parseLikert(r[c.idx])).filter(v => !isNaN(v));
     const n = vals.length || 1;
     d1.push(+(vals.filter(v=>v===1).length/n*100).toFixed(1));
     d2.push(+(vals.filter(v=>v===2).length/n*100).toFixed(1));
@@ -1174,7 +1280,7 @@ function renderPerfilCharts(rows) {
   const perfilAvg = {};
   pLabels.forEach(p => {
     const pRows = perfilColIdx >= 0 ? rows.filter(r => (r[perfilColIdx]||'Não informado') === p) : rows;
-    const vals = pRows.flatMap(r => numericCols.map(c => parseFloat(r[c.idx])).filter(v => !isNaN(v)));
+    const vals = pRows.flatMap(r => numericCols.map(c => parseLikert(r[c.idx])).filter(v => !isNaN(v)));
     perfilAvg[p] = vals.length ? +avg_(vals).toFixed(2) : 0;
   });
 
@@ -1194,7 +1300,7 @@ function renderPerfilCharts(rows) {
     options: {
       responsive: true, maintainAspectRatio: false,
       scales: {
-        y: { min: 0, max: 4, ticks: { stepSize: 1, font:{size:10} } },
+        y: { min: 1, max: 4, ticks: { stepSize: 1, font:{size:10} } },
         x: { ticks: { font:{size:11} } }
       },
       plugins: {
@@ -1204,6 +1310,85 @@ function renderPerfilCharts(rows) {
     }
   });
 }
+
+function renderCicloChart(rows){
+
+    if(cicloColIdx < 0){
+        return;
+    }
+
+    const ciclos = [
+        ...new Set(
+            rows
+                .map(r => r[cicloColIdx])
+                .filter(Boolean)
+        )
+    ];
+
+    const medias = ciclos.map(ciclo => {
+
+        const cicloRows =
+            rows.filter(
+                r => r[cicloColIdx] === ciclo
+            );
+
+        const valores =
+            cicloRows.flatMap(r =>
+                numericCols
+                    .map(c => parseLikert(r[c.idx]))
+                    .filter(v => !isNaN(v))
+            );
+
+        return valores.length
+            ? avg_(valores)
+            : 0;
+
+    });
+
+    if(window.cicloChartInst){
+        window.cicloChartInst.destroy();
+    }
+
+    window.cicloChartInst =
+        new Chart(
+            document.getElementById('cicloChart'),
+            {
+                type:'bar',
+
+                data:{
+                    labels:ciclos,
+
+                    datasets:[{
+
+                        label:'Média Geral',
+
+                        data:medias,
+
+                        borderRadius:8
+
+                    }]
+                },
+
+                options:{
+
+                    responsive:true,
+
+                    maintainAspectRatio:false,
+
+                    scales:{
+
+                        y:{
+                            min:1,
+                            max:4
+                        }
+
+                    }
+
+                }
+            }
+        );
+}
+
 
 /* ── Table ── */
 function renderTable(rows) {
@@ -1220,7 +1405,7 @@ function renderTable(rows) {
 
   const tbody = document.getElementById('table-body');
   tbody.innerHTML = sample.map(row => {
-    const numVals = numericCols.map(c => parseFloat(row[c.idx])).filter(v => !isNaN(v));
+    const numVals = numericCols.map(c => parseLikert(row[c.idx])).filter(v => !isNaN(v));
     const avg = numVals.length ? avg_(numVals) : null;
     const cells = showCols.map(i => `<td>${row[i] || '—'}</td>`).join('');
     const avgCell = avg !== null
@@ -1231,6 +1416,26 @@ function renderTable(rows) {
 }
 
 /* ───────────── HELPERS ───────────── */
+function parseLikert(v){
+
+    if(
+        v === null ||
+        v === undefined ||
+        v === ''
+    ){
+        return null;
+    }
+
+    const n = Number(v);
+
+    return (
+        n >= 1 &&
+        n <= 4
+    )
+        ? n
+        : null;
+}
+
 function avg_(arr) { return arr.reduce((a,b) => a+b, 0) / arr.length; }
 
 function dimScores(rows) {
@@ -1238,7 +1443,7 @@ function dimScores(rows) {
   Object.keys(DIMS).forEach(k => {
     const cols = numericCols.filter(c => c.dim === k);
     if (!cols.length) { scores[k] = 0; return; }
-    const vals = rows.flatMap(r => cols.map(c => parseFloat(r[c.idx])).filter(v => !isNaN(v)));
+    const vals = rows.flatMap(r => cols.map(c => parseLikert(r[c.idx])).filter(v => !isNaN(v)));
     scores[k] = vals.length ? avg_(vals) : 0;
   });
   return scores;
@@ -1317,19 +1522,47 @@ function showDimensionDetails(dimKey){
     tbody.innerHTML = cols.map(col => {
 
         const vals = rows
-            .map(r => parseFloat(r[col.idx]))
+            .map(r => parseLikert(r[col.idx]))
             .filter(v => !isNaN(v));
 
         const media = vals.length
             ? avg_(vals).toFixed(2)
             : "0.00";
 
-        return `
-            <tr>
-                <td>${getIndicadorNome(col.label)}</td>
-                <td><strong>${media}</strong></td>
-            </tr>
-        `;
+		const totalRespostas = vals.length;
+
+		const nivel4 =
+			totalRespostas
+			? ((vals.filter(v => v === 4).length / totalRespostas) * 100).toFixed(1)
+			: "0.0";
+
+		const nivel1 =
+			totalRespostas
+			? ((vals.filter(v => v === 1).length / totalRespostas) * 100).toFixed(1)
+			: "0.0";
+
+		return `
+		<tr>
+			<td>${getIndicadorNome(col.label)}</td>
+
+			<td>
+				<strong>${media}</strong>
+			</td>
+
+			<td>
+				${totalRespostas}
+			</td>
+
+			<td style="color:#00876A;font-weight:600">
+				${nivel4}%
+			</td>
+
+			<td style="color:#D8482F;font-weight:600">
+				${nivel1}%
+			</td>
+		</tr>
+		`;		
+		
     }).join('');
 
     document.getElementById('dimModal').style.display = 'block';
@@ -1372,6 +1605,9 @@ loadData();
         <tr>
           <th>Indicador</th>
           <th>Média</th>
+		  <th>Respostas</th>
+		  <th>Nível 4 (%)</th>
+		  <th>Nível 1 (%)</th>		  
         </tr>
       </thead>
       <tbody id="modalBody"></tbody>
