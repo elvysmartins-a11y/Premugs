@@ -1497,8 +1497,14 @@ function showDimensionDetails(dimKey){
 
     const rows = getFiltered();
 
-    const cols = numericCols.filter(
-        c => c.dim === dimKey
+    const cols = numericCols
+    .filter(c => c.dim === dimKey)
+    .filter((col,index,arr)=>
+        arr.findIndex(
+            x =>
+                normalizarTexto(x.label) ===
+                normalizarTexto(col.label)
+        ) === index
     );
 
     document.getElementById('modalTitle').textContent =
