@@ -839,7 +839,10 @@ function detectColumns(){
                 label:h,
                 dim:getDimensionFromQuestion(h)
             });
-
+			console.log(
+				h,
+				getDimensionFromQuestion(h)
+			);
         }
 
     });
@@ -1415,7 +1418,7 @@ function dimScores(rows) {
   Object.keys(DIMS).forEach(k => {
     const cols = numericCols.filter(c => c.dim === k);
     if (!cols.length) { scores[k] = 0; return; }
-    const vals = rows.flatMap(r => cols.map(c => parseLikert(r[c.idx])).filter(v => !isNaN(v)));
+    const vals = rows.flatMap(r => cols.map(c => parseLikert(r[c.idx])).filter(v => v !== null));
     scores[k] = vals.length ? avg_(vals) : 0;
   });
   return scores;
