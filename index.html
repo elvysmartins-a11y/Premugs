@@ -756,9 +756,9 @@ async function loadData() {
   document.getElementById('error-state').style.display   = 'none';
   document.getElementById('dashboard').style.display     = 'none';
 
-  const url = `https://docs.google.com/spreadsheets/d/e/CHAVE_PUBLICA/pub?gid=${GID}&single=true&output=csv`;
+  const url = `https://docs.google.com/spreadsheets/d/e/2PACX-1vXXXXXXXXXXXXXXX.../pub?gid=${GID}&single=true&output=csv`;
 
-  try {
+ try {
     const resp = await fetch(url);
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const csv = await resp.text();
