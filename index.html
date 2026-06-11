@@ -822,7 +822,20 @@ function detectColumns(){
 	    ){
 	        return;
 	    }
-	
+
+		// verifica se existe pelo menos uma resposta Likert
+
+        const hasLikert =
+            allRows.some(r => {
+
+                const v = parseLikert(r[i]);
+
+                return v !== null;
+
+        });
+
+		if(!hasLikert) return;
+		
 	    numericCols.push({
 	        idx:i,
 	        label:h,
@@ -830,6 +843,8 @@ function detectColumns(){
 	    });
 	
 	});
+    console.log("numericCols:", numericCols.length);
+    console.table(numericCols);	
 }
 
 function similarity(a,b){
