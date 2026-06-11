@@ -768,8 +768,15 @@ async function loadData() {
     headers = parsed.data[0];
     allRows  = parsed.data.slice(1);
 
+	console.log("Headers:", headers);
+	console.log("Primeira linha:", allRows[0]);	  
+
     detectColumns();
-	console.log("numericCols:", numericCols);
+	console.log("Perfil:", perfilColIdx);
+	console.log("Ciclo:", cicloColIdx);
+	console.log("NumericCols:", numericCols.length);
+	console.table(numericCols);	  
+
     populateCicloFilter();
     render();
 
@@ -792,13 +799,21 @@ function detectColumns() {
   perfilColIdx = -1;
   cicloColIdx  = -1;
 
-  headers.forEach((h, i) => {
+headers.forEach((h, i) => {
 
     if (i === 0) return;
 
-    if (i === perfilColIdx) return;
+    const hNorm = normalizarTexto(h);
 
-    if (i === cicloColIdx) return;
+    if (hNorm.includes('perfil')) {
+        perfilColIdx = i;
+        return;
+    }
+
+    if (hNorm.includes('ciclo')) {
+        cicloColIdx = i;
+        return;
+    }
 
     const vals = allRows
         .map(r => parseFloat(r[i]))
@@ -809,32 +824,13 @@ function detectColumns() {
         vals.every(v => v >= 1 && v <= 4)
     ) {
 
-        const dim = getDimensionFromQuestion(h);
-
-		const hNorm = normalizarTexto(h);
-
-		if(
-			hNorm.includes('perfil')
-		){
-			perfilColIdx = i;
-			return;
-		}
-
-		if(
-			hNorm.includes('ciclo')
-		){
-			cicloColIdx = i;
-			return;
-		}
-
-
         numericCols.push({
             idx: i,
             label: h,
-            dim
+            dim: getDimensionFromQuestion(h)
         });
     }
- });
+});  
 
 console.table(
     numericCols.map(c => ({
@@ -979,7 +975,7 @@ function renderDimBars(rows) {
 
     return `
       <div class="dim-row"
-           onclick="('${key}')">
+           onclick="showDimensionIndicators('${key}')"
 
         <div class="dim-label">
           ${cfg.label}
