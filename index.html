@@ -805,6 +805,13 @@ async function loadData() {
 function detectColumns(){
 
 	numericCols = [];
+
+	if(
+	    nome.includes("ciclo") ||
+	    nome.includes("ano")
+	){
+	    cicloColIdx = i;
+	}
 	
 	headers.forEach((h,i)=>{
 	
@@ -856,6 +863,9 @@ function detectColumns(){
 	});
     console.log("numericCols:", numericCols.length);
     console.table(numericCols);	
+	
+	console.log("perfilColIdx =", perfilColIdx);
+	console.log("cicloColIdx =", cicloColIdx);
 }
 
 function similarity(a,b){
@@ -984,14 +994,33 @@ function populatePerfilFilter(){
 }	
 	
 function populateCicloFilter() {
-  if (cicloColIdx < 0) return;
-  const sel = document.getElementById('filter-ciclo');
-  const vals = [...new Set(allRows.map(r => r[cicloColIdx]).filter(Boolean))].sort();
-  vals.forEach(v => {
-    const o = document.createElement('option');
-    o.value = v; o.textContent = v;
-    sel.appendChild(o);
-  });
+
+    if(cicloColIdx < 0) return;
+
+    const sel =
+        document.getElementById('filter-ciclo');
+
+    sel.innerHTML =
+        '<option value="todos">Todos os ciclos</option>';
+
+    const vals = [
+        ...new Set(
+            allRows
+                .map(r => r[cicloColIdx])
+                .filter(Boolean)
+        )
+    ].sort();
+
+    vals.forEach(v => {
+
+        const o =
+            document.createElement('option');
+
+        o.value = v;
+        o.textContent = v;
+
+        sel.appendChild(o);
+    });
 }
 
 /* ───────────── RENDER ───────────── */
