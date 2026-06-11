@@ -982,7 +982,7 @@ function renderDimBars(rows) {
 
     return `
       <div class="dim-row"
-           onclick="showDimensionIndicators('${key}')"
+           onclick="showDimensionIndicators('${key}')">
 
         <div class="dim-label">
           ${cfg.label}
