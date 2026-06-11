@@ -805,36 +805,37 @@ function detectColumns() {
 
     headers.forEach((h, i) => {
 
-        const parsed = parseHeader(h, i);
-        const hNorm = normalizarTexto(parsed.label);
+        const label = h;
 
-        // PERFIL
+        const hNorm = normalizarTexto(label);
+
         if (hNorm.includes('perfil') || hNorm.includes('respondente')) {
-            perfilColIdx = parsed.idx;
+            perfilColIdx = i;
             return;
         }
 
-        // CICLO
         if (hNorm.includes('ciclo')) {
-            cicloColIdx = parsed.idx;
+            cicloColIdx = i;
             return;
         }
 
-        // detectar Likert automaticamente
+        // tenta identificar Likert de forma mais simples
         const vals = allRows
-            .map(r => toLikert(r[parsed.idx]))
+            .map(r => toLikert(r[i]))
             .filter(v => !isNaN(v));
 
-        const isLikert =
-            vals.length >= allRows.length * 0.5 &&
-            vals.every(v => v >= 1 && v <= 4);
+        if (vals.length > 0) {
 
-        if (isLikert) {
-            numericCols.push({
-                idx: parsed.idx,
-                label: parsed.label,
-                dim: getDimensionFromQuestion(parsed.label)
-            });
+            const validRatio = vals.length / allRows.length;
+
+            if (validRatio > 0.3) { // <<< mais realista
+
+                numericCols.push({
+                    idx: i,
+                    label: label,
+                    dim: getDimensionFromQuestion(label)
+                });
+            }
         }
     });
 }	
@@ -861,7 +862,13 @@ function toLikert(v){
 
     if(v === null || v === undefined) return NaN;
 
-    const txt = v.toString().trim().toLowerCase();
+    const txt = v
+    ?.toString()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\w\s]/g, "") // remove pontuação
+    .trim()
+    .toLowerCase();
 
     const mapa = {
         "ótimo": 4,
@@ -899,15 +906,17 @@ function getDimensionFromQuestion(label){
     const texto = normalizarTexto(label);
 
     for (const [dim, indicadores] of Object.entries(INDICADORES)) {
-        const match = indicadores.find(i =>
-            normalizarTexto(i.pergunta) === texto
+
+        const found = indicadores.find(i =>
+            texto.includes(normalizarTexto(i.pergunta)) ||
+            normalizarTexto(i.pergunta).includes(texto)
         );
 
-        if (match) return dim;
+        if (found) return dim;
     }
 
-    return 'organizacional'; // fallback seguro
-}
+    return 'organizacional';
+}	
 	
 function getIndicadorNome(pergunta) {
 
