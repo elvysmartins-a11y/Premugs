@@ -846,14 +846,6 @@ function detectColumns(){
 			return;
 		}
 
-		const amostra = dataRows
-		    .map(r => parseLikert(r[i]))
-		    .filter(v => v !== null);
-		
-		if(amostra.length === 0){
-		    return;
-		}
-		
 	    numericCols.push({
 	        idx:i,
 	        label:h,
@@ -917,9 +909,13 @@ function getDimensionFromQuestion(label){
 
     }
 
-    return bestScore >= 0.80
+    return bestScore >= 0.60
         ? bestDim
         : 'avaliacao_geral';
+
+	if(!dim){
+	    return;
+	}
 		
 }
 
