@@ -795,51 +795,58 @@ async function loadData() {
 
 /* ── Auto-detect key columns ── */
 function detectColumns() {
-  numericCols = [];
-  perfilColIdx = -1;
-  cicloColIdx  = -1;
 
-headers.forEach((h, i) => {
+    numericCols = [];
+    perfilColIdx = -1;
+    cicloColIdx = -1;
 
-    if (i === 0) return;
+    headers.forEach((h, i) => {
 
-    const hNorm = normalizarTexto(h);
+        if(i === 0) return;
 
-    if (hNorm.includes('perfil')) {
-        perfilColIdx = i;
-        return;
-    }
+        const hNorm = normalizarTexto(h);
 
-    if (hNorm.includes('ciclo')) {
-        cicloColIdx = i;
-        return;
-    }
+        // Detecta Perfil
+        if(
+            hNorm.includes('perfil') ||
+            hNorm.includes('respondente')
+        ){
+            perfilColIdx = i;
+            return;
+        }
 
-    const vals = allRows
-        .map(r => parseFloat(r[i]))
-        .filter(v => !isNaN(v));
+        // Detecta Ciclo
+        if(
+            hNorm.includes('ciclo')
+        ){
+            cicloColIdx = i;
+            return;
+        }
 
-    if (
-        vals.length >= Math.max(1, allRows.length * 0.5) &&
-        vals.every(v => v >= 1 && v <= 4)
-    ) {
+        const vals = allRows
+            .map(r => parseFloat(r[i]))
+            .filter(v => !isNaN(v));
 
-        numericCols.push({
-            idx: i,
-            label: h,
-            dim: getDimensionFromQuestion(h)
-        });
-    }
-});  
+        if(
+            vals.length >= Math.max(1, allRows.length * 0.5) &&
+            vals.every(v => v >= 1 && v <= 4)
+        ){
 
-console.table(
-    numericCols.map(c => ({
-        pergunta: c.label,
-        dimensao: c.dim
-    }))
-); 
+            numericCols.push({
+                idx: i,
+                label: h,
+                dim: getDimensionFromQuestion(h)
+            });
+
+        }
+
+    });
+
+    console.log("Perfil:", perfilColIdx);
+    console.log("Ciclo:", cicloColIdx);
+    console.log("Perguntas:", numericCols.length);
 }
-
+	
 function normalizarTexto(txt) {
 
     if (!txt) return '';
