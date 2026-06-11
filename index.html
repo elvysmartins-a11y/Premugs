@@ -1492,6 +1492,14 @@ function showDimensionDetails(dimKey){
         return;
     }
 
+	console.table(
+    cols.map(c => ({
+        idx: c.idx,
+        label: c.label,
+        dim: c.dim
+    }))
+);
+	
     tbody.innerHTML = cols.map(col => {
 
         const vals = rows
