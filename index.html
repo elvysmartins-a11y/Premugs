@@ -898,24 +898,56 @@ function getDimensionFromQuestion(label){
 
     const texto = normalizarTexto(label);
 
-    for(const [dim, indicadores] of Object.entries(INDICADORES)){
+    const score = {
+        pedagogica: 0,
+        relacional: 0,
+        organizacional: 0,
+        governanca: 0,
+        sustentabilidade: 0,
+        avaliacao_geral: 0
+    };
 
-        for(const ind of indicadores){
+    const keywords = {
+        pedagogica: [
+            "aprendizagem", "teorica", "pratica", "competencia",
+            "formativa", "pedagog", "ensino", "desenvolvimento"
+        ],
+        relacional: [
+            "preceptor", "tutor", "feedback", "relacao",
+            "acolhimento", "integracao", "multiprofissional"
+        ],
+        organizacional: [
+            "comunicacao", "fluxo", "organizacao",
+            "cronograma", "suporte", "clima"
+        ],
+        governanca: [
+            "transparencia", "decisao", "evidencia",
+            "gestao", "monitoramento", "participacao", "coordena"
+        ],
+        sustentabilidade: [
+            "sustentabilidade", "impacto", "continuidade",
+            "custo", "efetividade", "institucional"
+        ],
+        avaliacao_geral: [
+            "avaliacao geral", "utilidade", "premugs avalia"
+        ]
+    };
 
-            const pergunta =
-                normalizarTexto(ind.pergunta);
-
-            if(
-                texto.includes(pergunta) ||
-                pergunta.includes(texto)
-            ){
-                return dim;
+    for (const dim in keywords) {
+        for (const kw of keywords[dim]) {
+            if (texto.includes(kw)) {
+                score[dim]++;
             }
         }
     }
 
-    return 'avaliacao_geral';
-}
+	console.log(parsed.label, "=>", parsed.dim);
+	
+    // pega dimensão com maior score
+    return Object.entries(score).reduce((a, b) =>
+        b[1] > a[1] ? b : a
+    )[0];
+}	
 
 function getIndicadorNome(pergunta) {
 
