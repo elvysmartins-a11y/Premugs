@@ -803,53 +803,33 @@ async function loadData() {
 /* ── Auto-detect key columns ── */
 function detectColumns(){
 
-    numericCols = [];
-    perfilColIdx = -1;
-    cicloColIdx = -1;
-
-    headers.forEach((h,i)=>{
-
-        const hNorm = normalizarTexto(h);
-
-        if(
-            hNorm.includes("perfil")
-        ){
-            perfilColIdx = i;
-            return;
-        }
-
-        if(
-            hNorm.includes("ciclo")
-        ){
-            cicloColIdx = i;
-            return;
-        }
-
-        const vals = allRows
-            .map(r => parseLikert(r[i]))
-            .filter(v => !isNaN(v));
-
-        if(
-            vals.length >= allRows.length * 0.5 &&
-            vals.every(v => v >= 1 && v <= 4)
-        ){
-
-            numericCols.push({
-                idx:i,
-                label:h,
-                dim:getDimensionFromQuestion(h)
-            });
-
-			console.table(
-			    headers.map(h=>({
-			        pergunta:h,
-			        dimensao:getDimensionFromQuestion(h)
-			    }))
-			);
-        }
-
-    });
-
+	numericCols = [];
+	
+	headers.forEach((h,i)=>{
+	
+	    const dim =
+	        getDimensionFromQuestion(h);
+	
+	    if(
+	        ![
+	            'pedagogica',
+	            'relacional',
+	            'organizacional',
+	            'governanca',
+	            'sustentabilidade',
+	            'avaliacao_geral'
+	        ].includes(dim)
+	    ){
+	        return;
+	    }
+	
+	    numericCols.push({
+	        idx:i,
+	        label:h,
+	        dim
+	    });
+	
+	});
 }
 
 function similarity(a,b){
