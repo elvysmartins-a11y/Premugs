@@ -806,15 +806,23 @@ function detectColumns(){
 
 	numericCols = [];
 
-	if(
-	    nome.includes("ciclo") ||
-	    nome.includes("ano")
-	){
-	    cicloColIdx = i;
-	}
-	
 	headers.forEach((h,i)=>{
-	
+
+        const nome = normalizarTexto(h);
+
+        // PERFIL
+		if(
+		    nome.includes("papel") &&
+		    nome.includes("premugs")
+		){
+		    perfilColIdx = i;
+		}
+
+		// CICLO
+        if(nome.includes("ano/ciclo avaliado")){
+            cicloColIdx = i;
+        }
+		
 	    const dim =
 	        getDimensionFromQuestion(h);
 	
