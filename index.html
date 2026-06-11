@@ -770,10 +770,9 @@ const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:
 
     headers = parsed.data[0];
     allRows  = parsed.data.slice(1);
-
-	console.log("Headers:", headers);
-	console.log("Primeira linha:", allRows[0]);	  
-
+    console.table(headers);
+    console.table(allRows[0]);	 
+	 
     detectColumns();
 	console.log("Perfil:", perfilColIdx);
 	console.log("Ciclo:", cicloColIdx);
@@ -827,7 +826,7 @@ function detectColumns() {
         }
 
         const vals = allRows
-            .map(r => parseFloat(r[i]))
+            .map(r => toLikert(r[i]))
             .filter(v => !isNaN(v));
 
         if(
@@ -848,6 +847,31 @@ function detectColumns() {
     console.log("Perfil:", perfilColIdx);
     console.log("Ciclo:", cicloColIdx);
     console.log("Perguntas:", numericCols.length);
+}
+
+function toLikert(v){
+
+    if(!v) return NaN;
+
+    const txt = v.toString().trim().toLowerCase();
+
+    const mapa = {
+        "ótimo":4,
+        "otimo":4,
+        "bom":3,
+        "regular":2,
+        "insuficiente":1
+    };
+
+    if(mapa[txt] !== undefined){
+        return mapa[txt];
+    }
+
+    const num = toLikert(txt);
+
+    return isNaN(num)
+        ? NaN
+        : num;
 }
 	
 function normalizarTexto(txt) {
@@ -944,7 +968,7 @@ function render() {
 /* ── KPIs ── */
 function renderKPIs(rows) {
   const total = rows.length;
-  const allVals = rows.flatMap(r => numericCols.map(c => parseFloat(r[c.idx])).filter(v => !isNaN(v)));
+  const allVals = rows.flatMap(r => numericCols.map(c => toLikert(r[c.idx])).filter(v => !isNaN(v)));
   const avg = allVals.length ? avg_(allVals) : 0;
   const pct4 = allVals.length ? (allVals.filter(v => v === 4).length / allVals.length * 100) : 0;
   const pct1 = allVals.length ? (allVals.filter(v => v === 1).length / allVals.length * 100) : 0;
@@ -1056,7 +1080,7 @@ function renderLikert(rows) {
 
   const d1 = [], d2 = [], d3 = [], d4 = [];
   cols.forEach(c => {
-    const vals = rows.map(r => parseFloat(r[c.idx])).filter(v => !isNaN(v));
+    const vals = rows.map(r => toLikert(r[c.idx])).filter(v => !isNaN(v));
     const n = vals.length || 1;
     d1.push(+(vals.filter(v=>v===1).length/n*100).toFixed(1));
     d2.push(+(vals.filter(v=>v===2).length/n*100).toFixed(1));
@@ -1180,7 +1204,7 @@ function renderPerfilCharts(rows) {
   const perfilAvg = {};
   pLabels.forEach(p => {
     const pRows = perfilColIdx >= 0 ? rows.filter(r => (r[perfilColIdx]||'Não informado') === p) : rows;
-    const vals = pRows.flatMap(r => numericCols.map(c => parseFloat(r[c.idx])).filter(v => !isNaN(v)));
+    const vals = pRows.flatMap(r => numericCols.map(c => toLikert(r[c.idx])).filter(v => !isNaN(v)));
     perfilAvg[p] = vals.length ? +avg_(vals).toFixed(2) : 0;
   });
 
@@ -1226,7 +1250,7 @@ function renderTable(rows) {
 
   const tbody = document.getElementById('table-body');
   tbody.innerHTML = sample.map(row => {
-    const numVals = numericCols.map(c => parseFloat(row[c.idx])).filter(v => !isNaN(v));
+    const numVals = numericCols.map(c => toLikert(row[c.idx])).filter(v => !isNaN(v));
     const avg = numVals.length ? avg_(numVals) : null;
     const cells = showCols.map(i => `<td>${row[i] || '—'}</td>`).join('');
     const avgCell = avg !== null
@@ -1244,7 +1268,7 @@ function dimScores(rows) {
   Object.keys(DIMS).forEach(k => {
     const cols = numericCols.filter(c => c.dim === k);
     if (!cols.length) { scores[k] = 0; return; }
-    const vals = rows.flatMap(r => cols.map(c => parseFloat(r[c.idx])).filter(v => !isNaN(v)));
+    const vals = rows.flatMap(r => cols.map(c => toLikert(r[c.idx])).filter(v => !isNaN(v)));
     scores[k] = vals.length ? avg_(vals) : 0;
   });
   return scores;
@@ -1334,7 +1358,7 @@ function showDimensionDetails(dimKey){
     tbody.innerHTML = cols.map(col => {
 
         const vals = rows
-            .map(r => parseFloat(r[col.idx]))
+            .map(r => toLikert(r[col.idx]))
             .filter(v => !isNaN(v));
 
         const media = vals.length
