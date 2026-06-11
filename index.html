@@ -1291,12 +1291,8 @@ function showDimensionIndicators(dimKey){
     modal.style.display = 'block';
 }
 
-
 function showDimensionDetails(dimKey){
 
-	console.log("Dimensão clicada:", dimKey);
-	console.log("Colunas encontradas:", cols);
-	
     const rows = getFiltered();
 
     const cols = numericCols.filter(
@@ -1306,22 +1302,15 @@ function showDimensionDetails(dimKey){
     document.getElementById('modalTitle').textContent =
         DIMS[dimKey].label;
 
-    const tbody =
-        document.getElementById('modalBody');
+    const tbody = document.getElementById('modalBody');
 
-    if(!cols.length){
-
+    if (!cols.length) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="2">
-                    Nenhum indicador encontrado.
-                </td>
+                <td colspan="2">Nenhum indicador encontrado.</td>
             </tr>
         `;
-
-        document.getElementById('dimModal').style.display =
-            'block';
-
+        document.getElementById('dimModal').style.display = 'block';
         return;
     }
 
@@ -1337,20 +1326,14 @@ function showDimensionDetails(dimKey){
 
         return `
             <tr>
-                <td>
-                    ${getIndicadorNome(col.label)}
-                </td>
-                <td>
-                    <strong>${media}</strong>
-                </td>
+                <td>${getIndicadorNome(col.label)}</td>
+                <td><strong>${media}</strong></td>
             </tr>
         `;
-
     }).join('');
 
-    document.getElementById('dimModal').style.display =
-        'block';
-}
+    document.getElementById('dimModal').style.display = 'block';
+}	
 
 function closeModal(){
     document.getElementById('dimModal').style.display = 'none';
