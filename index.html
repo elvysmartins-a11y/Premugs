@@ -796,58 +796,39 @@ const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:
 }
 
 /* ── Auto-detect key columns ── */
+
 function detectColumns() {
 
     numericCols = [];
-    perfilColIdx = -1;
-    cicloColIdx = -1;
+
+    // FIXO pela sua planilha
+    cicloColIdx  = 1;
+    perfilColIdx = 2;
 
     headers.forEach((h, i) => {
 
-        if(i === 0) return;
-
-        const hNorm = normalizarTexto(h);
-
-        // Detecta Perfil
-        if(
-            hNorm.includes('perfil') ||
-            hNorm.includes('respondente')
-        ){
-            perfilColIdx = i;
-            return;
-        }
-
-        // Detecta Ciclo
-        if(
-            hNorm.includes('ciclo')
-        ){
-            cicloColIdx = i;
-            return;
-        }
+        if (i <= 4) return; // ignora metadados
 
         const vals = allRows
             .map(r => toLikert(r[i]))
             .filter(v => !isNaN(v));
 
-        if(
-            vals.length >= Math.max(1, allRows.length * 0.5) &&
+        if (
+            vals.length >= 3 &&
             vals.every(v => v >= 1 && v <= 4)
-        ){
-
+        ) {
             numericCols.push({
                 idx: i,
                 label: h,
                 dim: getDimensionFromQuestion(h)
             });
-
         }
-
     });
 
     console.log("Perfil:", perfilColIdx);
     console.log("Ciclo:", cicloColIdx);
     console.log("Perguntas:", numericCols.length);
-}
+}	
 
 function toLikert(v){
 
