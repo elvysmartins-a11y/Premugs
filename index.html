@@ -835,6 +835,24 @@ function detectColumns(){
         });
 
 		if(!hasLikert) return;
+
+		const jaExiste = numericCols.some(
+			c =>
+				normalizarTexto(c.label) ===
+				normalizarTexto(h)
+		);
+		
+		if(jaExiste){
+			return;
+		}
+
+		const amostra = dataRows
+		    .map(r => parseLikert(r[i]))
+		    .filter(v => v !== null);
+		
+		if(amostra.length === 0){
+		    return;
+		}
 		
 	    numericCols.push({
 	        idx:i,
@@ -1441,8 +1459,14 @@ function showDimensionIndicators(dimKey){
 
     title.textContent = DIMS[dimKey].label;
 
-    const indicadores = numericCols.filter(
-        c => c.dim === dimKey
+    const cols = numericCols
+    .filter(c => c.dim === dimKey)
+    .filter((col, index, arr) =>
+        arr.findIndex(
+            x =>
+                normalizarTexto(x.label) ===
+                normalizarTexto(col.label)
+        ) === index
     );
 
     if(!indicadores.length){
