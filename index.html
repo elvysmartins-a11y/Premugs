@@ -756,7 +756,7 @@ async function loadData() {
   document.getElementById('error-state').style.display   = 'none';
   document.getElementById('dashboard').style.display     = 'none';
 
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
+  const url = `https://docs.google.com/spreadsheets/d/e/CHAVE_PUBLICA/pub?gid=${GID}&single=true&output=csv`;
 
   try {
     const resp = await fetch(url);
