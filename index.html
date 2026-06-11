@@ -839,9 +839,12 @@ function detectColumns(){
                 label:h,
                 dim:getDimensionFromQuestion(h)
             });
-			console.log(
-				h,
-				getDimensionFromQuestion(h)
+
+			console.table(
+			    headers.map(h=>({
+			        pergunta:h,
+			        dimensao:getDimensionFromQuestion(h)
+			    }))
 			);
         }
 
