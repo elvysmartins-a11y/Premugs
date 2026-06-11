@@ -907,36 +907,21 @@ function getDimensionFromQuestion(label){
 
     const texto = normalizarTexto(label);
 
-    let bestScore = 0;
-    let bestDim = null;
-
     for(const [dim, indicadores] of Object.entries(INDICADORES)){
 
-        indicadores.forEach(ind => {
+        const encontrou = indicadores.find(ind =>
 
-            const score = similarity(
-                texto,
-                normalizarTexto(ind.pergunta)
-            );
+            normalizarTexto(ind.pergunta) === texto
 
-            if(score > bestScore){
-                bestScore = score;
-                bestDim = dim;
-            }
+        );
 
-        });
-
+        if(encontrou){
+            return dim;
+        }
     }
 
-    return bestScore >= 0.80
-        ? bestDim
-        : 'avaliacao_geral';
-
-	if(!dim){
-	    return;
-	}
-		
-}
+    return null;
+}	
 
 function getIndicadorNome(pergunta) {
 
@@ -1568,14 +1553,16 @@ function showDimensionDetails(dimKey){
 
     const tbody = document.getElementById('modalBody');	
 
-    const cols = numericCols
-    .filter(c => c.dim === dimKey)
-    .filter((col,index,arr)=>
-        arr.findIndex(
-            x =>
-                normalizarTexto(x.label) ===
-                normalizarTexto(col.label)
-        ) === index
+	const indicadoresEsperados =
+    INDICADORES[dimKey]
+        .map(i => i.codigo);
+
+	const cols = numericCols
+	    .filter(c => c.dim === dimKey)
+	    .filter(c =>
+	        indicadoresEsperados.includes(
+	            getIndicadorNome(c.label)
+	        )
     );
 
     if (!cols.length) {
