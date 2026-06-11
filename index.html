@@ -859,27 +859,26 @@ function parseHeader(h, i) {
 	
 function toLikert(v){
 
-    if(!v) return NaN;
+    if(v === null || v === undefined) return NaN;
 
     const txt = v.toString().trim().toLowerCase();
 
     const mapa = {
-        "ótimo":4,
-        "otimo":4,
-        "bom":3,
-        "regular":2,
-        "insuficiente":1
+        "ótimo": 4,
+        "otimo": 4,
+        "bom": 3,
+        "regular": 2,
+        "insuficiente": 1
     };
 
-    if(mapa[txt] !== undefined){
+    if (mapa[txt] !== undefined) {
         return mapa[txt];
     }
 
-    const num = toLikert(txt);
+    // tenta número direto
+    const num = Number(txt);
 
-    return isNaN(num)
-        ? NaN
-        : num;
+    return Number.isFinite(num) ? num : NaN;
 }
 	
 function normalizarTexto(txt) {
