@@ -853,39 +853,12 @@ function similarity(a,b){
 
     let common = 0;
 
-    wordsA.forEach(w=>{
+    wordsA.forEach(w => {
         if(wordsB.has(w)) common++;
     });
 
     return common / Math.max(wordsA.size, wordsB.size);
 }
-
-let bestScore = 0;
-let bestDim = null;
-
-for(const [dim, indicadores] of Object.entries(INDICADORES)){
-
-    indicadores.forEach(ind=>{
-
-        const score = similarity(
-            texto,
-            normalizarTexto(ind.pergunta)
-        );
-
-        if(score > bestScore){
-
-            bestScore = score;
-            bestDim = dim;
-
-        }
-
-    });
-
-}
-
-return bestScore >= 0.50
-    ? bestDim
-    : null;
 
 function normalizarTexto(txt) {
 
@@ -902,28 +875,23 @@ function normalizarTexto(txt) {
 
 function getDimensionFromQuestion(label){
 
-    const texto =
-        normalizarTexto(label);
+    const texto = normalizarTexto(label);
 
     let bestScore = 0;
     let bestDim = null;
 
     for(const [dim, indicadores] of Object.entries(INDICADORES)){
 
-        indicadores.forEach(ind=>{
+        indicadores.forEach(ind => {
 
             const score = similarity(
                 texto,
-                normalizarTexto(
-                    ind.pergunta
-                )
+                normalizarTexto(ind.pergunta)
             );
 
             if(score > bestScore){
-
                 bestScore = score;
                 bestDim = dim;
-
             }
 
         });
@@ -933,6 +901,7 @@ function getDimensionFromQuestion(label){
     return bestScore >= 0.35
         ? bestDim
         : 'avaliacao_geral';
+		
 }
 
 function getIndicadorNome(pergunta) {
@@ -1395,9 +1364,12 @@ function renderTable(rows) {
   const sample = rows.slice(-50).reverse();
   document.getElementById('resp-count').textContent = `(${rows.length} total)`;
 
-  const showCols = [0, perfilColIdx, cicloColIdx, ...numericCols.slice(0,4).map(c=>c.idx)]
-    .filter(i => i >= 0)
-    .filter((v, i, a) => a.indexOf(v) === i);
+	const showCols = [
+		0,
+		perfilColIdx,
+		cicloColIdx,
+		...numericCols.slice(0,4).map(c => c.idx)
+	].filter(i => i >= 0).filter((v, i, a) => a.indexOf(v) === i);
 
   const thead = document.getElementById('table-header');
   thead.innerHTML = showCols.map(i => `<th>${headers[i] || 'Col '+i}</th>`).join('') +
