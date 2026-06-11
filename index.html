@@ -898,57 +898,17 @@ function getDimensionFromQuestion(label){
 
     const texto = normalizarTexto(label);
 
-    const score = {
-        pedagogica: 0,
-        relacional: 0,
-        organizacional: 0,
-        governanca: 0,
-        sustentabilidade: 0,
-        avaliacao_geral: 0
-    };
+    for (const [dim, indicadores] of Object.entries(INDICADORES)) {
+        const match = indicadores.find(i =>
+            normalizarTexto(i.pergunta) === texto
+        );
 
-    const keywords = {
-        pedagogica: [
-            "aprendizagem", "teorica", "pratica", "competencia",
-            "formativa", "pedagog", "ensino", "desenvolvimento"
-        ],
-        relacional: [
-            "preceptor", "tutor", "feedback", "relacao",
-            "acolhimento", "integracao", "multiprofissional"
-        ],
-        organizacional: [
-            "comunicacao", "fluxo", "organizacao",
-            "cronograma", "suporte", "clima"
-        ],
-        governanca: [
-            "transparencia", "decisao", "evidencia",
-            "gestao", "monitoramento", "participacao", "coordena"
-        ],
-        sustentabilidade: [
-            "sustentabilidade", "impacto", "continuidade",
-            "custo", "efetividade", "institucional"
-        ],
-        avaliacao_geral: [
-            "avaliacao geral", "utilidade", "premugs avalia"
-        ]
-    };
-
-    for (const dim in keywords) {
-        for (const kw of keywords[dim]) {
-            if (texto.includes(kw)) {
-                score[dim]++;
-            }
-        }
+        if (match) return dim;
     }
 
-	console.log(parsed.label, "=>", parsed.dim);
+    return 'organizacional'; // fallback seguro
+}
 	
-    // pega dimensão com maior score
-    return Object.entries(score).reduce((a, b) =>
-        b[1] > a[1] ? b : a
-    )[0];
-}	
-
 function getIndicadorNome(pergunta) {
 
     const texto = normalizarTexto(pergunta);
@@ -1321,8 +1281,13 @@ function scoreLabel(v) {
 }
 
 /* ── Wire filters ── */
-document.getElementById('filter-perfil').addEventListener('change', render);
-document.getElementById('filter-ciclo').addEventListener('change', render);
+document.getElementById('filter-perfil').addEventListener('change', () => {
+    setTimeout(render, 0);
+});
+
+document.getElementById('filter-ciclo').addEventListener('change', () => {
+    setTimeout(render, 0);
+});	
 
 function showDimensionIndicators(dimKey){
 
