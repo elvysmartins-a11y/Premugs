@@ -1031,7 +1031,7 @@ function render() {
 /* ── KPIs ── */
 function renderKPIs(rows) {
   const total = rows.length;
-  const allVals = rows.flatMap(r => numericCols.map(c => parseLikert(r[c.idx])).filter(v => !isNaN(v)));
+  const allVals = rows.flatMap(r => numericCols.map(c => parseLikert(r[c.idx])).filter(v => !== null));
   const avg = allVals.length ? avg_(allVals) : 0;
   const pct4 = allVals.length ? (allVals.filter(v => v === 4).length / allVals.length * 100) : 0;
   const pct1 = allVals.length ? (allVals.filter(v => v === 1).length / allVals.length * 100) : 0;
@@ -1059,15 +1059,13 @@ function renderKPIs(rows) {
 
 	const scores = dimScores(rows);
 
+	const valores = Object.values(scores)
+    .filter(v => v > 0);
+
 	const scoreGeral =
-	(
-		(scores.pedagogica || 0) +
-		(scores.relacional || 0) +
-		(scores.organizacional || 0) +
-		(scores.governanca || 0) +
-		(scores.sustentabilidade || 0) +
-		(scores.avaliacao_geral || 0)
-	) / 6;
+    valores.length
+        ? avg_(valores)
+        : 0;
 
   const data = [
     { label: 'Respostas', value: total, sub: 'respondentes', color: '#3B5FCC', badge: null },
@@ -1193,7 +1191,7 @@ function renderLikert(rows) {
 
   const d1 = [], d2 = [], d3 = [], d4 = [];
   cols.forEach(c => {
-    const vals = rows.map(r => parseLikert(r[c.idx])).filter(v => !isNaN(v));
+    const vals = rows.map(r => parseLikert(r[c.idx])).filter(v => !== null);
     const n = vals.length || 1;
     d1.push(+(vals.filter(v=>v===1).length/n*100).toFixed(1));
     d2.push(+(vals.filter(v=>v===2).length/n*100).toFixed(1));
@@ -1317,7 +1315,7 @@ function renderPerfilCharts(rows) {
   const perfilAvg = {};
   pLabels.forEach(p => {
     const pRows = perfilColIdx >= 0 ? rows.filter(r => (r[perfilColIdx]||'Não informado') === p) : rows;
-    const vals = pRows.flatMap(r => numericCols.map(c => parseLikert(r[c.idx])).filter(v => !isNaN(v)));
+    const vals = pRows.flatMap(r => numericCols.map(c => parseLikert(r[c.idx])).filter(v => !== null));
     perfilAvg[p] = vals.length ? +avg_(vals).toFixed(2) : 0;
   });
 
@@ -1373,7 +1371,7 @@ function renderCicloChart(rows){
             cicloRows.flatMap(r =>
                 numericCols
                     .map(c => parseLikert(r[c.idx]))
-                    .filter(v => !isNaN(v))
+                    .filter(v => !== null)
             );
 
         return valores.length
@@ -1445,7 +1443,7 @@ function renderTable(rows) {
 
   const tbody = document.getElementById('table-body');
   tbody.innerHTML = sample.map(row => {
-    const numVals = numericCols.map(c => parseLikert(row[c.idx])).filter(v => !isNaN(v));
+    const numVals = numericCols.map(c => parseLikert(row[c.idx])).filter(v => !== null);
     const avg = numVals.length ? avg_(numVals) : null;
     const cells = showCols.map(i => `<td>${row[i] || '—'}</td>`).join('');
     const avgCell = avg !== null
@@ -1587,7 +1585,7 @@ function showDimensionDetails(dimKey){
 
         const vals = rows
             .map(r => parseLikert(r[col.idx]))
-            .filter(v => !isNaN(v));
+            .filter(v => !== null);
 
         const media = vals.length
             ? avg_(vals).toFixed(2)
