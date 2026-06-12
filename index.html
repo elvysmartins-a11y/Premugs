@@ -2065,30 +2065,26 @@ function showResponseDetails(rowIndex){
             return;
         }
 
-        const col =
-            numericCols.find(
-                c => c.idx === i
-            );
-
-        if(!col){
-            return;
-        }
-
-        // verifica se a pergunta pertence ao perfil
-        const pertenceAoPerfil =
-            col.perfil.some(p =>
-
-                perfil
-                .toLowerCase()
-                .includes(
-                    p.toLowerCase()
-                )
-
-            );
-
-        if(!pertenceAoPerfil){
-            return;
-        }
+		const col =
+		    numericCols.find(
+		        c => c.idx === i
+		    );
+		
+		// Perguntas quantitativas
+		if(col){
+		
+		    const pertenceAoPerfil =
+		        col.perfil.some(p =>
+		            perfil.toLowerCase().includes(
+		                p.toLowerCase()
+		            )
+		        );
+		
+		    if(!pertenceAoPerfil){
+		        return;
+		    }
+		
+		}
 
         html += `
             <div style="
