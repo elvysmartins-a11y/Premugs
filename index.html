@@ -1650,54 +1650,69 @@ function mostrarDetalheIndicador(
                 Array.isArray(col.perfil)
                 ? col.perfil.join(', ')
                 : col.perfil;
-
-            return `
-                <li>
-                    <strong>${perfil}</strong><br>
-                    ${col.label}
-					<div style="
-					    margin-top:6px;
-					    margin-left:14px;
-					    font-size:12px;
-					">
-					
-					    Média: <b>${media}</b>
-					    • Respostas: <b>${total}</b>
-					
-					    <table style="
-					        margin-top:6px;
-					        font-size:11px;
-					        border-collapse:collapse">
-					
-					        <tr>
-					            <td>🟢 4</td>
-					            <td style="padding-left:8px">Ótimo</td>
-					            <td style="padding-left:12px"><b>${p4}% (${q4})</b></td>
-					        </tr>
-					
-					        <tr>
-					            <td>🟩 3</td>
-					            <td style="padding-left:8px">Bom</td>
-					            <td style="padding-left:12px"><b>${p3}% (${q3})</b></td>
-					        </tr>
-					
-					        <tr>
-					            <td>🟨 2</td>
-					            <td style="padding-left:8px">Regular</td>
-					            <td style="padding-left:12px"><b>${p2}% (${q2})</b></td>
-					        </tr>
-					
-					        <tr>
-					            <td>🟥 1</td>
-					            <td style="padding-left:8px">Insuficiente</td>
-					            <td style="padding-left:12px"><b>${p1}% (${q1})</b></td>
-					        </tr>
-					
-					    </table>
-					
-					</div>
-                </li>
-            `;
+			return `
+			<li style="margin-bottom:14px">
+			
+			    <strong>${getPerfilNome(col.label)}</strong>
+			
+			    <div style="margin-left:20px">
+			
+			        ${col.label}
+			
+			        <div style="
+			            margin-top:6px;
+			            margin-left:14px;
+			            font-size:12px;
+			        ">
+			
+			            Média: <b>${media}</b>
+			            • Respostas: <b>${total}</b>
+			
+			            <table style="
+			                margin-top:6px;
+			                font-size:11px;
+			                border-collapse:collapse">
+			
+			                <tr>
+			                    <td>🟢 4</td>
+			                    <td style="padding-left:8px">Ótimo</td>
+			                    <td style="padding-left:12px">
+			                        <b>${p4}% (${q4})</b>
+			                    </td>
+			                </tr>
+			
+			                <tr>
+			                    <td>🟩 3</td>
+			                    <td style="padding-left:8px">Bom</td>
+			                    <td style="padding-left:12px">
+			                        <b>${p3}% (${q3})</b>
+			                    </td>
+			                </tr>
+			
+			                <tr>
+			                    <td>🟨 2</td>
+			                    <td style="padding-left:8px">Regular</td>
+			                    <td style="padding-left:12px">
+			                        <b>${p2}% (${q2})</b>
+			                    </td>
+			                </tr>
+			
+			                <tr>
+			                    <td>🟥 1</td>
+			                    <td style="padding-left:8px">Insuficiente</td>
+			                    <td style="padding-left:12px">
+			                        <b>${p1}% (${q1})</b>
+			                    </td>
+			                </tr>
+			
+			            </table>
+			
+			        </div>
+			
+			    </div>
+			
+			</li>
+			`;
         }).join('');
 
     detalhe.innerHTML = `
