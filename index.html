@@ -1967,8 +1967,7 @@ function renderTable(rows) {
 	const showCols = [
 		0,
 		perfilColIdx,
-		cicloColIdx,
-		...numericCols.slice(0,4).map(c => c.idx)
+		cicloColIdx
 	].filter(i => i >= 0).filter((v, i, a) => a.indexOf(v) === i);
 
   const thead = document.getElementById('table-header');
