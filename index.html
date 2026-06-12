@@ -1441,7 +1441,14 @@ function renderKPIs(rows) {
   const avg = allVals.length ? avg_(allVals) : 0;
   const pct4 = allVals.length ? (allVals.filter(v => v === 4).length / allVals.length * 100) : 0;
   const pct1 = allVals.length ? (allVals.filter(v => v === 1).length / allVals.length * 100) : 0;
-
+  
+  const nivel4 = todasNotas.filter(v => v === 4).length;
+  const nivel3 = todasNotas.filter(v => v === 3).length;
+  const nivel2 = todasNotas.filter(v => v === 2).length;
+  const nivel1 = todasNotas.filter(v => v === 1).length;
+  const totalAvaliacoes = nivel1 + nivel2 + nivel3 + nivel4;
+  const aprovacao = totalAvaliacoes? ((nivel3 + nivel4) / totalAvaliacoes) * 100 : 0;
+	
   const perfis = perfilColIdx >= 0 ? new Set(rows.map(r => r[perfilColIdx]).filter(Boolean)).size : '—';
 
 	const dimensoesAtivas = new Set();
@@ -1477,7 +1484,7 @@ function renderKPIs(rows) {
     { label: 'Respostas', value: total, sub: 'respondentes', color: '#3B5FCC', badge: null },
     { label: 'Média Geral', value: avg.toFixed(2), sub: 'escala 1–4', color: '#00876A',
       badge: scoreLabel(avg) },
-    { label: 'Score Geral PREMUGS', value: scoreGeral.toFixed(2), sub: 'índice executivo', color: '#004B87', badge: scoreLabel(scoreGeral)},	  
+    { label:'Aprovação Geral', value: aprovacao.toFixed(0) + '%', sub:'bom + ótimo', color: '#004B87', badge: null},	  
     { label: 'Nível 4 (Ótimo)', value: pct4.toFixed(0) + '%', sub: 'das avaliações', color: '#00876A', badge: null },
     { label: 'Nível 1 (Insuf.)', value: pct1.toFixed(0) + '%', sub: 'das avaliações', color: '#D8482F', badge: null },
     { label: 'Perfis', value: perfis, sub: 'distintos', color: '#0087A8', badge: null },
