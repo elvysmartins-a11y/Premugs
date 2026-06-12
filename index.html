@@ -1351,9 +1351,13 @@ function renderLikert(rows) {
 
     const tooltips = labels;
 
+const wrap = document.querySelector('.chart-canvas-wrap[style*="420"]');
 
-  const wrap = document.querySelector('.chart-canvas-wrap[style*="420"]');
-  if (wrap) wrap.style.height = Math.max(300, cols.length * 28 + 80) + 'px';
+if (wrap){
+    wrap.style.height =
+        Math.max(300, labels.length * 28 + 80) + 'px';
+}
+ 
 
   if (likertChartInst) likertChartInst.destroy();
   const ctx = document.getElementById('likertChart');
