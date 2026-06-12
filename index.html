@@ -1998,7 +1998,7 @@ function renderTable(rows) {
 		    <td style="text-align:center">
 		
 		        <button
-		            onclick="showResponseDetails(${allRows.indexOf(row)})"
+		            onclick="(${allRows.indexOf(row)})"
 		            style="
 		                border:none;
 		                background:none;
@@ -2023,30 +2023,101 @@ function showResponseDetails(rowIndex){
 
     const row = allRows[rowIndex];
 
+    const perfil =
+        row[perfilColIdx];
+
     const body =
-        document.getElementById(
-            'responseBody'
-        );
+        document.getElementById('responseBody');
 
-    body.innerHTML =
-        headers.map((h,i)=>`
+    let html = '';
 
+    headers.forEach((header,i)=>{
+
+        const valor = row[i];
+
+        // ignora vazios
+        if(
+            valor === '' ||
+            valor === null ||
+            valor === undefined
+        ){
+            return;
+        }
+
+        // mantém colunas administrativas
+        if(
+            i === 0 ||
+            i === perfilColIdx ||
+            i === cicloColIdx
+        ){
+
+            html += `
+                <div style="
+                    margin-bottom:10px;
+                    padding-bottom:8px;
+                    border-bottom:1px solid #eee">
+
+                    <strong>${header}</strong><br>
+                    ${valor}
+
+                </div>
+            `;
+
+            return;
+        }
+
+        const col =
+            numericCols.find(
+                c => c.idx === i
+            );
+
+        if(!col){
+            return;
+        }
+
+        // verifica se a pergunta pertence ao perfil
+        const pertenceAoPerfil =
+            col.perfil.some(p =>
+
+                perfil
+                .toLowerCase()
+                .includes(
+                    p.toLowerCase()
+                )
+
+            );
+
+        if(!pertenceAoPerfil){
+            return;
+        }
+
+        html += `
             <div style="
-                padding:8px 0;
-                border-bottom:1px solid #eee">
+                margin-bottom:12px;
+                padding-bottom:10px;
+                border-bottom:1px solid #f0f0f0">
 
-                <strong>${h}</strong><br>
+                <strong>${header}</strong>
 
-                ${row[i] || '—'}
+                <div style="
+                    margin-top:4px;
+                    color:#004B87;
+                    font-weight:600">
+
+                    ${valor}
+
+                </div>
 
             </div>
+        `;
+    });
 
-        `).join('');
+    body.innerHTML = html;
 
     document.getElementById(
         'responseModal'
     ).style.display = 'block';
-}
+}	
 
 function closeResponseModal(){
     document.getElementById(
