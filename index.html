@@ -56,19 +56,24 @@
 		
     color:white;
 
-    min-height:40px;
-    padding:0px 30px;
+    min-height:120px;
 }
 
 .header-left{
-    flex:0 0 210px;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
 }
 
 .premugs-logo{
-    width:250px;
-    height:auto;
-    filter: drop-shadow(0 2px 4px rgba(255,255,255,.25));
+    width:240px;
 }
+	
+.sms-logo{
+    width:140px;
+    margin-left:20px; /* leve recuo */
+    margin-top:-5px;
+}	
 
 .header-divider{
     width:2px;
@@ -582,6 +587,9 @@
         <img src="logopremugsavalia.png"
              alt="PREMUGS Avalia"
              class="premugs-logo">
+        <img src="logo-sms.png"
+             alt="SMS da PMF"
+             class="sms-logo">		
     </div>
 
     <div class="header-divider"></div>
