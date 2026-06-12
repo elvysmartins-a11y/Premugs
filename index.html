@@ -550,6 +550,15 @@
       <div class="chart-sub">Percentual de respondentes por nível em cada questão</div>
       <div class="chart-canvas-wrap" style="height:420px">
         <canvas id="likertChart" role="img" aria-label="Gráfico de barras empilhadas Likert por questão">Distribuição Likert por questão.</canvas>
+		<div id="likertDetalhe"
+		     style="
+		        display:none;
+		        margin-top:20px;
+		        padding:15px;
+		        border:1px solid #ddd;
+		        border-radius:8px;
+		        background:#fafafa;">
+		</div>		  
       </div>
     </div>
 
@@ -1391,6 +1400,20 @@ if (wrap){
       ]
     },
     options: {
+	    onClick: (event, elements) => {
+	
+	        if(!elements.length) return;
+	
+	        const index = elements[0].index;
+	
+	        const indicador = labels[index];
+	
+	        mostrarDetalheIndicador(
+	            indicador,
+	            grupos[indicador],
+	            rows
+	        );
+	    },		
       indexAxis: 'y',
       responsive: true, maintainAspectRatio: false,
       scales: {
@@ -1476,6 +1499,88 @@ document.getElementById('likert-section')
 );  
   
 }
+
+function mostrarDetalheIndicador(
+    indicador,
+    perguntas,
+    rows
+){
+
+    const detalhe =
+        document.getElementById(
+            'likertDetalhe'
+        );
+
+    const vals = [];
+
+    perguntas.forEach(col => {
+
+        rows.forEach(r => {
+
+            const v =
+                parseLikert(r[col.idx]);
+
+            if(v !== null){
+                vals.push(v);
+            }
+
+        });
+
+    });
+
+    const media =
+        vals.length
+        ? avg_(vals).toFixed(2)
+        : '0.00';
+
+    const htmlPerguntas =
+        perguntas.map(col => {
+
+            const perfil =
+                Array.isArray(col.perfil)
+                ? col.perfil.join(', ')
+                : col.perfil;
+
+            return `
+                <li>
+                    <strong>${perfil}</strong><br>
+                    ${col.label}
+                </li>
+            `;
+        }).join('');
+
+    detalhe.innerHTML = `
+
+        <h3 style="margin-bottom:10px">
+            ${indicador}
+        </h3>
+
+        <p>
+            <strong>Média:</strong>
+            ${media}
+        </p>
+
+        <p>
+            <strong>Total de respostas:</strong>
+            ${vals.length}
+        </p>
+
+        <hr style="margin:12px 0">
+
+        <strong>Perguntas do indicador</strong>
+
+        <ul style="margin-top:10px">
+            ${htmlPerguntas}
+        </ul>
+    `;
+
+    detalhe.style.display = 'block';
+
+    detalhe.scrollIntoView({
+        behavior:'smooth',
+        block:'start'
+    });
+}	
 
 /* ── Perfil charts ── */
 function renderPerfilCharts(rows) {
