@@ -2018,10 +2018,13 @@ function renderTable(rows) {
   }).join('');
 }
 
-
 function showResponseDetails(rowIndex){
+	alert("Clique detectado: " + rowIndex);
+}
 
-    const row = allRows[rowIndex];
+function showResponseDetails3(rowIndex){
+
+	const row = allRows[rowIndex];
 
     const perfil =
         row[perfilColIdx];
