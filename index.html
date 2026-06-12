@@ -1572,52 +1572,75 @@ function showDimensionDetails(dimKey){
     }))
 );
 	
-    tbody.innerHTML = cols.map(col => {
+const grupos = {};
 
-        const vals = rows
-            .map(r => parseLikert(r[col.idx]))
-            .filter(v => v !== null);
+cols.forEach(col => {
 
-        const media = vals.length
-            ? avg_(vals).toFixed(2)
-            : "0.00";
+    const indicador =
+        getIndicadorNome(col.label);
 
-		const totalRespostas = vals.length;
+    if(!grupos[indicador]){
+        grupos[indicador] = [];
+    }
 
-		const nivel4 =
-			totalRespostas
-			? ((vals.filter(v => v === 4).length / totalRespostas) * 100).toFixed(1)
-			: "0.0";
+    grupos[indicador].push(col);
 
-		const nivel1 =
-			totalRespostas
-			? ((vals.filter(v => v === 1).length / totalRespostas) * 100).toFixed(1)
-			: "0.0";
+});
 
-		return `
-		<tr>
-			<td>${getIndicadorNome(col.label)}</td>
+tbody.innerHTML = Object.entries(grupos)
+.map(([indicador, perguntas]) => {
 
-			<td>
-				<strong>${media}</strong>
-			</td>
+    const vals = [];
 
-			<td>
-				${totalRespostas}
-			</td>
+    perguntas.forEach(col => {
 
-			<td style="color:#00876A;font-weight:600">
-				${nivel4}%
-			</td>
+        rows.forEach(r => {
 
-			<td style="color:#D8482F;font-weight:600">
-				${nivel1}%
-			</td>
-		</tr>
-		`;		
-		
-    }).join('');
+            const v =
+                parseLikert(r[col.idx]);
 
+            if(v !== null){
+                vals.push(v);
+            }
+
+        });
+
+    });
+
+    const media =
+        vals.length
+        ? avg_(vals).toFixed(2)
+        : "0.00";
+
+    const total =
+        vals.length;
+
+    const nivel4 =
+        total
+        ? ((vals.filter(v => v === 4).length / total) * 100).toFixed(1)
+        : "0.0";
+
+    const nivel1 =
+        total
+        ? ((vals.filter(v => v === 1).length / total) * 100).toFixed(1)
+        : "0.0";
+
+    return `
+        <tr>
+            <td>${indicador}</td>
+            <td><strong>${media}</strong></td>
+            <td>${total}</td>
+            <td style="color:#00876A;font-weight:600">
+                ${nivel4}%
+            </td>
+            <td style="color:#D8482F;font-weight:600">
+                ${nivel1}%
+            </td>
+        </tr>
+    `;
+
+}).join('');
+	
     document.getElementById('dimModal').style.display = 'block';
 }	
 
