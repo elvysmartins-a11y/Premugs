@@ -1307,7 +1307,16 @@ function renderLikert(rows) {
 	
 	    tooltips[indicador] =
 	        grupos[indicador]
-	            .map(c => c.label)
+	            .map(c => {
+	
+	                const perfis =
+	                    Array.isArray(c.perfil)
+	                    ? c.perfil.join(", ")
+	                    : c.perfil;
+	
+	                return `[${perfis}]\n${c.label}`;
+	
+	            })
 	            .join("\n\n");
 	
 	});
