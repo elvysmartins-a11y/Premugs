@@ -1983,7 +1983,7 @@ function renderTable(rows) {
     `;
 
   const tbody = document.getElementById('table-body');
-  tbody.innerHTML = sample.map(row => {
+  tbody.innerHTML = sample.map((row,rowIndex) => {
     const numVals = numericCols.map(c => parseLikert(row[c.idx])).filter(v => v !== null);
     const avg = numVals.length ? avg_(numVals) : null;
     const cells = showCols.map(i => `<td>${row[i] || '—'}</td>`).join('');
@@ -1998,7 +1998,7 @@ function renderTable(rows) {
 		    <td style="text-align:center">
 		
 		        <button
-		            onclick="(${allRows.indexOf(row)})"
+		            onclick="showResponseDetailsFromRow(${rowIndex})"
 		            style="
 		                border:none;
 		                background:none;
