@@ -1998,7 +1998,7 @@ function renderTable(rows) {
 		    <td style="text-align:center">
 		
 		        <button
-		            onclick="showResponseDetailsFromRow(${rowIndex})"
+		            onclick="showResponseDetails(${allRows.indexOf(row)})"
 		            style="
 		                border:none;
 		                background:none;
@@ -2019,10 +2019,6 @@ function renderTable(rows) {
 }
 
 function showResponseDetails(rowIndex){
-	alert("Clique detectado: " + rowIndex);
-}
-
-function showResponseDetails3(rowIndex){
 
 	const row = allRows[rowIndex];
 
