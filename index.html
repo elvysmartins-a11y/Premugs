@@ -714,22 +714,22 @@
 	  <!-- ABAS -->
 	  <div class="tabs">
 	      <button class="tab-btn active"
-	              onclick="showTab('geral')">
+              	  onclick="showTab('geral', this)">
 	          📊 Análise Geral
 	      </button>
 	
 	      <button class="tab-btn"
-	              onclick="showTab('distribuicao')">
+	              onclick="showTab('distribuicao', this)">
 	          📈 Distribuição
 	      </button>
 	
 	      <button class="tab-btn"
-	              onclick="showTab('perfil')">
+	              onclick="showTab('perfil', this)">
 	          👥 Perfis
 	      </button>
 	
 	      <button class="tab-btn"
-	              onclick="showTab('respostas')">
+	              onclick="showTab('respostas', this)">
 	          📝 Registro
 	      </button>
 	  </div>
@@ -1114,21 +1114,20 @@ async function loadData() {
   }
 }
 
-function showTab(tab){
+function showTab(tab, btn = null){
 
-    document
-        .querySelectorAll('.tab-content')
+    document.querySelectorAll('.tab-content')
         .forEach(el => el.style.display='none');
 
-    document
-        .querySelectorAll('.tab-btn')
-        .forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-btn')
+        .forEach(b => b.classList.remove('active'));
 
-    document.getElementById(
-        'tab-' + tab
-    ).style.display = 'block';
+    document.getElementById('tab-' + tab)
+        .style.display = 'block';
 
-    event.target.classList.add('active');
+    if(btn){
+        btn.classList.add('active');
+    }
 }
 	
 /* ── Auto-detect key columns ── */
