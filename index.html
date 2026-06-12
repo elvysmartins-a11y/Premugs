@@ -852,21 +852,12 @@ function detectColumns(){
 
 		if(!hasLikert) return;
 
-		const jaExiste = numericCols.some(
-			c =>
-				normalizarTexto(c.label) ===
-				normalizarTexto(h)
-		);
-		
-		if(jaExiste){
-			return;
-		}
-
-	    numericCols.push({
-	        idx:i,
-	        label:h,
-	        dim
-	    });
+		numericCols.push({
+		    idx:i,
+		    label:h,
+		    dim,
+		    indicador:getIndicadorNome(h)
+		});
 	
 	});
     console.log("numericCols:", numericCols.length);
