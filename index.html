@@ -960,15 +960,15 @@ function similarity(a,b){
 
 function getPerfilDaColuna(idx){
 
-    if(idx >= 5 && idx <= 33){
+    if(idx >= 5 && idx <= 33) || (idx >= 130 && idx <= 134){
         return 'Residente';
     }
 
-    if(idx >= 34 && idx <= 67){
+    if(idx >= 34 && idx <= 67) || (idx >= 130 && idx <= 134){
         return 'Preceptor';
     }
 
-    if(idx >= 68 && idx <= 99){
+    if(idx >= 68 && idx <= 99) || (idx >= 130 && idx <= 134){
         return 'Tutor';
     }
 
