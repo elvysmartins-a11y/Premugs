@@ -528,15 +528,44 @@
     border:1px solid #ddd;
 }
 
-.resumo-likert td{
-    padding:8px;
-    border:1px solid #ddd;
+.resumo-likert td:last-child{
+    text-align:center;
+    font-weight:600;
+}
+
+.resumo-likert td:first-child{
+    font-weight:600;
 }
 
 .resumo-likert tr:nth-child(even){
     background:#fafafa;
 }	
-	
+
+.nivel-dot{
+    display:inline-block;
+    width:12px;
+    height:12px;
+    border-radius:50%;
+    margin-right:8px;
+    vertical-align:middle;
+}
+
+.nivel-4{
+    background:#00876A;
+}
+
+.nivel-3{
+    background:#4DB89A;
+}
+
+.nivel-2{
+    background:#F0A500;
+}
+
+.nivel-1{
+    background:#D8482F;
+}	
+
 </style>
 </head>
 <body>
@@ -1494,29 +1523,41 @@ function renderLikert(rows){
 					
 					    <tbody>
 										
-					        <tr>
-					            <td style="color:#00876A;font-weight:700">4</td>
-					            <td>Ótimo</td>
-					            <td>${p4}%</td>
-					        </tr>
-					
-					        <tr>
-					            <td style="color:#4DB89A;font-weight:700">3</td>
-					            <td>Bom</td>
-					            <td>${p3}%</td>
-					        </tr>
-					
-					        <tr>
-					            <td style="color:#F0A500;font-weight:700">2</td>
-					            <td>Regular</td>
-					            <td>${p2}%</td>
-					        </tr>
-					
-					        <tr>
-					            <td style="color:#D8482F;font-weight:700">1</td>
-					            <td>Insuficiente</td>
-					            <td>${p1}%</td>
-					        </tr>
+							<tr>
+							    <td>
+							        <span class="nivel-dot nivel-4"></span>
+							        4
+							    </td>
+							    <td>Ótimo</td>
+							    <td>${p4}%</td>
+							</tr>
+							
+							<tr>
+							    <td>
+							        <span class="nivel-dot nivel-3"></span>
+							        3
+							    </td>
+							    <td>Bom</td>
+							    <td>${p3}%</td>
+							</tr>
+							
+							<tr>
+							    <td>
+							        <span class="nivel-dot nivel-2"></span>
+							        2
+							    </td>
+							    <td>Regular</td>
+							    <td>${p2}%</td>
+							</tr>
+							
+							<tr>
+							    <td>
+							        <span class="nivel-dot nivel-1"></span>
+							        1
+							    </td>
+							    <td>Insuficiente</td>
+							    <td>${p1}%</td>
+							</tr>
 					
 					    </tbody>
 					
