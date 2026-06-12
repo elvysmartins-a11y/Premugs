@@ -933,7 +933,7 @@ function detectColumns(){
 		    idx:i,
 		    label:h,
 		    dim,
-		    perfil:getPerfilDaColuna(i)
+		    perfil:getPerfisDaColuna(i)
 		});
 	
 	});
@@ -958,25 +958,27 @@ function similarity(a,b){
     return common / Math.max(wordsA.size, wordsB.size);
 }
 
-function getPerfilDaColuna(idx){
+function getPerfisDaColuna(idx){
 
-    if(idx >= 5 && idx <= 33) || (idx >= 130 && idx <= 134){
-        return 'Residente';
+    const perfis = [];
+
+    if ((idx >= 5 && idx <= 33) || (idx >= 130 && idx <= 134)){
+        perfis.push('Residente');
     }
 
-    if(idx >= 34 && idx <= 67) || (idx >= 130 && idx <= 134){
-        return 'Preceptor';
+    if ((idx >= 34 && idx <= 67) || (idx >= 130 && idx <= 134)){
+        perfis.push('Preceptor');
     }
 
-    if(idx >= 68 && idx <= 99) || (idx >= 130 && idx <= 134){
-        return 'Tutor';
+    if ((idx >= 68 && idx <= 99) || (idx >= 130 && idx <= 134)){
+        perfis.push('Tutor');
     }
 
-    if(idx >= 100){
-        return 'Coordenação';
+    if (idx >= 100){
+        perfis.push('Coordenação');
     }
 
-    return '';
+    return perfis;
 }	
 
 function normalizarTexto(txt) {
