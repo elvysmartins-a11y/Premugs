@@ -1314,7 +1314,7 @@ function renderLikert(rows) {
 	                    ? c.perfil.join(", ")
 	                    : c.perfil;
 	
-	                return `[${perfis}]\n${c.label}`;
+	                return `${perfis}: ${c.label}`;
 	
 	            })
 	            .join("\n\n");
