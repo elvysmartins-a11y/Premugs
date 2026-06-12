@@ -856,8 +856,7 @@ function detectColumns(){
 		    idx:i,
 		    label:h,
 		    dim,
-		    //indicador:getIndicadorNome(h),
-			perfil: perfilAtual
+		    perfil:getPerfilDaColuna(i)
 		});
 	
 	});
@@ -881,6 +880,27 @@ function similarity(a,b){
 
     return common / Math.max(wordsA.size, wordsB.size);
 }
+
+function getPerfilDaColuna(idx){
+
+    if(idx >= 5 && idx <= 35){
+        return 'Residente';
+    }
+
+    if(idx >= 39 && idx <= 69){
+        return 'Preceptor';
+    }
+
+    if(idx >= 73 && idx <= 103){
+        return 'Tutor';
+    }
+
+    if(idx >= 107){
+        return 'Coordenação';
+    }
+
+    return '';
+}	
 
 function normalizarTexto(txt) {
 
@@ -1615,7 +1635,9 @@ tbody.innerHTML = Object.entries(grupos)
 	const perfisTexto =
     [...new Set(
         perguntas.map(p => p.perfil)
-    )].join(", ");
+    )]
+    .filter(Boolean)
+    .join(", ");
 
     const vals = [];
 
