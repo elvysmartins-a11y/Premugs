@@ -435,7 +435,80 @@
 .dim-row:hover{
     transform:translateX(3px);
 }  
-  
+
+.accordion-item{
+    border:1px solid #ddd;
+    border-radius:8px;
+    margin-bottom:10px;
+    overflow:hidden;
+}
+
+.accordion-header{
+    padding:14px;
+    background:#f4f7fb;
+    cursor:pointer;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-weight:600;
+}
+
+.accordion-header:hover{
+    background:#eaf0f8;
+}
+
+.accordion-body{
+    display:none;
+    padding:16px;
+    background:#fff;
+}
+
+.accordion-body.open{
+    display:block;
+}
+
+.accordion-body ul{
+    margin-top:10px;
+    padding-left:20px;
+}
+
+.accordion-body li{
+    margin-bottom:10px;
+}
+
+.likert-mini{
+    display:flex;
+    height:35px;
+    margin-top:15px;
+    border-radius:6px;
+    overflow:hidden;
+    color:#fff;
+    font-size:11px;
+    font-weight:600;
+}
+
+.l4{
+    background:#00876A;
+}
+
+.l3{
+    background:#4DB89A;
+}
+
+.l2{
+    background:#F0A500;
+}
+
+.l1{
+    background:#D8482F;
+}
+
+.likert-mini > div{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}	
+	
 </style>
 </head>
 <body>
@@ -545,22 +618,15 @@
     <p class="section-title">Distribuição das Respostas</p>
 
     <!-- Per-question Likert breakdown -->
-    <div class="chart-card full" id="likert-section">
-      <div class="chart-title">Distribuição por Pergunta (Escala Likert 1–4)</div>
-      <div class="chart-sub">Percentual de respondentes por nível em cada questão</div>
-      <div class="chart-canvas-wrap" style="height:420px">
-        <canvas id="likertChart" role="img" aria-label="Gráfico de barras empilhadas Likert por questão">Distribuição Likert por questão.</canvas>
-		<div id="likertDetalhe"
-		     style="
-		        display:none;
-		        margin-top:20px;
-		        padding:15px;
-		        border:1px solid #ddd;
-		        border-radius:8px;
-		        background:#fafafa;">
-		</div>		  
-      </div>
-    </div>
+<div class="chart-card full" id="likert-section">
+  <div class="chart-title">Indicadores Avaliados</div>
+
+  <div class="chart-sub">
+    Clique em um indicador para visualizar perguntas e distribuição das respostas
+  </div>
+
+  <div id="indicadoresAccordion"></div>
+</div>
 
     <p class="section-title">Respostas por Perfil</p>
     <div class="charts-grid">
@@ -1291,7 +1357,7 @@ function renderRadar(rows) {
 }
 
 /* ── Likert stacked bar ── */
-function renderLikert(rows) {
+function renderLikert(rows){
 
     const grupos = {};
 
@@ -1308,41 +1374,15 @@ function renderLikert(rows) {
 
     });
 
-    const labels = Object.keys(grupos);
+    const container =
+        document.getElementById('indicadoresAccordion');
 
-	const tooltips = {};
-
-	labels.forEach(indicador => {
-	
-	    tooltips[indicador] =
-	        grupos[indicador]
-	            .map(c => {
-	
-	                const perfis =
-	                    Array.isArray(c.perfil)
-	                    ? c.perfil.join(", ")
-	                    : c.perfil;
-	
-	                return `${perfis}: ${c.label}`;
-	
-	            })
-	            .join("\n\n");
-	
-	});
-
-    const d1 = [];
-    const d2 = [];
-    const d3 = [];
-    const d4 = [];
-
-    labels.forEach(indicador => {
-
-        const perguntas =
-            grupos[indicador];
+    container.innerHTML = Object.entries(grupos)
+    .map(([indicador, cols], idx) => {
 
         const vals = [];
 
-        perguntas.forEach(col => {
+        cols.forEach(col => {
 
             rows.forEach(r => {
 
@@ -1357,149 +1397,99 @@ function renderLikert(rows) {
 
         });
 
+        const media =
+            vals.length
+            ? avg_(vals).toFixed(2)
+            : "0.00";
+
         const total =
             vals.length || 1;
 
-        d1.push(
-            +(vals.filter(v => v === 1).length / total * 100).toFixed(1)
-        );
+        const p4 =
+            ((vals.filter(v => v === 4).length / total) * 100).toFixed(1);
 
-        d2.push(
-            +(vals.filter(v => v === 2).length / total * 100).toFixed(1)
-        );
+        const p3 =
+            ((vals.filter(v => v === 3).length / total) * 100).toFixed(1);
 
-        d3.push(
-            +(vals.filter(v => v === 3).length / total * 100).toFixed(1)
-        );
+        const p2 =
+            ((vals.filter(v => v === 2).length / total) * 100).toFixed(1);
 
-        d4.push(
-            +(vals.filter(v => v === 4).length / total * 100).toFixed(1)
-        );
+        const p1 =
+            ((vals.filter(v => v === 1).length / total) * 100).toFixed(1);
 
-    });
+        const perguntasHtml =
+            cols.map(col => `
 
-const wrap = document.querySelector('.chart-canvas-wrap[style*="420"]');
+                <li>
+                    <strong>${col.perfil.join(", ")}</strong><br>
+                    ${col.label}
+                </li>
 
-if (wrap){
-    wrap.style.height =
-        Math.max(300, labels.length * 28 + 80) + 'px';
-}
- 
+            `).join('');
 
-  if (likertChartInst) likertChartInst.destroy();
-  const ctx = document.getElementById('likertChart');
-  likertChartInst = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [
-        { label: '4 – Ótimo',       data: d4, backgroundColor: '#00876A', borderSkipped: false },
-        { label: '3 – Bom',         data: d3, backgroundColor: '#4DB89A', borderSkipped: false },
-        { label: '2 – Regular',     data: d2, backgroundColor: '#F0A500', borderSkipped: false },
-        { label: '1 – Insuficiente',data: d1, backgroundColor: '#D8482F', borderSkipped: false },
-      ]
-    },
-    options: {
-	    onClick: (event, elements) => {
-	
-	        if(!elements.length) return;
-	
-	        const index = elements[0].index;
-	
-	        const indicador = labels[index];
-	
-	        mostrarDetalheIndicador(
-	            indicador,
-	            grupos[indicador],
-	            rows
-	        );
-	    },		
-      indexAxis: 'y',
-      responsive: true, maintainAspectRatio: false,
-      scales: {
-        x: { stacked: true, max: 100, ticks: { callback: v => v + '%', font: {size:10} } },
-        y: { stacked: true, ticks: { font: {size: 11} } }
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-				title: items => {
-		
-		            const indicador =
-		                labels[items[0].dataIndex];
-		
-		            return indicador;
-		
-		        },
-		
-		        label: item =>
-		            ` ${item.dataset.label}: ${item.raw}%`,
-		
-		        footer: items => {
-		
-		            const indicador =
-		                labels[items[0].dataIndex];
-		
-		            return tooltips[indicador];
-		
-		        }
-	  
-          }
-        }
-      }
-    }
-  });
+        return `
 
-  /* custom legend */
-  const colors = ['#00876A','#4DB89A','#F0A500','#D8482F'];
-  const lbls   = ['4 – Ótimo','3 – Bom','2 – Regular','1 – Insuficiente'];
+            <div class="accordion-item">
 
-const oldLegend =
-    document.getElementById('likertLegend');
+                <div class="accordion-header"
+                     onclick="toggleAccordion(${idx})">
 
-if(oldLegend){
-    oldLegend.remove();
-}  
-  
-document.getElementById('likert-section')
-.querySelector('.chart-sub')
-.insertAdjacentHTML(
-'afterend',
-`
-<div id="likertLegend"
-     style="display:flex;
-            gap:16px;
-            flex-wrap:wrap;
-            margin-bottom:10px;
-            font-size:11px;
-            color:var(--text-muted)">
+                    <span>${indicador}</span>
 
-    ${colors.map((c,i)=>`
+                    <span>
+                        Média: ${media}
+                    </span>
 
-        <span style="display:flex;
-                     align-items:center;
-                     gap:4px">
+                </div>
 
-            <span style="
-                width:10px;
-                height:10px;
-                border-radius:2px;
-                background:${c}">
-            </span>
+                <div class="accordion-body"
+                     id="acc-${idx}">
 
-            ${lbls[i]}
+                    <p>
+                        <strong>Total de respostas:</strong>
+                        ${total}
+                    </p>
 
-        </span>
+                    <ul>
+                        ${perguntasHtml}
+                    </ul>
 
-    `).join('')}
+                    <div class="likert-mini">
 
-</div>
-`
-);  
-  
+                        <div class="l4" style="width:${p4}%">
+                            4 (${p4}%)
+                        </div>
+
+                        <div class="l3" style="width:${p3}%">
+                            3 (${p3}%)
+                        </div>
+
+                        <div class="l2" style="width:${p2}%">
+                            2 (${p2}%)
+                        </div>
+
+                        <div class="l1" style="width:${p1}%">
+                            1 (${p1}%)
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        `;
+    }).join('');
 }
 
+function toggleAccordion(id){
+
+    const body =
+        document.getElementById(`acc-${id}`);
+
+    body.classList.toggle('open');
+}
+	
 function mostrarDetalheIndicador(
     indicador,
     perguntas,
