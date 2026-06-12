@@ -1283,39 +1283,74 @@ function renderRadar(rows) {
 
 /* ── Likert stacked bar ── */
 function renderLikert(rows) {
-  const maxQ = Math.min(
-      numericCols.length,
-      20
-  );
 
-  const cols = numericCols.slice(
-      0,
-      maxQ
-  );
+    const grupos = {};
 
-	const labels = cols.map(c => {
+    numericCols.forEach(col => {
 
-		const nome =
-			getIndicadorNome(c.label);
+        const indicador =
+            getIndicadorNome(col.label);
 
-		return nome.length > 35
-			? nome.slice(0,35) + "..."
-			: nome;
-	});  
+        if(!grupos[indicador]){
+            grupos[indicador] = [];
+        }
 
-  const tooltips = cols.map(
-      c => c.label
-  );
+        grupos[indicador].push(col);
 
-  const d1 = [], d2 = [], d3 = [], d4 = [];
-  cols.forEach(c => {
-    const vals = rows.map(r => parseLikert(r[c.idx])).filter(v => v !== null);
-    const n = vals.length || 1;
-    d1.push(+(vals.filter(v=>v===1).length/n*100).toFixed(1));
-    d2.push(+(vals.filter(v=>v===2).length/n*100).toFixed(1));
-    d3.push(+(vals.filter(v=>v===3).length/n*100).toFixed(1));
-    d4.push(+(vals.filter(v=>v===4).length/n*100).toFixed(1));
-  });
+    });
+
+    const labels = Object.keys(grupos);
+
+    const d1 = [];
+    const d2 = [];
+    const d3 = [];
+    const d4 = [];
+
+    labels.forEach(indicador => {
+
+        const perguntas =
+            grupos[indicador];
+
+        const vals = [];
+
+        perguntas.forEach(col => {
+
+            rows.forEach(r => {
+
+                const v =
+                    parseLikert(r[col.idx]);
+
+                if(v !== null){
+                    vals.push(v);
+                }
+
+            });
+
+        });
+
+        const total =
+            vals.length || 1;
+
+        d1.push(
+            +(vals.filter(v => v === 1).length / total * 100).toFixed(1)
+        );
+
+        d2.push(
+            +(vals.filter(v => v === 2).length / total * 100).toFixed(1)
+        );
+
+        d3.push(
+            +(vals.filter(v => v === 3).length / total * 100).toFixed(1)
+        );
+
+        d4.push(
+            +(vals.filter(v => v === 4).length / total * 100).toFixed(1)
+        );
+
+    });
+
+    const tooltips = labels;
+
 
   const wrap = document.querySelector('.chart-canvas-wrap[style*="420"]');
   if (wrap) wrap.style.height = Math.max(300, cols.length * 28 + 80) + 'px';
