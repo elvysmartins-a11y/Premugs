@@ -693,83 +693,115 @@
   </div>
   <div id="dashboard" style="display:none">
 
+	  <!-- ABAS -->
+	  <div class="tabs">
+	      <button class="tab-btn active"
+	              onclick="showTab('geral')">
+	          📊 Análise Geral
+	      </button>
+	
+	      <button class="tab-btn"
+	              onclick="showTab('distribuicao')">
+	          📈 Distribuição
+	      </button>
+	
+	      <button class="tab-btn"
+	              onclick="showTab('perfil')">
+	          👥 Perfis
+	      </button>
+	
+	      <button class="tab-btn"
+	              onclick="showTab('respostas')">
+	          📝 Registro
+	      </button>
+	  </div>
+	  
+	  
     <!-- KPIs -->
     <div class="kpi-grid" id="kpi-grid"></div>
 
-    <p class="section-title">Média por Dimensão</p>
-
-    <!-- Dimension bars + radar side by side -->
-    <div class="charts-grid">
-      <div class="chart-card">
-        <div class="chart-title">Desempenho por Dimensão</div>
-        <div class="chart-sub">Escala Likert 1–4 · média das respostas</div>
-        <div id="dim-bars"></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Radar Multidimensional</div>
-        <div class="chart-sub">Visão comparativa das seis dimensões</div>
-        <div class="chart-canvas-wrap" style="height:280px">
-          <canvas id="radarChart" role="img" aria-label="Radar chart das dimensões de avaliação PREMUGS">Radar das dimensões avaliativas.</canvas>
-        </div>
-      </div>
-    </div>
+	<div id="tab-geral" class="tab-content active">	  
+	    <p class="section-title">Média por Dimensão</p>
 	
-	<p class="section-title">Comparação entre Ciclos</p>
-	<div class="chart-card">
-		<div class="chart-title">
-			Média Geral por Ciclo
+	    <!-- Dimension bars + radar side by side -->
+	    <div class="charts-grid">
+	      <div class="chart-card">
+	        <div class="chart-title">Desempenho por Dimensão</div>
+	        <div class="chart-sub">Escala Likert 1–4 · média das respostas</div>
+	        <div id="dim-bars"></div>
+	      </div>
+	      <div class="chart-card">
+	        <div class="chart-title">Radar Multidimensional</div>
+	        <div class="chart-sub">Visão comparativa das seis dimensões</div>
+	        <div class="chart-canvas-wrap" style="height:280px">
+	          <canvas id="radarChart" role="img" aria-label="Radar chart das dimensões de avaliação PREMUGS">Radar das dimensões avaliativas.</canvas>
+	        </div>
+	      </div>
+	    </div>
+	  
+		<p class="section-title">Comparação entre Ciclos</p>
+		<div class="chart-card">
+			<div class="chart-title">
+				Média Geral por Ciclo
+			</div>
+			<div class="chart-sub">
+				Comparativo dos ciclos identificados na planilha
+			</div>
+			<div class="chart-canvas-wrap"
+				 style="height:300px">
+				<canvas id="cicloChart"></canvas>
+			</div>
+		</div>	
+	</div>
+
+	<div id="tab-distribuicao" class="tab-content">	  
+	    <p class="section-title">Distribuição das Respostas</p>
+	
+	    <!-- Per-question Likert breakdown -->
+		<div class="chart-card full" id="likert-section">
+		  <div class="chart-title">Indicadores Avaliados</div>
+		
+		  <div class="chart-sub">
+		    Clique em um indicador para visualizar perguntas e distribuição das respostas
+		  </div>
+		
+		  <div id="indicadoresAccordion"></div>
 		</div>
-		<div class="chart-sub">
-			Comparativo dos ciclos identificados na planilha
-		</div>
-		<div class="chart-canvas-wrap"
-			 style="height:300px">
-			<canvas id="cicloChart"></canvas>
-		</div>
-	</div>	
+	</div>
 
-    <p class="section-title">Distribuição das Respostas</p>
+	<div id="tab-perfil" class="tab-content">	  
+	    <p class="section-title">Respostas por Perfil</p>
+	    <div class="charts-grid">
+	      <div class="chart-card">
+	        <div class="chart-title">Participação por Perfil</div>
+	        <div class="chart-sub">Distribuição dos respondentes</div>
+	        <div class="chart-canvas-wrap" style="height:240px">
+	          <canvas id="perfilChart" role="img" aria-label="Gráfico de rosca por perfil de respondente">Distribuição por perfil.</canvas>
+	        </div>
+	      </div>
+	      <div class="chart-card">
+	        <div class="chart-title">Média Geral por Perfil</div>
+	        <div class="chart-sub">Comparativo entre grupos</div>
+	        <div class="chart-canvas-wrap" style="height:240px">
+	          <canvas id="perfilBarChart" role="img" aria-label="Barras comparativas de média por perfil">Médias por perfil.</canvas>
+	        </div>
+	      </div>
+	    </div>
+	</div>
 
-    <!-- Per-question Likert breakdown -->
-<div class="chart-card full" id="likert-section">
-  <div class="chart-title">Indicadores Avaliados</div>
-
-  <div class="chart-sub">
-    Clique em um indicador para visualizar perguntas e distribuição das respostas
-  </div>
-
-  <div id="indicadoresAccordion"></div>
-</div>
-
-    <p class="section-title">Respostas por Perfil</p>
-    <div class="charts-grid">
-      <div class="chart-card">
-        <div class="chart-title">Participação por Perfil</div>
-        <div class="chart-sub">Distribuição dos respondentes</div>
-        <div class="chart-canvas-wrap" style="height:240px">
-          <canvas id="perfilChart" role="img" aria-label="Gráfico de rosca por perfil de respondente">Distribuição por perfil.</canvas>
-        </div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Média Geral por Perfil</div>
-        <div class="chart-sub">Comparativo entre grupos</div>
-        <div class="chart-canvas-wrap" style="height:240px">
-          <canvas id="perfilBarChart" role="img" aria-label="Barras comparativas de média por perfil">Médias por perfil.</canvas>
-        </div>
-      </div>
-    </div>
-
-    <p class="section-title">Últimas Respostas</p>
-    <div class="chart-card">
-      <div class="chart-title">Registro de Respostas <span style="font-weight:400;font-size:12px;color:var(--text-muted)" id="resp-count"></span></div>
-      <div class="chart-sub">Exibindo as 50 mais recentes</div>
-      <div class="responses-table-wrap">
-        <table id="resp-table">
-          <thead><tr id="table-header"></tr></thead>
-          <tbody id="table-body"></tbody>
-        </table>
-      </div>
-    </div>
+	<div id="tab-respostas" class="tab-content">	  
+	    <p class="section-title">Últimas Respostas</p>
+	    <div class="chart-card">
+	      <div class="chart-title">Registro de Respostas <span style="font-weight:400;font-size:12px;color:var(--text-muted)" id="resp-count"></span></div>
+	      <div class="chart-sub">Exibindo as 50 mais recentes</div>
+	      <div class="responses-table-wrap">
+	        <table id="resp-table">
+	          <thead><tr id="table-header"></tr></thead>
+	          <tbody id="table-body"></tbody>
+	        </table>
+	      </div>
+	    </div>
+	</div>
 
   </div><!-- /dashboard -->
 </main>
@@ -1052,6 +1084,7 @@ async function loadData() {
 	populateCicloFilter();
 	console.log("numericCols:", numericCols);
     render();
+	showTab('geral');
 
     document.getElementById('last-updated').textContent =
       'Atualizado em ' + new Date().toLocaleString('pt-BR', { dateStyle:'short', timeStyle:'short' });
@@ -1066,6 +1099,31 @@ async function loadData() {
   }
 }
 
+function showTab(tab){
+
+    document
+      .querySelectorAll('.tab-content')
+      .forEach(el =>
+          el.classList.remove('active')
+      );
+
+    document
+      .querySelectorAll('.tab-btn')
+      .forEach(el =>
+          el.classList.remove('active')
+      );
+
+    document
+      .getElementById('tab-' + tab)
+      .classList.add('active');
+
+    document
+      .querySelector(
+          `[onclick="showTab('${tab}')"]`
+      )
+      .classList.add('active');
+}	
+	
 /* ── Auto-detect key columns ── */
 function detectColumns(){
 
