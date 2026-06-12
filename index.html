@@ -182,6 +182,21 @@
   .btn-refresh:hover { background: var(--sms-blue-light); }
   .btn-refresh svg { width: 14px; height: 14px; }
 
+	.btn-export{
+	    background:#00876A;
+	    color:#fff;
+	    border:none;
+	    border-radius:6px;
+	    padding:8px 14px;
+	    font-size:12px;
+	    font-weight:600;
+	    cursor:pointer;
+	}
+	
+	.btn-export:hover{
+	    opacity:.9;
+	}
+	
   /* ── MAIN LAYOUT ── */
   main { padding: 20px 28px 40px; max-width: 1400px; margin: 0 auto; }
 
@@ -659,6 +674,11 @@
     </svg>
     Atualizar dados
   </button>
+	<button
+		class="btn-export"
+		onclick="exportExcel()">
+			📊 Exportar Excel
+	</button>	
 </div>
 
 <main>
@@ -1112,6 +1132,27 @@ function detectColumns(){
 	console.log("cicloColIdx =", cicloColIdx);
 }
 
+function exportExcel(){
+
+    const wb = XLSX.utils.book_new();
+
+    const ws = XLSX.utils.aoa_to_sheet([
+        headers,
+        ...allRows
+    ]);
+
+    XLSX.utils.book_append_sheet(
+        wb,
+        ws,
+        "Respostas"
+    );
+
+    XLSX.writeFile(
+        wb,
+        "PREMUGS_Avalia.xlsx"
+    );
+}	
+	
 function similarity(a,b){
 
     const wordsA = new Set(a.split(" "));
@@ -2447,6 +2488,8 @@ loadData();
         <div id="responseBody"></div>
     </div>
 </div>	
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>	
 	
 </body>
 </html>
