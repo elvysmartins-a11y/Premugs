@@ -856,7 +856,8 @@ function detectColumns(){
 		    idx:i,
 		    label:h,
 		    dim,
-		    indicador:getIndicadorNome(h)
+		    //indicador:getIndicadorNome(h),
+			perfil: perfilAtual
 		});
 	
 	});
@@ -1590,14 +1591,39 @@ cols.forEach(col => {
 tbody.innerHTML = Object.entries(grupos)
 .map(([indicador, perguntas]) => {
 
+    // PERFIS DO INDICADOR
+    const perfis = [];
+
+    perguntas.forEach(col => {
+
+        const header = col.label.toLowerCase();
+
+        if(header.includes("residente")){
+            perfis.push("Residente");
+        }
+
+        if(header.includes("preceptor")){
+            perfis.push("Preceptor");
+        }
+
+        if(header.includes("tutor")){
+            perfis.push("Tutor");
+        }
+
+    });
+
+	const perfisTexto =
+    [...new Set(
+        perguntas.map(p => p.perfil)
+    )].join(", ");
+
     const vals = [];
 
     perguntas.forEach(col => {
 
         rows.forEach(r => {
 
-            const v =
-                parseLikert(r[col.idx]);
+            const v = parseLikert(r[col.idx]);
 
             if(v !== null){
                 vals.push(v);
@@ -1627,7 +1653,9 @@ tbody.innerHTML = Object.entries(grupos)
 
     return `
         <tr>
-            <td>${indicador}</td>
+			<td title="Perfis: ${perfisTexto}">
+        		${indicador}
+    		</td>
             <td><strong>${media}</strong></td>
             <td>${total}</td>
             <td style="color:#00876A;font-weight:600">
