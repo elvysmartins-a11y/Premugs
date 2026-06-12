@@ -47,37 +47,45 @@
 .header-premugs{
     display:flex;
     align-items:center;
-    justify-content:flex-start;
-    gap:20px;
+    justify-content:space-between;
+
+    padding:22px 36px;
 
     background:
-        radial-gradient(circle at 85% 20%, rgba(255,255,255,.15) 0%, transparent 30%),
-        linear-gradient(135deg, #4A90E2 0%, #7EC3FF 100%);
-		
+        radial-gradient(circle at top right,
+            rgba(255,255,255,.20),
+            transparent 40%),
+        linear-gradient(
+            135deg,
+            #4E8FD8 0%,
+            #6FADE7 100%
+        );
+
     color:white;
 
     min-height:160px;
-	padding:20px 30px;
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,.12);
 }
 
 .header-left{
+    flex:0 0 220px;
     display:flex;
-    flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:8px;
-    min-width:210px;
 }
 
 .premugs-logo{
-    width:210px;
+    width:220px;
     height:auto;
 }
 	
 .sms-logo{
     width:140px;
     height:auto;
-}	
+	margin-bottom:14px;
+}
 
 .header-divider{
     width:2px;
@@ -87,32 +95,50 @@
 
 .header-center{
     flex:1;
-    padding-left:10px;
+    padding:0 30px;
+
+    border-left:2px solid rgba(255,255,255,.45);
+
+    margin-left:10px;
 }
 
 .header-center h1{
-    font-size:1.6rem;
-    margin:0;
+    font-size:3rem;
+    font-weight:700;
+    margin-bottom:10px;
+    line-height:1.1;
+
 }
 
 .header-center p{
-    font-size:1.2rem;
-    margin-top:6px;
+    font-size:1.65rem;
+    margin-bottom:6px;
+    opacity:.95;
 }
 
+.header-center .subtitulo{
+    font-size:1.4rem;
+    font-weight:500;
+    opacity:.95;
+}	
 
 /* DATA */
 .header-right{
-    min-width:180px;
+    width:250px;
+
     display:flex;
-    justify-content:flex-end;
-	align-items:flex-end; /* desce o conteúdo */
-    padding-bottom:8px;   /* ajuste fino */
+    flex-direction:column;
+    align-items:flex-end;
+    justify-content:center;
+
+    text-align:right;
 }
 
-.update-box span{
-    display:block;
-    font-size:0.85rem;   /* antes 1rem */
+.update-box{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:2px;
 }
 
 .update-box svg{
@@ -121,14 +147,13 @@
 }
 
 .update-box span{
-    display:block;
-    font-size:0.8rem;
+    font-size:.9rem;
+    opacity:.85;
 }
 
 .update-box strong{
-    display:block;
-    font-size:0.75rem;   /* antes 0.8rem */
-    margin-top:2px;
+    font-size:1rem;
+    font-weight:700;
 }
 
   /* ── FILTERS ── */
