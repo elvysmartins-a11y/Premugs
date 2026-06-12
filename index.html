@@ -513,6 +513,29 @@
     min-width:40px;      /* evita blocos invisíveis */
     white-space:nowrap;
 }
+
+.resumo-likert{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:15px;
+    font-size:13px;
+}
+
+.resumo-likert th{
+    background:#f4f7fb;
+    padding:8px;
+    text-align:left;
+    border:1px solid #ddd;
+}
+
+.resumo-likert td{
+    padding:8px;
+    border:1px solid #ddd;
+}
+
+.resumo-likert tr:nth-child(even){
+    background:#fafafa;
+}	
 	
 </style>
 </head>
@@ -1459,26 +1482,45 @@ function renderLikert(rows){
                         ${perguntasHtml}
                     </ul>
 
-                    <div class="likert-mini">
-
-                        <div class="l4" style="width:${p4}%">
-                            4 (${p4}%)
-                        </div>
-
-                        <div class="l3" style="width:${p3}%">
-                            3 (${p3}%)
-                        </div>
-
-                        <div class="l2" style="width:${p2}%">
-                            2 (${p2}%)
-                        </div>
-
-                        <div class="l1" style="width:${p1}%">
-                            1 (${p1}%)
-                        </div>
-
-                    </div>
-
+					<table class="resumo-likert">
+					
+					    <thead>
+					        <tr>
+					            <th>Nível</th>
+					            <th>Descrição</th>
+					            <th>%</th>
+					        </tr>
+					    </thead>
+					
+					    <tbody>
+										
+					        <tr>
+					            <td style="color:#00876A;font-weight:700">4</td>
+					            <td>Ótimo</td>
+					            <td>${p4}%</td>
+					        </tr>
+					
+					        <tr>
+					            <td style="color:#4DB89A;font-weight:700">3</td>
+					            <td>Bom</td>
+					            <td>${p3}%</td>
+					        </tr>
+					
+					        <tr>
+					            <td style="color:#F0A500;font-weight:700">2</td>
+					            <td>Regular</td>
+					            <td>${p2}%</td>
+					        </tr>
+					
+					        <tr>
+					            <td style="color:#D8482F;font-weight:700">1</td>
+					            <td>Insuficiente</td>
+					            <td>${p1}%</td>
+					        </tr>
+					
+					    </tbody>
+					
+					</table>
                 </div>
 
             </div>
