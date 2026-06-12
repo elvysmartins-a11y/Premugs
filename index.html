@@ -1971,8 +1971,16 @@ function renderTable(rows) {
 	].filter(i => i >= 0).filter((v, i, a) => a.indexOf(v) === i);
 
   const thead = document.getElementById('table-header');
-  thead.innerHTML = showCols.map(i => `<th>${headers[i] || 'Col '+i}</th>`).join('') +
-    '<th>Média</th>';
+  thead.innerHTML =
+    showCols.map(i =>
+        `<th>${headers[i] || 'Col '+i}</th>`
+    ).join('')
+    + `
+      <th>Média</th>
+      <th style="width:70px;text-align:center">
+        Detalhes
+      </th>
+    `;
 
   const tbody = document.getElementById('table-body');
   tbody.innerHTML = sample.map(row => {
@@ -1982,10 +1990,70 @@ function renderTable(rows) {
     const avgCell = avg !== null
       ? `<td><span class="score-pill sp-${Math.round(avg)}">${avg.toFixed(2)}</span></td>`
       : '<td>—</td>';
-    return `<tr>${cells}${avgCell}</tr>`;
+	return `
+		<tr>
+		    ${cells}
+		    ${avgCell}
+		
+		    <td style="text-align:center">
+		
+		        <button
+		            onclick="showResponseDetails(${allRows.indexOf(row)})"
+		            style="
+		                border:none;
+		                background:none;
+		                cursor:pointer;
+		                font-size:18px;
+		            "
+		            title="Ver respostas">
+		
+		            👁
+		
+		        </button>
+		
+		    </td>
+		
+		</tr>
+		`;
   }).join('');
 }
 
+
+function showResponseDetails(rowIndex){
+
+    const row = allRows[rowIndex];
+
+    const body =
+        document.getElementById(
+            'responseBody'
+        );
+
+    body.innerHTML =
+        headers.map((h,i)=>`
+
+            <div style="
+                padding:8px 0;
+                border-bottom:1px solid #eee">
+
+                <strong>${h}</strong><br>
+
+                ${row[i] || '—'}
+
+            </div>
+
+        `).join('');
+
+    document.getElementById(
+        'responseModal'
+    ).style.display = 'block';
+}
+
+function closeResponseModal(){
+    document.getElementById(
+        'responseModal'
+    ).style.display = 'none';
+}
+	
 /* ───────────── HELPERS ───────────── */
 function parseLikert(v){
 
@@ -2262,5 +2330,17 @@ loadData();
   </div>
 </div>
 
+<div id="responseModal" class="modal">
+    <div class="modal-content">
+        <span
+            class="close-modal"
+            onclick="closeResponseModal()">
+            &times;
+        </span>
+        <h2>Detalhes da Resposta</h2>
+        <div id="responseBody"></div>
+    </div>
+</div>	
+	
 </body>
 </html>
