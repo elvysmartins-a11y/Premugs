@@ -1442,10 +1442,10 @@ function renderKPIs(rows) {
   const pct4 = allVals.length ? (allVals.filter(v => v === 4).length / allVals.length * 100) : 0;
   const pct1 = allVals.length ? (allVals.filter(v => v === 1).length / allVals.length * 100) : 0;
   
-  const nivel4 = todasNotas.filter(v => v === 4).length;
-  const nivel3 = todasNotas.filter(v => v === 3).length;
-  const nivel2 = todasNotas.filter(v => v === 2).length;
-  const nivel1 = todasNotas.filter(v => v === 1).length;
+  const nivel4 = allVals.filter(v => v === 4).length;
+  const nivel3 = allVals.filter(v => v === 3).length;
+  const nivel2 = allVals.filter(v => v === 2).length;
+  const nivel1 = allVals.filter(v => v === 1).length;
   const totalAvaliacoes = nivel1 + nivel2 + nivel3 + nivel4;
   const aprovacao = totalAvaliacoes? ((nivel3 + nivel4) / totalAvaliacoes) * 100 : 0;
 	
