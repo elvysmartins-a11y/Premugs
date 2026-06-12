@@ -1034,39 +1034,41 @@ function getDimensionFromQuestion(label){
 
     const texto = normalizarTexto(label);
 
+    let bestDim = null;
+    let bestScore = 0;
+
     for(const [dim, indicadores] of Object.entries(INDICADORES)){
 
-        const encontrou = indicadores.find(ind =>
+        indicadores.forEach(ind => {
 
             const perguntas =
-    ind.perguntas || [ind.pergunta];
+                ind.perguntas || [ind.pergunta];
 
-perguntas.forEach(p => {
+            perguntas.forEach(p => {
 
-    const score = similarity(
-        texto,
-        normalizarTexto(p)
-    );
+                const score = similarity(
+                    texto,
+                    normalizarTexto(p)
+                );
 
-    if(score > bestScore){
+                if(score > bestScore){
 
-        bestScore = score;
-        bestDim = dim;
+                    bestScore = score;
+                    bestDim = dim;
+
+                }
+
+            });
+
+        });
 
     }
 
-}); === texto
-
-        );
-
-        if(encontrou){
-            return dim;
-        }
-    }
-
-    return null;
-}	
-
+    return bestScore > 0.85
+        ? bestDim
+        : null;
+}
+	
 function getIndicadorNome(pergunta) {
 
     const texto = normalizarTexto(pergunta);
