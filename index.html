@@ -613,6 +613,21 @@
     background:#D8482F;
 }	
 
+.tab-content{
+    animation: fadeTab .25s ease;
+}
+
+@keyframes fadeTab{
+    from{
+        opacity:0;
+        transform:translateY(5px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}	
+	
 </style>
 </head>
 <body>
@@ -693,6 +708,9 @@
   </div>
   <div id="dashboard" style="display:none">
 
+    <!-- KPIs -->
+    <div class="kpi-grid" id="kpi-grid"></div>
+
 	  <!-- ABAS -->
 	  <div class="tabs">
 	      <button class="tab-btn active"
@@ -717,10 +735,7 @@
 	  </div>
 	  
 	  
-    <!-- KPIs -->
-    <div class="kpi-grid" id="kpi-grid"></div>
-
-	<div id="tab-geral" class="tab-content active">	  
+	<div id="tab-geral" class="tab-content">	  
 	    <p class="section-title">Média por Dimensão</p>
 	
 	    <!-- Dimension bars + radar side by side -->
@@ -754,7 +769,7 @@
 		</div>	
 	</div>
 
-	<div id="tab-distribuicao" class="tab-content">	  
+	<div id="tab-distribuicao" class="tab-content" style="display:none">	  
 	    <p class="section-title">Distribuição das Respostas</p>
 	
 	    <!-- Per-question Likert breakdown -->
@@ -769,7 +784,7 @@
 		</div>
 	</div>
 
-	<div id="tab-perfil" class="tab-content">	  
+	<div id="tab-perfil" class="tab-content" style="display:none">	  
 	    <p class="section-title">Respostas por Perfil</p>
 	    <div class="charts-grid">
 	      <div class="chart-card">
@@ -789,7 +804,7 @@
 	    </div>
 	</div>
 
-	<div id="tab-respostas" class="tab-content">	  
+	<div id="tab-respostas" class="tab-content" style="display:none"> 
 	    <p class="section-title">Últimas Respostas</p>
 	    <div class="chart-card">
 	      <div class="chart-title">Registro de Respostas <span style="font-weight:400;font-size:12px;color:var(--text-muted)" id="resp-count"></span></div>
@@ -1102,27 +1117,19 @@ async function loadData() {
 function showTab(tab){
 
     document
-      .querySelectorAll('.tab-content')
-      .forEach(el =>
-          el.classList.remove('active')
-      );
+        .querySelectorAll('.tab-content')
+        .forEach(el => el.style.display='none');
 
     document
-      .querySelectorAll('.tab-btn')
-      .forEach(el =>
-          el.classList.remove('active')
-      );
+        .querySelectorAll('.tab-btn')
+        .forEach(btn => btn.classList.remove('active'));
 
-    document
-      .getElementById('tab-' + tab)
-      .classList.add('active');
+    document.getElementById(
+        'tab-' + tab
+    ).style.display = 'block';
 
-    document
-      .querySelector(
-          `[onclick="showTab('${tab}')"]`
-      )
-      .classList.add('active');
-}	
+    event.target.classList.add('active');
+}
 	
 /* ── Auto-detect key columns ── */
 function detectColumns(){
