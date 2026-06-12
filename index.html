@@ -1301,6 +1301,17 @@ function renderLikert(rows) {
 
     const labels = Object.keys(grupos);
 
+	const tooltips = {};
+
+	labels.forEach(indicador => {
+	
+	    tooltips[indicador] =
+	        grupos[indicador]
+	            .map(c => c.label)
+	            .join("\n\n");
+	
+	});
+
     const d1 = [];
     const d2 = [];
     const d3 = [];
@@ -1383,8 +1394,27 @@ if (wrap){
         legend: { display: false },
         tooltip: {
           callbacks: {
-            title: items => tooltips[items[0].dataIndex] || labels[items[0].dataIndex],
-            label: item => ` ${item.dataset.label}: ${item.raw}%`
+				title: items => {
+		
+		            const indicador =
+		                labels[items[0].dataIndex];
+		
+		            return indicador;
+		
+		        },
+		
+		        label: item =>
+		            ` ${item.dataset.label}: ${item.raw}%`,
+		
+		        footer: items => {
+		
+		            const indicador =
+		                labels[items[0].dataIndex];
+		
+		            return tooltips[indicador];
+		
+		        }
+	  
           }
         }
       }
