@@ -1485,9 +1485,9 @@ function renderKPIs(rows) {
     { label: 'Respostas', value: total, sub: 'respondentes', color: '#3B5FCC', badge: null },
     { label: 'Média Geral', value: avg.toFixed(2), sub: 'escala 1–4', color: '#00876A',
       badge: scoreLabel(avg) },
-    { label:'Aprovação Geral', value: aprovacao.toFixed(0) + '%', sub:'bom + ótimo', color: '#004B87', badge: null},	  
-    { label: 'Nível 4 (Ótimo)', value: pct4.toFixed(0) + '%', sub: 'das avaliações', color: '#00876A', badge: null },
-    { label: 'Nível 1 (Insuf.)', value: pct1.toFixed(0) + '%', sub: 'das avaliações', color: '#D8482F', badge: null },
+    { label:'Aprovação Geral', value: aprovacao.toFixed(0) + '%', sub:'bom + excelente', color: '#004B87', badge: null},	  
+    { label: 'Nível 4 (Excelente)', value: pct4.toFixed(0) + '%', sub: 'das avaliações', color: '#00876A', badge: null },
+    { label: 'Nível 1 (Insatisfatório)', value: pct1.toFixed(0) + '%', sub: 'das avaliações', color: '#D8482F', badge: null },
     { label: 'Perfis', value: perfis, sub: 'distintos', color: '#0087A8', badge: null },
     { label: 'Dimensões', value: dimensoesAtivas.size, sub: 'detectadas', color: '#9B59B6', badge: null },
   ];
@@ -1703,7 +1703,7 @@ function renderLikert(rows){
 			
 							<br>
 			
-							Ótimo:
+							Excelente:
 							<strong>${p4}% (${q4})</strong>
 			
 							&nbsp;•&nbsp;
@@ -1713,12 +1713,12 @@ function renderLikert(rows){
 			
 							&nbsp;•&nbsp;
 			
-							Regular:
+							Adequado:
 							<strong>${p2}% (${q2})</strong>
 			
 							&nbsp;•&nbsp;
 			
-							Insuficiente:
+							Insatisfatório:
 							<strong>${p1}% (${q1})</strong>
 			
 						</div>
@@ -1773,7 +1773,7 @@ function renderLikert(rows){
 							        <span class="nivel-dot nivel-4"></span>
 							        4
 							    </td>
-							    <td>Ótimo</td>
+							    <td>Excelente</td>
 							    <td>${p4}% (${n4})</td>
 							</tr>
 							
@@ -1791,7 +1791,7 @@ function renderLikert(rows){
 							        <span class="nivel-dot nivel-2"></span>
 							        2
 							    </td>
-							    <td>Regular</td>
+							    <td>Adequado</td>
 							    <td>${p2}% (${n2})</td>
 							</tr>
 							
@@ -1800,7 +1800,7 @@ function renderLikert(rows){
 							        <span class="nivel-dot nivel-1"></span>
 							        1
 							    </td>
-							    <td>Insuficiente</td>
+							    <td>Insatisfatório</td>
 							    <td>${p1}% (${n1})</td>
 							</tr>
 					
@@ -1908,7 +1908,7 @@ function mostrarDetalheIndicador(
 			
 			                <tr>
 			                    <td>🟢 4</td>
-			                    <td style="padding-left:8px">Ótimo</td>
+			                    <td style="padding-left:8px">Excelente</td>
 			                    <td style="padding-left:12px">
 			                        <b>${p4}% (${q4})</b>
 			                    </td>
@@ -1924,7 +1924,7 @@ function mostrarDetalheIndicador(
 			
 			                <tr>
 			                    <td>🟨 2</td>
-			                    <td style="padding-left:8px">Regular</td>
+			                    <td style="padding-left:8px">Adequado</td>
 			                    <td style="padding-left:12px">
 			                        <b>${p2}% (${q2})</b>
 			                    </td>
@@ -1932,7 +1932,7 @@ function mostrarDetalheIndicador(
 			
 			                <tr>
 			                    <td>🟥 1</td>
-			                    <td style="padding-left:8px">Insuficiente</td>
+			                    <td style="padding-left:8px">Insatisfatório</td>
 			                    <td style="padding-left:12px">
 			                        <b>${p1}% (${q1})</b>
 			                    </td>
@@ -2323,10 +2323,10 @@ function dimScores(rows) {
 }
 
 function scoreLabel(v) {
-  if (v >= 3.5) return 'Ótimo';
+  if (v >= 3.5) return 'Excelente';
   if (v >= 2.5) return 'Bom';
-  if (v >= 1.5) return 'Regular';
-  return 'Insuficiente';
+  if (v >= 1.5) return 'Adequado';
+  return 'Insatisfatório';
 }
 
 /* ── Wire filters ── */
