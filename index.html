@@ -1117,7 +1117,7 @@ async function loadData() {
 	showTab('geral');
 
     document.getElementById('last-updated').textContent =
-      'Atualizado em ' + new Date().toLocaleString('pt-BR', { dateStyle:'short', timeStyle:'short' });
+       new Date().toLocaleString('pt-BR', { dateStyle:'short', timeStyle:'short' });
     document.getElementById('loading-state').style.display = 'none';
     document.getElementById('dashboard').style.display     = 'block';
 
