@@ -283,6 +283,10 @@
   .dim-bar-fill { height: 100%; border-radius: 7px; transition: width .8s cubic-bezier(.4,0,.2,1); }
   .dim-score { font-size: 12px; font-weight: 700; width: 32px; text-align: right; }
 
+#perfilDimChart{
+    max-height:420px;
+}
+	
   /* ── LIKERT GRID ── */
   .likert-grid {
     display: grid;
@@ -2131,11 +2135,11 @@ function renderPerfilDimensaoChart(rows){
 
     const perfis = [
         'Residente',
-        'Preceptor',
-        'Tutor',
-        'Coordenação'
+        'Preceptor(a)',
+        'Tutor(a)',
+        'Coordenador(a)'
     ];
-
+									
     const dimensoes = [
         'pedagogica',
         'relacional',
