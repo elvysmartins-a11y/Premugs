@@ -777,7 +777,15 @@
 			<div class="chart-canvas-wrap" style="height:300px">
 				<canvas id="cicloChart"></canvas>
 			</div>
-		</div>	
+		</div>
+
+		<div class="chart-card full">
+		    <div class="chart-title">Média por dimensão e papel</div>
+		    <div class="chart-sub">Como cada papel avalia cada dimensão do programa</div>
+		    <div class="chart-canvas-wrap">
+		        <canvas id="perfilDimChart"></canvas>
+		    </div>
+		</div>		
 	</div>
 
 	<div id="tab-distribuicao" class="tab-content" style="display:none">	  
@@ -1086,7 +1094,8 @@ let radarChartInst = null;
 let likertChartInst = null;
 let perfilChartInst = null;
 let perfilBarInst   = null;
-
+let perfilDimChart = null;
+	
 /* ───────────── DATA LOAD ───────────── */
 async function loadData() {
   document.getElementById('loading-state').style.display = 'flex';
@@ -1427,6 +1436,7 @@ function render() {
   renderLikert(rows);
   renderPerfilCharts(rows);
   renderCicloChart(rows);
+  renderPerfilDimensaoChart(rows)
   renderTable(rows);
 }
 
@@ -2117,7 +2127,132 @@ function renderCicloChart(rows){
         );
 }
 
+function renderPerfilDimensaoChart(rows){
 
+    const perfis = [
+        'Residente',
+        'Preceptor',
+        'Tutor',
+        'Coordenação'
+    ];
+
+    const dimensoes = [
+        'pedagogica',
+        'relacional',
+        'organizacional',
+        'governanca',
+        'sustentabilidade'
+    ];
+
+    const labels = [
+        'Pedagógica',
+        'Relacional',
+        'Organizacional',
+        'Governança',
+        'Sustentabilidade'
+    ];
+
+    const datasets = perfis.map((perfil, idx) => {
+
+        const medias = dimensoes.map(dim => {
+
+            const cols = numericCols.filter(c =>
+                c.dim === dim &&
+                c.perfil.includes(perfil)
+            );
+
+            const valores = [];
+
+            rows.forEach(row => {
+
+                const perfilResp =
+                    (row[perfilColIdx] || '')
+                    .toLowerCase();
+
+                if(
+                    !perfilResp.includes(
+                        perfil.toLowerCase()
+                    )
+                ){
+                    return;
+                }
+
+                cols.forEach(col => {
+
+                    const v =
+                        parseLikert(
+                            row[col.idx]
+                        );
+
+                    if(v !== null){
+                        valores.push(v);
+                    }
+
+                });
+
+            });
+
+            return valores.length
+                ? avg_(valores)
+                : 0;
+
+        });
+
+        const cores = [
+            '#3367D6',
+            '#0B8457',
+            '#D97706',
+            '#7C3AED'
+        ];
+
+        return {
+            label: perfil,
+            data: medias,
+            backgroundColor: cores[idx]
+        };
+
+    });
+
+    const ctx =
+        document
+        .getElementById('perfilDimChart');
+
+    if(!ctx) return;
+
+    if(perfilDimChart){
+        perfilDimChart.destroy();
+    }
+
+    perfilDimChart =
+        new Chart(ctx,{
+            type:'bar',
+
+            data:{
+                labels,
+                datasets
+            },
+
+            options:{
+                responsive:true,
+
+                plugins:{
+                    legend:{
+                        position:'bottom'
+                    }
+                },
+
+                scales:{
+                    y:{
+                        min:0,
+                        max:4
+                    }
+                }
+            }
+        });
+}
+
+
+	
 /* ── Table ── */
 function renderTable(rows) {
   const sample = rows.slice(-50).reverse();
