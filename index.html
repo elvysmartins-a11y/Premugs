@@ -828,6 +828,17 @@
 
     border-radius:6px;
 }	
+
+.accordion-header{
+    cursor:pointer;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.accordion-body{
+    margin-top:12px;
+}	
 	
 </style>
 </head>
@@ -1698,20 +1709,29 @@ function renderQualitativas(rows){
         if(totalRespostas === 0)
             return;
 
-        html += `
-
-            <div class="qualitativa-card">
-
-                <div class="qualitativa-title">
-                    ${pergunta.label}
-                </div>
-
-                <div class="qualitativa-count">
-                    ${totalRespostas} respostas
-                </div>
-
-        `;
-			
+		const perguntaId =
+		    `pergunta-${pergunta.colunas[0]}`;
+		
+		html += `
+		
+		<div class="qualitativa-card">
+		
+		    <div class="qualitativa-title accordion-header"
+		         onclick="togglePerguntaQualitativa('${perguntaId}')">
+		
+		        <span>${pergunta.label}</span>
+		
+		        <span>
+		            (${totalRespostas} respostas)
+		        </span>
+		
+		    </div>
+		
+		    <div class="accordion-body"
+		         id="${perguntaId}"
+		         style="display:none">
+		
+		`;			
 		const ordemPerfis = [
 			'residente',
 			'preceptor',
@@ -1785,10 +1805,10 @@ function renderQualitativas(rows){
 
         });
 
-        html += `
-            </div>
-        `;
-
+		html += `
+		    </div>
+		</div>
+		`;
 	    });
 	
 	});		
@@ -1796,6 +1816,19 @@ function renderQualitativas(rows){
     container.innerHTML = html;
 }	
 
+function togglePerguntaQualitativa(id){
+
+    const el =
+        document.getElementById(id);
+
+    if(!el) return;
+
+    el.style.display =
+        el.style.display === 'none'
+            ? 'block'
+            : 'none';
+}	
+	
 function togglePerfilQualitativo(id){
 
     const el =
