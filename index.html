@@ -6,6 +6,7 @@
 <title>PREMUGS Avalia — Painel Gerencial</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>	
 <style>
   :root {
     --sms-blue: #004B87;
@@ -1163,6 +1164,11 @@ async function loadData() {
     allRows  = parsed.data.slice(1);
 
     detectColumns();
+	  
+	console.log("colAvaliaPremugs =", colAvaliaPremugs);
+	console.log("colRecomendaria =", colRecomendaria);
+	console.log("colUtilidade =", colUtilidade);	  
+	  
 	populatePerfilFilter();
 	populateCicloFilter();
 	console.log("numericCols:", numericCols);
