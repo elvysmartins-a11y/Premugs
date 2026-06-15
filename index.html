@@ -1319,6 +1319,7 @@ let numericCols  = [];    /* {idx, label, dim} */
 let radarChartInst = null;
 let likertChartInst = null;
 let perfilChartInst = null;
+let cicloChartInst = null;	
 let perfilBarInst   = null;
 let perfilDimChartInst = null;
 let colAvaliaPremugs = -1;
@@ -2859,7 +2860,7 @@ function renderPerfilDimensaoChart(rows){
 
     const ctx =
         document
-        .getElementById('perfilDimChartInst');
+        .getElementById('perfilDimChart');
 
     if(!ctx) return;
 
