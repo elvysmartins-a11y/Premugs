@@ -1652,46 +1652,33 @@ function renderQualitativas(rows){
 
         const respostasPorPerfil = {};
 
-        rows.forEach(r => {
-
-			pergunta.colunas.forEach(colIdx => {
-
-		    const resposta =
-		        String(
-		            r[colIdx] || ''
-		        ).trim();
+		rows.forEach(r => {
 		
-		    if(!resposta)
-		        return;
+		    pergunta.colunas.forEach(colIdx => {
 		
-		    const perfil =
-		        identificarPerfilPorColuna(colIdx);
+		        const resposta =
+		            String(
+		                r[colIdx] || ''
+		            ).trim();
 		
-		    if(!respostasPorPerfil[perfil]){
-		        respostasPorPerfil[perfil] = [];
-		    }
+		        if(!resposta)
+		            return;
 		
-		    respostasPorPerfil[perfil]
-		        .push(resposta);
+		        const perfil =
+		            identificarPerfilPorColuna(colIdx);
+		
+		        if(!respostasPorPerfil[perfil]){
+		            respostasPorPerfil[perfil] = [];
+		        }
+		
+		        respostasPorPerfil[perfil]
+		            .push(resposta);
+		
+		    });
 		
 		});
 
-            if(!resposta) return;
-
-            const perfil =
-                perfilColIdx >= 0
-                ? r[perfilColIdx]
-                : 'Não informado';
-
-            if(!respostasPorPerfil[perfil]){
-                respostasPorPerfil[perfil] = [];
-            }
-
-            respostasPorPerfil[perfil]
-                .push(resposta);
-
-        });
-
+		
         const totalRespostas =
             Object.values(respostasPorPerfil)
             .reduce(
