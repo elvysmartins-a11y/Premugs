@@ -1654,8 +1654,21 @@ function renderQualitativas(rows){
 		        if(!resposta)
 		            return;
 		
-		        const perfil =
-		            identificarPerfilPorColuna(colIdx);
+				let perfil;
+				
+				if(dimensao === 'avaliacao_geral'){
+				
+				    perfil =
+				        perfilColIdx >= 0
+				        ? r[perfilColIdx]
+				        : 'Não informado';
+				
+				}else{
+				
+				    perfil =
+				        identificarPerfilPorColuna(colIdx);
+				
+				}
 		
 		        if(!respostasPorPerfil[perfil]){
 		            respostasPorPerfil[perfil] = [];
