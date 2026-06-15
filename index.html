@@ -2596,18 +2596,19 @@ function toggleAccordion(id){
 
 function toggleDimensaoQuali(nome){
 
+    console.log('CLICOU', nome);
+
     const body =
         document.getElementById(`dim-${nome}`);
 
+    console.log(body);
+
     if(!body) return;
 
-    const aberto =
-        getComputedStyle(body).display !== 'none';
-
     body.style.display =
-        aberto
-            ? 'none'
-            : 'block';
+        body.style.display === 'none'
+            ? 'block'
+            : 'none';
 }
 	
 function mostrarDetalheIndicador(
