@@ -1550,29 +1550,40 @@ function renderQualitativas(rows){
     let html = '';
 
     perguntas.forEach(pergunta => {
-	const respostasPorPerfil = {};
-	
-	rows.forEach(r => {
-	
-	    const resposta =
-	        String(r[pergunta.idx] || '').trim();
-	
-	    if(!resposta) return;
-	
-	    const perfil =
-	        perfilColIdx >= 0
-	        ? r[perfilColIdx]
-	        : 'Não informado';
-	
-	    if(!respostasPorPerfil[perfil]){
-	        respostasPorPerfil[perfil] = [];
-	    }
-	
-	    respostasPorPerfil[perfil].push(resposta);
-	
-	});
-		
-        if(!respostas.length)
+
+        const respostasPorPerfil = {};
+
+        rows.forEach(r => {
+
+            const resposta =
+                String(
+                    r[pergunta.idx] || ''
+                ).trim();
+
+            if(!resposta) return;
+
+            const perfil =
+                perfilColIdx >= 0
+                ? r[perfilColIdx]
+                : 'Não informado';
+
+            if(!respostasPorPerfil[perfil]){
+                respostasPorPerfil[perfil] = [];
+            }
+
+            respostasPorPerfil[perfil]
+                .push(resposta);
+
+        });
+
+        const totalRespostas =
+            Object.values(respostasPorPerfil)
+            .reduce(
+                (acc, arr) => acc + arr.length,
+                0
+            );
+
+        if(totalRespostas === 0)
             return;
 
         html += `
@@ -1580,60 +1591,66 @@ function renderQualitativas(rows){
             <div class="qualitativa-card">
 
                 <div class="qualitativa-title">
-
                     ${pergunta.label}
-
                 </div>
 
                 <div class="qualitativa-count">
-
-                    ${respostas.length}
-                    respostas
-
+                    ${totalRespostas} respostas
                 </div>
 
         `;
 
-Object.entries(respostasPorPerfil)
-.forEach(([perfil,respostas]) => {
+        Object.entries(respostasPorPerfil)
+        .forEach(([perfil,respostas]) => {
 
-    html += `
+            const perfilId =
+                `${pergunta.idx}-${perfil}`
+                .replace(/\s+/g,'-')
+                .replace(/[^\w-]/g,'');
 
-        <div class="perfil-qualitativo">
+            html += `
 
-            <div class="perfil-header"
-                 onclick="togglePerfilQualitativo('${pergunta.idx}-${perfil}')">
+                <div class="perfil-qualitativo">
 
-                <span>
-                    ${perfil}
-                </span>
+                    <div class="perfil-header"
+                         onclick="togglePerfilQualitativo('${perfilId}')">
 
-                <span>
-                    (${respostas.length} respostas)
-                </span>
+                        <span>${perfil}</span>
 
+                        <span>
+                            (${respostas.length} respostas)
+                        </span>
+
+                    </div>
+
+                    <div class="perfil-body"
+                         id="perfil-${perfilId}"
+                         style="display:none">
+
+            `;
+
+            respostas.forEach(resp => {
+
+                html += `
+                    <div class="qualitativa-resposta">
+                        ${resp}
+                    </div>
+                `;
+
+            });
+
+            html += `
+                    </div>
+                </div>
+            `;
+
+        });
+
+        html += `
             </div>
+        `;
 
-            <div class="perfil-body"
-                 id="perfil-${pergunta.idx}-${perfil}">
-
-    `;
-
-	    respostas.forEach(resp => {
-		
-		        html += `
-		            <div class="qualitativa-resposta">
-		                ${resp}
-		            </div>
-		        `;
-		
-		    });
-		
-		    html += `
-		            </div>
-		        </div>
-		    `;
-		});		
+    });
 
     container.innerHTML = html;
 }	
