@@ -1656,12 +1656,14 @@ function renderQualitativas(rows){
 		
 				let perfil;
 				
-				if(dimensao === 'avaliacao_geral'){
+				if(
+				    getDimensaoQualitativa(pergunta.label) === 'avaliacao_geral'
+				){
 				
 				    perfil =
 				        perfilColIdx >= 0
-				        ? r[perfilColIdx]
-				        : 'Não informado';
+				            ? (r[perfilColIdx] || 'Não informado')
+				            : 'Não informado';
 				
 				}else{
 				
