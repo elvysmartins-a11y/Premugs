@@ -1534,6 +1534,7 @@ function exportExcel(){
 
 function isQualitativa(label){
 
+	const texto = normalizarTexto(label);
     const texto = label.toLowerCase().trim();
 
     const perguntasQualitativas = [
@@ -1548,7 +1549,8 @@ function isQualitativa(label){
     ];
 
     return perguntasQualitativas.some(p =>
-        texto.includes(p)
+        texto.includes(
+            normalizarTexto(p))
     );
 }	
 
@@ -1575,7 +1577,10 @@ function getDimensaoQualitativa(label){
     if(texto.includes('pontos fortes'))
         return 'avaliacao_geral';
 
-    if(texto.includes('desafios e fragilidades'))
+    if(texto.includes('desafios'))
+        return 'avaliacao_geral';
+
+    if(texto.includes('fragilidades'))
         return 'avaliacao_geral';
 
     if(texto.includes('premugs avalia'))
