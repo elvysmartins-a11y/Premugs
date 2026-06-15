@@ -1388,7 +1388,8 @@ function showTab(tab, btn = null){
     setTimeout(() => {
 
         if(window.perfilChart)
-            perfilChart.resize();
+			if (perfilChart && typeof perfilChart.resize === 'function'){
+			    perfilChart.resize();}
 
         if(window.perfilBarChart)
             perfilBarChart.resize();
