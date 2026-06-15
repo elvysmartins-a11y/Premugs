@@ -737,6 +737,47 @@
     display:none;
     margin-top:10px;
 }
+
+.qualitativa-card{
+
+    margin-bottom:24px;
+
+    border:1px solid #e2e8f0;
+
+    border-radius:12px;
+
+    padding:20px;
+
+    background:white;
+}
+
+.qualitativa-title{
+
+    font-size:20px;
+    font-weight:700;
+
+    margin-bottom:8px;
+}
+
+.qualitativa-count{
+
+    color:#64748b;
+
+    margin-bottom:20px;
+}
+
+.qualitativa-resposta{
+
+    padding:16px;
+
+    margin-bottom:12px;
+
+    background:#f8fafc;
+
+    border-radius:10px;
+
+    line-height:1.6;
+}
 	
 </style>
 </head>
@@ -837,6 +878,11 @@
 	              onclick="showTab('perfil', this)">
 	          👥 Perfis
 	      </button>
+
+		  <button class="tab-btn"
+		        onclick="showTab('qualitativas', this)">
+		    💬 Qualitativas
+		</button>
 	
 	      <button class="tab-btn"
 	              onclick="showTab('respostas', this)">
@@ -924,6 +970,15 @@
 		</div>
 	</div>
 
+	<div id="tab-qualitativas" class="tab-content" style="display:none">
+	    <p class="section-title">💬 Respostas Qualitativas</p>
+	    <div class="chart-card full">
+	        <div class="chart-title">Comentários dos participantes</div>
+	        <div class="chart-sub">Respostas em texto livre agrupadas por pergunta</div>
+	        <div id="qualitativasContainer"></div>
+	    </div>
+	</div>
+	  
 	<div id="tab-perfil" class="tab-content" style="display:none">	  
 	    <p class="section-title">Respostas por Perfil</p>
 	    <div class="charts-grid">
@@ -1402,6 +1457,98 @@ function exportExcel(){
         "PREMUGS_Avalia.xlsx"
     );
 }	
+
+function isQualitativa(label){
+
+    const texto =
+        label.toLowerCase();
+
+    return (
+        texto.includes('quais aspectos') ||
+        texto.includes('comentário') ||
+        texto.includes('comentario') ||
+        texto.includes('sugest') ||
+        texto.includes('melhor') ||
+        texto.includes('fortalec') ||
+        texto.includes('observa')
+    );
+}
+
+function renderQualitativas(rows){
+
+    const container =
+        document.getElementById(
+            'qualitativasContainer'
+        );
+
+    if(!container) return;
+
+    const perguntas =
+        headers
+        .map((h,i)=>({
+            idx:i,
+            label:h
+        }))
+        .filter(h =>
+            isQualitativa(h.label)
+        );
+
+    let html = '';
+
+    perguntas.forEach(pergunta => {
+
+        const respostas =
+            rows
+            .map(r => r[pergunta.idx])
+            .filter(v =>
+                v &&
+                String(v).trim() !== ''
+            );
+
+        if(!respostas.length)
+            return;
+
+        html += `
+
+            <div class="qualitativa-card">
+
+                <div class="qualitativa-title">
+
+                    ${pergunta.label}
+
+                </div>
+
+                <div class="qualitativa-count">
+
+                    ${respostas.length}
+                    respostas
+
+                </div>
+
+        `;
+
+        respostas.forEach(resp => {
+
+            html += `
+
+                <div class="qualitativa-resposta">
+
+                    ${resp}
+
+                </div>
+
+            `;
+
+        });
+
+        html += `
+            </div>
+        `;
+
+    });
+
+    container.innerHTML = html;
+}	
 	
 function similarity(a,b){
 
@@ -1604,6 +1751,7 @@ function render() {
   renderCicloChart(rows);
   renderPerfilDimensaoChart(rows);
   renderAvaliacaoGeral(rows);
+  renderQualitativas(rows);	
   renderTable(rows);
 }
 
