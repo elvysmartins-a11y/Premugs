@@ -2594,10 +2594,10 @@ function toggleAccordion(id){
     body.classList.toggle('open');
 }
 
-function toggleDimensaoQuali(id){
+function toggleDimensaoQuali(nome){
 
     const body =
-        document.getElementById(id);
+        document.getElementById(`dim-${nome}`);
 
     if(!body) return;
 
