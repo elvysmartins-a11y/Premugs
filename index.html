@@ -1658,16 +1658,28 @@ function renderQualitativas(rows){
 
     Object.entries(grupos)
 	.forEach(([dimensao, perguntasDim]) => {
-	
-	    html += `
-		    <div class="dimensao-header">
-		        ${formatarNomeDimensao(dimensao)}
-		        <span class="dimensao-count">
-		            (${perguntasDim.length} perguntas)
+		
+		const dimId = `dim-${dimensao}`;
+		
+		html += `
+		<div class="dimensao-card">
+		
+		    <div class="dimensao-header accordion-header"
+		         onclick="toggleDimensao('${dimId}')">
+		
+		        <span>
+		            ${formatarNomeDimensao(dimensao)}
 		        </span>
+		
+		        <span>▼</span>
+		
 		    </div>
+		
+		    <div class="accordion-body accordion-body-dim"
+		         id="${dimId}"
+		         style="display:none">
 		`;
-	
+		
 	perguntasDim.forEach(pergunta => {
 
         const respostasPorPerfil = {};
@@ -1710,13 +1722,7 @@ function renderQualitativas(rows){
 		            .push(resposta);
 		
 		    });
-		
 		});
-
-		console.log(
-		    pergunta.label,
-		    Object.keys(respostasPorPerfil)
-		);
 		
         const totalRespostas =
             Object.values(respostasPorPerfil)
@@ -1816,10 +1822,49 @@ function renderQualitativas(rows){
 		</div>
 		`;
 	    });
-	
+
+		html += `
+				</div>
+			</div>
+		`;
+
 	});		
 
     container.innerHTML = html;
+}	
+
+function toggleDimensao(id){
+
+    const el =
+        document.getElementById(id);
+
+    if(!el) return;
+
+    el.style.display =
+        el.style.display === 'none'
+            ? 'block'
+            : 'none';
+}	
+
+function toggleDimensao(id){
+
+    document
+        .querySelectorAll('.accordion-body-dim')
+        .forEach(el => {
+
+            if(el.id !== id){
+                el.style.display = 'none';
+            }
+
+        });
+
+    const atual =
+        document.getElementById(id);
+
+    atual.style.display =
+        atual.style.display === 'none'
+            ? 'block'
+            : 'none';
 }	
 
 function togglePerguntaQualitativa(id){
