@@ -778,6 +778,56 @@
 
     line-height:1.6;
 }
+
+.perfil-qualitativo{
+
+    margin-top:12px;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:8px;
+
+    overflow:hidden;
+}
+
+.perfil-header{
+
+    background:#f4f7fb;
+
+    padding:12px 16px;
+
+    cursor:pointer;
+
+    display:flex;
+    justify-content:space-between;
+
+    font-weight:600;
+}
+
+.perfil-header:hover{
+
+    background:#e8eef7;
+}
+
+.perfil-body{
+
+    display:none;
+
+    padding:15px;
+}
+
+.qualitativa-resposta{
+
+    padding:12px;
+
+    margin-bottom:10px;
+
+    background:#fafafa;
+
+    border-left:4px solid #004B87;
+
+    border-radius:6px;
+}	
 	
 </style>
 </head>
@@ -1500,15 +1550,28 @@ function renderQualitativas(rows){
     let html = '';
 
     perguntas.forEach(pergunta => {
-
-        const respostas =
-            rows
-            .map(r => r[pergunta.idx])
-            .filter(v =>
-                v &&
-                String(v).trim() !== ''
-            );
-
+	const respostasPorPerfil = {};
+	
+	rows.forEach(r => {
+	
+	    const resposta =
+	        String(r[pergunta.idx] || '').trim();
+	
+	    if(!resposta) return;
+	
+	    const perfil =
+	        perfilColIdx >= 0
+	        ? r[perfilColIdx]
+	        : 'Não informado';
+	
+	    if(!respostasPorPerfil[perfil]){
+	        respostasPorPerfil[perfil] = [];
+	    }
+	
+	    respostasPorPerfil[perfil].push(resposta);
+	
+	});
+		
         if(!respostas.length)
             return;
 
@@ -1531,28 +1594,67 @@ function renderQualitativas(rows){
 
         `;
 
-        respostas.forEach(resp => {
+Object.entries(respostasPorPerfil)
+.forEach(([perfil,respostas]) => {
 
-            html += `
+    html += `
 
-                <div class="qualitativa-resposta">
+        <div class="perfil-qualitativo">
 
-                    ${resp}
+            <div class="perfil-header"
+                 onclick="togglePerfilQualitativo('${pergunta.idx}-${perfil}')">
 
-                </div>
+                <span>
+                    ${perfil}
+                </span>
 
-            `;
+                <span>
+                    (${respostas.length} respostas)
+                </span>
 
-        });
-
-        html += `
             </div>
-        `;
 
-    });
+            <div class="perfil-body"
+                 id="perfil-${pergunta.idx}-${perfil}">
+
+    `;
+
+	    respostas.forEach(resp => {
+		
+		        html += `
+		            <div class="qualitativa-resposta">
+		                ${resp}
+		            </div>
+		        `;
+		
+		    });
+		
+		    html += `
+		            </div>
+		        </div>
+		    `;
+		});		
 
     container.innerHTML = html;
 }	
+
+function togglePerfilQualitativo(id){
+
+    const el =
+        document.getElementById(`perfil-${id}`);
+
+    if(!el) return;
+
+    if(el.style.display === 'none'){
+
+        el.style.display = 'block';
+
+    }else{
+
+        el.style.display = 'none';
+
+    }
+}					  
 	
 function similarity(a,b){
 
