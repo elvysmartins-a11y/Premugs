@@ -1675,7 +1675,7 @@ function renderQualitativas(rows){
 		<div class="dimensao-card">
 		
 		    <div class="dimensao-header accordion-header"
-		         onclick="toggleDimensao('${dimensao}')">
+		         onclick="toggleDimensaoQuali('${dimensao}')">
 		
 		        <span>
 		            ${formatarNomeDimensao(dimensao)}
@@ -1843,7 +1843,7 @@ function renderQualitativas(rows){
     container.innerHTML = html;
 }	
 
-function toggleDimensao(nome){
+function toggleDimensaoQuanti(nome){
 
     const body =
         document.getElementById(`dim-${nome}`);
@@ -2328,7 +2328,7 @@ function renderLikert(rows){
 		<div class="dimensao-accordion">
 		
 		    <div class="dimensao-header"
-		         onclick="toggleDimensao('${dimensao}')">
+		         onclick="toggleDimensaoQuanti('${dimensao}')">
 		
 		        <span>${formatarNomeDimensao(dimensao)}</span>
 		
@@ -2594,7 +2594,7 @@ function toggleAccordion(id){
     body.classList.toggle('open');
 }
 
-function toggleDimensao(id){
+function toggleDimensaoQuali(id){
 
     const body =
         document.getElementById(id);
