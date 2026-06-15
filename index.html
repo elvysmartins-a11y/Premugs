@@ -1579,6 +1579,12 @@ function renderQualitativas(rows){
             isQualitativa(h.label)
         );
 
+	console.table(
+    perguntas.map(p => ({
+        idx: p.idx,
+        label: p.label
+    }))
+);
 		const grupos = {};
 		
 		perguntas.forEach(pergunta => {
