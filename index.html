@@ -1814,8 +1814,8 @@ function renderLikert(rows){
 		`;
 
         Object.entries(indicadores).forEach(([indicador, cols]) => {
-
-            idx++;
+        
+			idx++;
 
             const vals = [];
 
@@ -2048,13 +2048,11 @@ function renderLikert(rows){
 
         });
 
+				html += `
+				    </div>
+				</div>
+				`;
     });
-
-		html += `
-	    </div>
-	</div>
-	`;
-	
     container.innerHTML = html;
 }
 	
