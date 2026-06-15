@@ -1569,15 +1569,29 @@ function renderQualitativas(rows){
 
     if(!container) return;
 
-    const perguntas =
-        headers
-        .map((h,i)=>({
-            idx:i,
-            label:h
-        }))
-        .filter(h =>
-            isQualitativa(h.label)
-        );
+	const perguntasAgrupadas = {};
+	
+	headers.forEach((h, idx) => {
+	
+	    if(!isQualitativa(h))
+	        return;
+	
+	    const chave =
+	        normalizarTexto(h);
+	
+	    if(!perguntasAgrupadas[chave]){
+	
+	        perguntasAgrupadas[chave] = {
+	            label: h,
+	            colunas: []
+	        };
+	
+	    }
+	
+	    perguntasAgrupadas[chave]
+	        .colunas.push(idx);
+	
+	});	
 
 	console.table(
     perguntas.map(p => ({
@@ -1586,8 +1600,9 @@ function renderQualitativas(rows){
     }))
 );
 		const grupos = {};
-		
-		perguntas.forEach(pergunta => {
+
+		Object.values(perguntasAgrupadas)
+		.forEach(pergunta => {
 		
 		    const dimensao =
 		        getDimensaoQualitativa(
@@ -1622,10 +1637,27 @@ function renderQualitativas(rows){
 
         rows.forEach(r => {
 
-            const resposta =
-                String(
-                    r[pergunta.idx] || ''
-                ).trim();
+			pergunta.colunas.forEach(colIdx => {
+
+		    const resposta =
+		        String(
+		            r[colIdx] || ''
+		        ).trim();
+		
+		    if(!resposta)
+		        return;
+		
+		    const perfil =
+		        identificarPerfilPorColuna(colIdx);
+		
+		    if(!respostasPorPerfil[perfil]){
+		        respostasPorPerfil[perfil] = [];
+		    }
+		
+		    respostasPorPerfil[perfil]
+		        .push(resposta);
+		
+		});
 
             if(!resposta) return;
 
