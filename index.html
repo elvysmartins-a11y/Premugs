@@ -284,7 +284,7 @@
   .dim-bar-fill { height: 100%; border-radius: 7px; transition: width .8s cubic-bezier(.4,0,.2,1); }
   .dim-score { font-size: 12px; font-weight: 700; width: 32px; text-align: right; }
 
-#perfilDimChart{
+#perfilDimChartInst{
     max-height:420px;
 }
 	
@@ -955,7 +955,7 @@
 	        <div class="chart-title">Radar Multidimensional</div>
 	        <div class="chart-sub">Visão comparativa das seis dimensões</div>
 	        <div class="chart-canvas-wrap" style="height:280px">
-	          <canvas id="radarChart" role="img" aria-label="Radar chart das dimensões de avaliação PREMUGS">Radar das dimensões avaliativas.</canvas>
+	          <canvas id="radarChartInst" role="img" aria-label="Radar chart das dimensões de avaliação PREMUGS">Radar das dimensões avaliativas.</canvas>
 	        </div>
 	      </div>
 	    </div>
@@ -966,7 +966,7 @@
 				<div class="chart-title">Média Geral por Ciclo</div>
 				<div class="chart-sub">Comparativo dos ciclos identificados na planilha</div>
 				<div class="chart-canvas-wrap" style="height:280px">
-					<canvas id="cicloChart"></canvas>
+					<canvas id="cicloChartInst"></canvas>
 				</div>
 			</div>
 	
@@ -974,7 +974,7 @@
 			    <div class="chart-title">Média por dimensão e perfil</div>
 			    <div class="chart-sub">Como cada perfil avalia cada dimensão do programa</div>
 			    <div class="chart-canvas-wrap" style="height:280px">
-			        <canvas id="perfilDimChart"></canvas>
+			        <canvas id="perfilDimChartInst"></canvas>
 			    </div>
 			</div>		
 	    </div>
@@ -1320,7 +1320,7 @@ let radarChartInst = null;
 let likertChartInst = null;
 let perfilChartInst = null;
 let perfilBarInst   = null;
-let perfilDimChart = null;
+let perfilDimChartInst = null;
 let colAvaliaPremugs = -1;
 let colRecomendaria = -1;
 let colUtilidade = -1;	
@@ -1387,20 +1387,20 @@ function showTab(tab, btn = null){
     // força redesenho dos gráficos
     setTimeout(() => {
 
-		if(window.perfilChartInst)
+		if(perfilChartInst)
 		    perfilChartInst.resize();
 		
-		if(window.perfilBarInst)
+		if(perfilBarInst)
 		    perfilBarInst.resize();
 
-        if(window.radarChart)
-            radarChart.resize();
+        if(radarChartInst)
+            radarChartInst.resize();
 
-        if(window.cicloChart)
-            cicloChart.resize();
+        if(cicloChartInst)
+            cicloChartInst.resize();
 
-        if(window.perfilDimChart)
-            perfilDimChart.resize();
+        if(perfilDimChartInst)
+            perfilDimChartInst.resize();
 
     },100);
 }
@@ -2094,7 +2094,7 @@ function renderRadar(rows) {
   const data    = Object.keys(DIMS).map(k => +(scores[k] || 0).toFixed(2));
 
   if (radarChartInst) radarChartInst.destroy();
-  const ctx = document.getElementById('radarChart');
+  const ctx = document.getElementById('radarChartInst');
   radarChartInst = new Chart(ctx, {
     type: 'radar',
     data: {
@@ -2727,13 +2727,13 @@ function renderCicloChart(rows){
 
     });
 
-    if(window.cicloChartInst){
-        window.cicloChartInst.destroy();
+    if(cicloChartInst){
+        cicloChartInst.destroy();
     }
 
-    window.cicloChartInst =
+    cicloChartInst =
         new Chart(
-            document.getElementById('cicloChart'),
+            document.getElementById('cicloChartInst'),
             {
                 type:'bar',
 
@@ -2859,15 +2859,15 @@ function renderPerfilDimensaoChart(rows){
 
     const ctx =
         document
-        .getElementById('perfilDimChart');
+        .getElementById('perfilDimChartInst');
 
     if(!ctx) return;
 
-    if(perfilDimChart){
-        perfilDimChart.destroy();
+    if(perfilDimChartInst){
+        perfilDimChartInst.destroy();
     }
 
-    perfilDimChart =
+    perfilDimChartInst =
         new Chart(ctx,{
             type:'bar',
 
