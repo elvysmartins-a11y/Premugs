@@ -1557,25 +1557,25 @@ function getDimensaoQualitativa(label){
     const texto =
         label.toLowerCase();
 
-    if(texto.includes('pedag'))
+    if(texto.includes('aspectos pedag'))
         return 'pedagogica';
 
-    if(texto.includes('interpesso'))
+    if(texto.includes('interpessoais'))
         return 'relacional';
 
     if(texto.includes('cultura organizacional'))
         return 'organizacional';
 
-    if(texto.includes('governan'))
-        return 'governanca';
-
-    if(texto.includes('sustentabilidade'))
+	if(texto.includes('aumentar a sustentabilidade'))
         return 'sustentabilidade';
+
+    if(texto.includes('avalia a governan'))
+        return 'governanca';
 
     if(texto.includes('pontos fortes'))
         return 'avaliacao_geral';
 
-    if(texto.includes('fragilidades'))
+    if(texto.includes('desafios e fragilidades'))
         return 'avaliacao_geral';
 
     if(texto.includes('premugs avalia'))
