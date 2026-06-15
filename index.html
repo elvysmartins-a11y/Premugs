@@ -1501,15 +1501,29 @@ function detectColumns(){
 
 function identificarPerfilPorColuna(colIdx){
 
-    const col =
-        numericCols.find(c => c.idx === colIdx);
+    const perfis =
+        getPerfisDaColuna(colIdx);
 
-    if(!col)
+    if(!perfis.length){
         return 'Não informado';
+    }
 
-    return Array.isArray(col.perfil)
-        ? col.perfil[0]
-        : col.perfil;
+    let perfil = perfis[0];
+
+    switch(perfil){
+
+        case 'Preceptor':
+            return 'Preceptor(a)';
+
+        case 'Tutor':
+            return 'Tutor(a)';
+
+        case 'Coordenador':
+            return 'Coordenador(a)';
+
+        default:
+            return perfil;
+    }
 }
 	
 function exportExcel(){
