@@ -1757,24 +1757,11 @@ function renderQualitativas(rows){
 		    'Tutor(a)',
 			'Coordenador(a)'
 		];
-		
+
 		const perfisOrdenados =
-			Object.keys(respostasPorPerfil)
-			.sort((a,b) => {
-		
-				const ia =
-					ordemPerfis.findIndex(p =>
-						a.toLowerCase().includes(p)
-					);
-		
-				const ib =
-					ordemPerfis.findIndex(p =>
-						b.toLowerCase().includes(p)
-					);
-		
-				return ia - ib;
-		
-			});
+			ordemPerfis.filter(
+				p => respostasPorPerfil[p]
+			);		
 		
 		perfisOrdenados.forEach(perfil => {
 		
