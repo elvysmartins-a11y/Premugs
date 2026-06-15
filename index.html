@@ -1810,7 +1810,8 @@ function renderLikert(rows){
 		    </div>
 		
 		    <div class="dimensao-body"
-		         id="dim-${dimensao}">
+			     id="dim-${dimensao}"
+			     style="display:none;">
 		`;
 
         Object.entries(indicadores).forEach(([indicador, cols]) => {
@@ -2073,13 +2074,19 @@ function toggleDimensao(nome){
         document.getElementById(`icon-${nome}`);
 
     const aberto =
-        body.style.display !== 'none';
+        getComputedStyle(body).display !== 'none';
 
-    body.style.display =
-        aberto ? 'none' : 'block';
+    if(aberto){
 
-    icon.textContent =
-        aberto ? '►' : '▼';
+        body.style.display = 'none';
+        icon.textContent = '►';
+
+    }else{
+
+        body.style.display = 'block';
+        icon.textContent = '▼';
+
+    }
 }	
 	
 function mostrarDetalheIndicador(
