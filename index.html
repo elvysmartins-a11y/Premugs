@@ -1521,13 +1521,13 @@ function normalizarPerfil(perfil){
         return 'Residente';
 
     if(texto.includes('preceptor'))
-        return 'Preceptor';
+        return 'Preceptor(a)';
 
     if(texto.includes('tutor'))
-        return 'Tutor';
+        return 'Tutor(a)';
 
     if(texto.includes('coordenador'))
-        return 'Coordenador';
+        return 'Coordenador(a)';
 
     return perfil || 'Não informado';
 }	
