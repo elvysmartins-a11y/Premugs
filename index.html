@@ -691,6 +691,18 @@
     font-size:20px;
     color:#8a94a6;
 }	
+
+.chart-metric{
+    font-size:14px;
+    color:#8a94a6;
+    margin-top:-6px;
+    margin-bottom:10px;
+}
+
+.chart-metric strong{
+    color:#2563eb;
+    font-weight:700;
+}	
 	
 </style>
 </head>
@@ -843,16 +855,19 @@
 		    <div class="avaliacao-grid">
 		        <div class="chart-card">
 		            <div class="chart-title">Como avalia o PREMUGS?</div>
+					<div id="premugsResumo" class="chart-metric"></div>
 		            <canvas id="premugsChart"></canvas>
 		        </div>
 		        <div class="chart-card">
 		            <div class="chart-title">Recomendaria o PREMUGS?</div>
+					<div id="recomendacaoResumo" class="chart-metric"></div>
 				     <div class="donut-center">
 				        <canvas id="recomendacaoChart"></canvas>
 				    </div>
 		        </div>
 		        <div class="chart-card">
 		            <div class="chart-title">Utilidade do PREMUGS Avalia</div>
+					<div id="utilidadeResumo" class="chart-metric"></div>
 		            <div id="utilidadeScore"</div>
 		        </div>
 		    </div>
@@ -2376,6 +2391,22 @@ function renderPremugsChart(rows){
     if(premugsChart)
         premugsChart.destroy();
 
+	const total =
+    notas.reduce((a,b)=>a+b,0);
+
+	const soma =
+	    notas.reduce(
+	        (acc,qtd,idx)=>acc + ((idx+1)*qtd),
+	        0
+	    );
+	
+	const media =
+	    total ? soma / total : 0;
+	
+	document.getElementById('premugsResumo').innerHTML = `
+	    Média <strong>${media.toFixed(1)}</strong>/4.0 · ${total} respostas
+	`;
+	
     premugsChart = new Chart(ctx,{
 
         type:'bar',
@@ -2433,6 +2464,12 @@ function renderRecomendacaoChart(rows){
     if(recomendacaoChart)
         recomendacaoChart.destroy();
 
+	const total = sim + nao;
+	
+	document.getElementById('recomendacaoResumo').innerHTML = `
+	    ${total} respostas
+	`;	
+
     recomendacaoChart = new Chart(ctx,{
 
         type:'doughnut',
@@ -2470,7 +2507,10 @@ function renderUtilidadeScore(rows){
 
     const media =
         avg_(notas);
-
+	
+	document.getElementById('utilidadeResumo').innerHTML = `
+	    ${notas.length} respostas
+	`;
     document.getElementById('utilidadeScore').innerHTML = `
     <div>
         <div class="score-number">
