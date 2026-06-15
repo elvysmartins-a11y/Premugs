@@ -2255,8 +2255,15 @@ function renderPerfilCharts(rows) {
     const p = (perfilColIdx >= 0 ? r[perfilColIdx] : null) || 'Não informado';
     perfilMap[p] = (perfilMap[p] || 0) + 1;
   });
-  const pLabels = Object.keys(perfilMap);
-  const pData   = Object.values(perfilMap);
+
+  const ordemPerfis = [
+	  'Residente',
+	  'Preceptor(a)',
+	  'Tutor(a)',
+	  'Coordenador(a)'
+  ];
+  const pLabels = ordemPerfis.filter(p => perfilMap[p]);
+  const pData = pLabels.map(p => perfilMap[p]);
   const pColors = ['#3B5FCC','#00876A','#9B59B6','#D8482F','#0087A8','#F0A500'];
 
   if (perfilChartInst) perfilChartInst.destroy();
