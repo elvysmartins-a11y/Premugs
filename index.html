@@ -1705,9 +1705,20 @@ function renderQualitativas(rows){
                 </div>
 
         `;
+			
+		const ordemPerfis = [
+			'Residente',
+			'Preceptor',
+			'Tutor',
+			'Coordenador'
+		];
 
-        Object.entries(respostasPorPerfil)
-        .forEach(([perfil,respostas]) => {
+		ordemPerfis
+			.filter(perfil => respostasPorPerfil[perfil])
+			.forEach(perfil => {
+		
+				const respostas =
+					respostasPorPerfil[perfil];
 
             const perfilId =
     			`${pergunta.colunas[0]}-${perfil}`
