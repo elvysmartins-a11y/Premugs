@@ -1681,7 +1681,7 @@ function renderQualitativas(rows){
 		            ${formatarNomeDimensao(dimensao)}
 		        </span>
 		
-		        <span>▼</span>
+		        <span>►</span>
 		
 		    </div>
 		
@@ -1843,33 +1843,36 @@ function renderQualitativas(rows){
     container.innerHTML = html;
 }	
 
-function toggleDimensao(id){
+function toggleDimensao(nome){
 
-    const atual =
-        document.getElementById(id);
+    const body =
+        document.getElementById(`dim-${nome}`);
 
-    if(!atual){
-        console.error(
-            'Dimensão não encontrada:',
-            id
-        );
-        return;
+    const icon =
+        document.getElementById(`icon-${nome}`);
+
+    if(!body) return;
+
+    const aberto =
+        getComputedStyle(body).display !== 'none';
+
+    if(aberto){
+
+        body.style.display = 'none';
+
+        if(icon){
+            icon.textContent = '►';
+        }
+
+    }else{
+
+        body.style.display = 'block';
+
+        if(icon){
+            icon.textContent = '▼';
+        }
+
     }
-
-    document
-        .querySelectorAll('.accordion-body-dim')
-        .forEach(el => {
-
-            if(el.id !== id){
-                el.style.display = 'none';
-            }
-
-        });
-
-    atual.style.display =
-        atual.style.display === 'none'
-            ? 'block'
-            : 'none';
 }	
 
 function togglePerguntaQualitativa(id){
@@ -2591,26 +2594,21 @@ function toggleAccordion(id){
     body.classList.toggle('open');
 }
 
-function toggleDimensao(nome){
+function toggleDimensao(id){
 
     const body =
-        document.getElementById(`dim-${nome}`);
+        document.getElementById(id);
+
+    if(!body) return;
 
     const aberto =
         getComputedStyle(body).display !== 'none';
 
-    if(aberto){
-
-        body.style.display = 'none';
-        icon.textContent = '►';
-
-    }else{
-
-        body.style.display = 'block';
-        icon.textContent = '▼';
-
-    }
-}	
+    body.style.display =
+        aberto
+            ? 'none'
+            : 'block';
+}
 	
 function mostrarDetalheIndicador(
     indicador,
