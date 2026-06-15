@@ -1899,7 +1899,32 @@ function normalizarTexto(txt) {
 
 function getDimensionFromQuestion(label){
 
-    const texto = normalizarTexto(label);
+    const texto =
+        normalizarTexto(label);
+
+    // regras diretas
+
+    if(texto.includes('sustentabilidade')){
+        return 'sustentabilidade';
+    }
+
+    if(texto.includes('governanca')){
+        return 'governanca';
+    }
+
+    if(texto.includes('relacoes interpessoais')){
+        return 'relacional';
+    }
+
+    if(texto.includes('cultura organizacional')){
+        return 'organizacional';
+    }
+
+    if(texto.includes('aspectos pedagogicos')){
+        return 'pedagogica';
+    }
+
+    // fallback por similaridade
 
     let bestDim = null;
     let bestScore = 0;
