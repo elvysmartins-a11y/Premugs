@@ -647,7 +647,18 @@
         transform:translateY(0);
     }
 }	
-	
+
+.avaliacao-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+}
+@media(max-width:1000px){
+    .avaliacao-grid{
+        grid-template-columns:1fr;
+    }
+}	
+
 </style>
 </head>
 <body>
@@ -792,6 +803,34 @@
 			    </div>
 			</div>		
 	    </div>
+
+		<div class="chart-card full">
+		    <div class="chart-title">Avaliação Geral</div>
+		    <div class="chart-sub">Percepção global do programa e da ferramenta de avaliação</div>
+		    <div class="avaliacao-grid">
+		        <div class="chart-card">
+		            <div class="chart-title">Como avalia o PREMUGS?</div>
+		            <canvas id="premugsChart"></canvas>
+		        </div>
+		        <div class="chart-card">
+		            <div class="chart-title">Recomendaria o PREMUGS?</div>
+		            <canvas id="recomendacaoChart"></canvas>
+		        </div>
+		        <div class="chart-card">
+		            <div class="chart-title">Utilidade do PREMUGS Avalia</div>
+		            <div id="utilidadeScore"
+		                 style="
+		                 height:320px;
+		                 display:flex;
+		                 align-items:center;
+		                 justify-content:center;
+		                 font-size:56px;
+		                 font-weight:700;
+		                 color:#00876A;">
+		            </div>
+		        </div>
+		    </div>
+		</div>		
 	</div>
 
 	<div id="tab-distribuicao" class="tab-content" style="display:none">	  
@@ -1101,6 +1140,9 @@ let likertChartInst = null;
 let perfilChartInst = null;
 let perfilBarInst   = null;
 let perfilDimChart = null;
+let colAvaliaPremugs = -1;
+let colRecomendaria = -1;
+let colUtilidade = -1;	
 	
 /* ───────────── DATA LOAD ───────────── */
 async function loadData() {
@@ -1165,6 +1207,19 @@ function detectColumns(){
 
         const nome = normalizarTexto(h);
 
+        // AVALIAÇÃO GERAL
+	    if(nome.includes("De forma geral, como você avalia o PREMUGS?")){
+			colAvaliaPremugs = i;
+		}
+	
+		if(nome.includes("Você recomendaria o PREMUGS para outros profissionais?")){
+			colRecomendaria = i;
+		}
+	
+		if(nome.includes("Quão útil você considera esta ferramenta de avaliação (PREMUGS Avalia) para a SMS de Florianópolis?")){
+			colUtilidade = i;
+		}
+		
         // PERFIL
 		if(
 		    nome.includes("papel") &&
@@ -1442,7 +1497,8 @@ function render() {
   renderLikert(rows);
   renderPerfilCharts(rows);
   renderCicloChart(rows);
-  renderPerfilDimensaoChart(rows)
+  renderPerfilDimensaoChart(rows);
+  renderAvaliacaoGeral(rows);
   renderTable(rows);
 }
 
@@ -2257,7 +2313,148 @@ function renderPerfilDimensaoChart(rows){
         });
 }
 
+/* ── Avaliação geral ── */
+function renderAvaliacaoGeral(rows){
+    renderPremugsChart(rows);
+    renderRecomendacaoChart(rows);
+    renderUtilidadeScore(rows);
+}	
 
+/* ── Gráfico "Como avalia o PREMUGS" ── */
+let premugsChart;
+
+function renderPremugsChart(rows){
+
+    if(colAvaliaPremugs < 0) return;
+
+    const notas = [1,2,3,4].map(n =>
+        rows.filter(r =>
+            parseLikert(r[colAvaliaPremugs]) === n
+        ).length
+    );
+
+    const ctx =
+        document.getElementById('premugsChart');
+
+    if(!ctx) return;
+
+    if(premugsChart)
+        premugsChart.destroy();
+
+    premugsChart = new Chart(ctx,{
+
+        type:'bar',
+
+        data:{
+            labels:[
+                'Nota 1',
+                'Nota 2',
+                'Nota 3',
+                'Nota 4'
+            ],
+            datasets:[{
+                data:notas,
+                backgroundColor:'#00876A'
+            }]
+        },
+
+        options:{
+            responsive:true,
+            plugins:{
+                legend:{display:false}
+            }
+        }
+
+    });
+
+}	
+
+/* ── Gráfico "Recomendaria o PREMUGS" ── */	
+let recomendacaoChart;
+
+function renderRecomendacaoChart(rows){
+
+    if(colRecomendaria < 0) return;
+
+    const sim =
+        rows.filter(r =>
+
+            String(
+                r[colRecomendaria] || ''
+            )
+            .toLowerCase()
+            .includes('sim')
+
+        ).length;
+
+    const nao =
+        rows.length - sim;
+
+    const ctx =
+        document.getElementById('recomendacaoChart');
+
+    if(!ctx) return;
+
+    if(recomendacaoChart)
+        recomendacaoChart.destroy();
+
+    recomendacaoChart = new Chart(ctx,{
+
+        type:'doughnut',
+
+        data:{
+            labels:['Sim','Não'],
+            datasets:[{
+                data:[sim,nao],
+                backgroundColor:[
+                    '#00876A',
+                    '#D8482F'
+                ]
+            }]
+        }
+
+    });
+
+}
+
+/* ── Utilidade do PREMUGS Avalia ── */
+function renderUtilidadeScore(rows){
+
+    if(colUtilidade < 0) return;
+
+    const notas =
+        rows
+        .map(r =>
+            parseLikert(
+                r[colUtilidade]
+            )
+        )
+        .filter(v => v !== null);
+
+    if(!notas.length) return;
+
+    const media =
+        avg_(notas);
+
+    document.getElementById(
+        'utilidadeScore'
+    ).innerHTML = `
+        <div style="text-align:center">
+
+            ${media.toFixed(1)}
+
+            <div style="
+                font-size:18px;
+                color:#888;
+                font-weight:400">
+
+                de 4.0
+
+            </div>
+
+        </div>
+    `;
+}
 	
 /* ── Table ── */
 function renderTable(rows) {
