@@ -1528,6 +1528,38 @@ function isQualitativa(label){
     );
 }	
 
+function getDimensaoQualitativa(label){
+
+    const texto =
+        label.toLowerCase();
+
+    if(texto.includes('pedag'))
+        return 'pedagogica';
+
+    if(texto.includes('interpesso'))
+        return 'relacional';
+
+    if(texto.includes('cultura organizacional'))
+        return 'organizacional';
+
+    if(texto.includes('governan'))
+        return 'governanca';
+
+    if(texto.includes('sustentabilidade'))
+        return 'sustentabilidade';
+
+    if(texto.includes('pontos fortes'))
+        return 'geral';
+
+    if(texto.includes('fragilidades'))
+        return 'geral';
+
+    if(texto.includes('premugs avalia'))
+        return 'geral';
+
+    return 'geral';
+}	
+	
 function renderQualitativas(rows){
 
     const container =
@@ -1547,9 +1579,35 @@ function renderQualitativas(rows){
             isQualitativa(h.label)
         );
 
+		const grupos = {};
+		
+		perguntas.forEach(pergunta => {
+		
+		    const dimensao =
+		        getDimensaoQualitativa(
+		            pergunta.label
+		        );
+		
+		    if(!grupos[dimensao]){
+		        grupos[dimensao] = [];
+		    }
+		
+		    grupos[dimensao].push(pergunta);
+		
+		});
+	
     let html = '';
 
-    perguntas.forEach(pergunta => {
+    Object.entries(grupos)
+	.forEach(([dimensao, perguntasDim]) => {
+	
+	    html += `
+	        <div class="dimensao-header">
+	            ${formatarNomeDimensao(dimensao)}
+	        </div>
+	    `;
+	
+	perguntasDim.forEach(pergunta => {
 
         const respostasPorPerfil = {};
 
@@ -1650,7 +1708,9 @@ function renderQualitativas(rows){
             </div>
         `;
 
-    });
+	    });
+	
+	});		
 
     container.innerHTML = html;
 }	
