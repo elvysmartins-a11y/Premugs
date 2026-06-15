@@ -1510,6 +1510,27 @@ function identificarPerfilPorColuna(colIdx){
 
     return 'Não informado';
 }
+
+function normalizarPerfil(perfil){
+
+    const texto =
+        String(perfil || '')
+        .toLowerCase();
+
+    if(texto.includes('resident'))
+        return 'Residente';
+
+    if(texto.includes('preceptor'))
+        return 'Preceptor';
+
+    if(texto.includes('tutor'))
+        return 'Tutor';
+
+    if(texto.includes('coordenador'))
+        return 'Coordenador';
+
+    return perfil || 'Não informado';
+}	
 	
 function exportExcel(){
 
@@ -1677,8 +1698,8 @@ function renderQualitativas(rows){
 				
 				    perfil =
 				        perfilColIdx >= 0
-				            ? (r[perfilColIdx] || 'Não informado')
-				            : 'Não informado';
+				              ? normalizarPerfil(r[perfilColIdx])
+        						: 'Não informado';
 				
 				}else{
 				
