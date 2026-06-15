@@ -706,18 +706,37 @@
     font-weight:700;
 }	
 
+.dimensao-accordion{
+    margin-bottom:20px;
+}
+
 .dimensao-header{
-    margin-top:20px;
-    margin-bottom:10px;
-    padding:12px 16px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    cursor:pointer;
+
+    padding:14px 18px;
+
     border-radius:8px;
+
     background:#004B87;
-    color:white;
-    font-size:14px;
+    color:#fff;
+
     font-weight:700;
-    text-transform:uppercase;
-    letter-spacing:.5px;
-}	
+    font-size:14px;
+}
+
+.dimensao-header:hover{
+    background:#00599f;
+}
+
+.dimensao-body{
+    display:none;
+    margin-top:10px;
+}
 	
 </style>
 </head>
@@ -1776,11 +1795,23 @@ function renderLikert(rows){
 
     Object.entries(grupos).forEach(([dimensao, indicadores]) => {
 
-        html += `
-            <div class="dimensao-header">
-                ${formatarNomeDimensao(dimensao)}
-            </div>
-        `;
+		html += `
+		<div class="dimensao-accordion">
+		
+		    <div class="dimensao-header"
+		         onclick="toggleDimensao('${dimensao}')">
+		
+		        <span>${formatarNomeDimensao(dimensao)}</span>
+		
+		        <span id="icon-${dimensao}">
+		            ►
+		        </span>
+		
+		    </div>
+		
+		    <div class="dimensao-body"
+		         id="dim-${dimensao}">
+		`;
 
         Object.entries(indicadores).forEach(([indicador, cols]) => {
 
@@ -2019,6 +2050,11 @@ function renderLikert(rows){
 
     });
 
+		html += `
+	    </div>
+	</div>
+	`;
+	
     container.innerHTML = html;
 }
 	
@@ -2029,6 +2065,24 @@ function toggleAccordion(id){
 
     body.classList.toggle('open');
 }
+
+function toggleDimensao(nome){
+
+    const body =
+        document.getElementById(`dim-${nome}`);
+
+    const icon =
+        document.getElementById(`icon-${nome}`);
+
+    const aberto =
+        body.style.display !== 'none';
+
+    body.style.display =
+        aberto ? 'none' : 'block';
+
+    icon.textContent =
+        aberto ? '►' : '▼';
+}	
 	
 function mostrarDetalheIndicador(
     indicador,
