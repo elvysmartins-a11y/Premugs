@@ -1225,25 +1225,20 @@ function detectColumns(){
         const nome = normalizarTexto(h);
 
         // AVALIAÇÃO GERAL
-		if(
-		    nome.includes("avalia") &&
-		    nome.includes("premugs")
-		){
+		if(nome.includes('de forma geral') &&
+		   nome.includes('premugs')){
 		    colAvaliaPremugs = i;
-		}
+		}	
 		
-		if(
-		    nome.includes("recomendaria") &&
-		    nome.includes("premugs")
-		){
+		if(nome.includes("recomendaria") &&
+		    nome.includes("premugs")){
 		    colRecomendaria = i;
 		}
 		
-		if(
-		    nome.includes("premugs avalia")
-		){
+		if(nome.includes('quao util') ||
+		   nome.includes('ferramenta de avaliacao')){
 		    colUtilidade = i;
-		}		
+		}
 		
         // PERFIL
 		if(
