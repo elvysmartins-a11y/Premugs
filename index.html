@@ -1164,11 +1164,9 @@ async function loadData() {
     allRows  = parsed.data.slice(1);
 
     detectColumns();
-	  
-	console.log("colAvaliaPremugs =", colAvaliaPremugs);
-	console.log("colRecomendaria =", colRecomendaria);
-	console.log("colUtilidade =", colUtilidade);	  
-	  
+
+	console.table(headers);
+  
 	populatePerfilFilter();
 	populateCicloFilter();
 	console.log("numericCols:", numericCols);
