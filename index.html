@@ -1460,18 +1460,23 @@ function exportExcel(){
 
 function isQualitativa(label){
 
-    const texto =
-        label.toLowerCase();
+    const texto = label.toLowerCase().trim();
 
-    return (
-        texto.includes('quais aspectos') ||
-        texto.includes('pontos fortes') ||
-        texto.includes('fragilidades') ||
-        texto.includes('sustentabilidade do premugs') ||
-        texto.includes('governança do premugs') ||
-        texto.includes('premugs avalia')
-	);
-}
+    const perguntasQualitativas = [
+        'quais aspectos pedagógicos do premugs',
+        'quais aspectos das relações interpessoais',
+        'quais aspectos da cultura organizacional',
+        'como você avalia a governança do premugs',
+        'o que seria necessário para aumentar a sustentabilidade',
+        'quais são os principais pontos fortes do premugs',
+        'quais são os principais desafios e fragilidades do premugs',
+        'o que você observou de positivo na ferramenta premugs avalia'
+    ];
+
+    return perguntasQualitativas.some(p =>
+        texto.includes(p)
+    );
+}	
 
 function renderQualitativas(rows){
 
