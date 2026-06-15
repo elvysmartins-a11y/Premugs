@@ -1490,26 +1490,15 @@ function detectColumns(){
 
 function identificarPerfilPorColuna(colIdx){
 
-    const header =
-        headers[colIdx];
+    const perfis =
+        getPerfisDaColuna(colIdx);
 
-    const nome =
-        normalizarTexto(header);
-
-    if(nome.includes('residente'))
-        return 'Residente';
-
-    if(nome.includes('preceptor'))
-        return 'Preceptor(a)';
-
-    if(nome.includes('tutor'))
-        return 'Tutor(a)';
-
-    if(nome.includes('coordenador'))
-        return 'Coordenador(a)';
+    if(Array.isArray(perfis) && perfis.length){
+        return perfis[0];
+    }
 
     return 'Não informado';
-}	
+}
 	
 function exportExcel(){
 
