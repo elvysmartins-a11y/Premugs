@@ -1562,15 +1562,15 @@ function getDimensaoQualitativa(label){
         return 'sustentabilidade';
 
     if(texto.includes('pontos fortes'))
-        return 'geral';
+        return 'avaliacao_geral';
 
     if(texto.includes('fragilidades'))
-        return 'geral';
+        return 'avaliacao_geral';
 
     if(texto.includes('premugs avalia'))
-        return 'geral';
+        return 'avaliacao_geral';
 
-    return 'geral';
+    return 'avaliacao_geral';
 }	
 	
 function renderQualitativas(rows){
