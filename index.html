@@ -1669,13 +1669,13 @@ function renderQualitativas(rows){
     Object.entries(grupos)
 	.forEach(([dimensao, perguntasDim]) => {
 		
-		const dimId = `dim-${dimensao}`;
+		const dimId = `quali-dim-${dimensao}`;
 		
 		html += `
 		<div class="dimensao-card">
 		
 		    <div class="dimensao-header accordion-header"
-		         onclick="toggleDimensaoQuali('${dimensao}')">
+		         onclick="toggleDimensaoQuali('${dimId}')">
 		
 		        <span>
 		            ${formatarNomeDimensao(dimensao)}
@@ -2594,19 +2594,15 @@ function toggleAccordion(id){
     body.classList.toggle('open');
 }
 
-function toggleDimensaoQuali(nome){
-
-    console.log('CLICOU', nome);
+function toggleDimensaoQuali(id){
 
     const body =
-        document.getElementById(`dim-${nome}`);
-
-    console.log(body);
+        document.getElementById(id);
 
     if(!body) return;
 
     body.style.display =
-        body.style.display === 'none'
+        getComputedStyle(body).display === 'none'
             ? 'block'
             : 'none';
 }
