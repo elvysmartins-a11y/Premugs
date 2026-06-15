@@ -1675,7 +1675,7 @@ function renderQualitativas(rows){
 		<div class="dimensao-card">
 		
 		    <div class="dimensao-header accordion-header"
-		         onclick="toggleDimensao('${dimId}')">
+		         onclick="toggleDimensao('${dimensao}')">
 		
 		        <span>
 		            ${formatarNomeDimensao(dimensao)}
@@ -2595,9 +2595,6 @@ function toggleDimensao(nome){
 
     const body =
         document.getElementById(`dim-${nome}`);
-
-    const icon =
-        document.getElementById(`icon-${nome}`);
 
     const aberto =
         getComputedStyle(body).display !== 'none';
