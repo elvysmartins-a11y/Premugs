@@ -1683,6 +1683,10 @@ function renderQualitativas(rows){
 		
 		});
 
+		console.log(
+		    pergunta.label,
+		    Object.keys(respostasPorPerfil)
+		);
 		
         const totalRespostas =
             Object.values(respostasPorPerfil)
@@ -1709,18 +1713,34 @@ function renderQualitativas(rows){
         `;
 			
 		const ordemPerfis = [
-			'Residente',
-			'Preceptor',
-			'Tutor',
-			'Coordenador'
+			'residente',
+			'preceptor',
+			'tutor',
+			'coordenador'
 		];
-
-		ordemPerfis
-			.filter(perfil => respostasPorPerfil[perfil])
-			.forEach(perfil => {
 		
-				const respostas =
-					respostasPorPerfil[perfil];
+		const perfisOrdenados =
+			Object.keys(respostasPorPerfil)
+			.sort((a,b) => {
+		
+				const ia =
+					ordemPerfis.findIndex(p =>
+						a.toLowerCase().includes(p)
+					);
+		
+				const ib =
+					ordemPerfis.findIndex(p =>
+						b.toLowerCase().includes(p)
+					);
+		
+				return ia - ib;
+		
+			});
+		
+		perfisOrdenados.forEach(perfil => {
+		
+			const respostas =
+				respostasPorPerfil[perfil];
 
             const perfilId =
     			`${pergunta.colunas[0]}-${perfil}`
