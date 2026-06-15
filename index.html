@@ -1465,13 +1465,12 @@ function isQualitativa(label){
 
     return (
         texto.includes('quais aspectos') ||
-        texto.includes('comentário') ||
-        texto.includes('comentario') ||
-        texto.includes('sugest') ||
-        texto.includes('melhor') ||
-        texto.includes('fortalec') ||
-        texto.includes('observa')
-    );
+        texto.includes('pontos fortes') ||
+        texto.includes('fragilidades') ||
+        texto.includes('sustentabilidade do premugs') ||
+        texto.includes('governança do premugs') ||
+        texto.includes('premugs avalia')
+	);
 }
 
 function renderQualitativas(rows){
