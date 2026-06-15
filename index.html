@@ -1387,12 +1387,11 @@ function showTab(tab, btn = null){
     // força redesenho dos gráficos
     setTimeout(() => {
 
-        if(window.perfilChart)
-			if (perfilChart && typeof perfilChart.resize === 'function'){
-			    perfilChart.resize();}
-
-        if(window.perfilBarChart)
-            perfilBarChart.resize();
+		if(window.perfilChartInst)
+		    perfilChartInst.resize();
+		
+		if(window.perfilBarInst)
+		    perfilBarInst.resize();
 
         if(window.radarChart)
             radarChart.resize();
