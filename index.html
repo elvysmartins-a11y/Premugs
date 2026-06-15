@@ -667,6 +667,26 @@
     align-items:center;
     overflow:hidden;
 }
+
+#utilidadeScore{
+    height:180px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+#utilidadeScore .score-number{
+    font-size:72px;
+    font-weight:700;
+    color:#00876A;
+    line-height:1;
+}
+
+#utilidadeScore .score-label{
+    margin-top:8px;
+    font-size:20px;
+    color:#8a94a6;
+}	
 	
 </style>
 </head>
@@ -2456,24 +2476,15 @@ function renderUtilidadeScore(rows){
     const media =
         avg_(notas);
 
-    document.getElementById(
-        'utilidadeScore'
-    ).innerHTML = `
-        <div style="text-align:center">
-
+    document.getElementById('utilidadeScore').innerHTML = `
+    <div>
+        <div class="score-number">
             ${media.toFixed(1)}
-
-            <div style="
-                font-size:18px;
-                color:#888;
-                font-weight:400">
-
-                de 4.0
-
-            </div>
-
         </div>
-    `;
+        <div class="score-label">
+            de 4.0
+        </div>
+    </div>`;
 }
 	
 /* ── Table ── */
