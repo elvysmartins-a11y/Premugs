@@ -1845,18 +1845,16 @@ function renderQualitativas(rows){
 
 function toggleDimensao(id){
 
-    const el =
+    const atual =
         document.getElementById(id);
 
-    if(!el) return;
-
-    el.style.display =
-        el.style.display === 'none'
-            ? 'block'
-            : 'none';
-}	
-
-function toggleDimensao(id){
+    if(!atual){
+        console.error(
+            'Dimensão não encontrada:',
+            id
+        );
+        return;
+    }
 
     document
         .querySelectorAll('.accordion-body-dim')
@@ -1867,9 +1865,6 @@ function toggleDimensao(id){
             }
 
         });
-
-    const atual =
-        document.getElementById(id);
 
     atual.style.display =
         atual.style.display === 'none'
