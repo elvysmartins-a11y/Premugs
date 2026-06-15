@@ -2601,10 +2601,30 @@ function toggleDimensaoQuali(id){
 
     if(!body) return;
 
-    body.style.display =
-        getComputedStyle(body).display === 'none'
-            ? 'block'
-            : 'none';
+    const header =
+        body.previousElementSibling;
+
+    const icon =
+        header.querySelector('span:last-child');
+
+    const aberto =
+        getComputedStyle(body).display !== 'none';
+
+    if(aberto){
+
+        body.style.display = 'none';
+
+        if(icon)
+            icon.textContent = '►';
+
+    }else{
+
+        body.style.display = 'block';
+
+        if(icon)
+            icon.textContent = '▼';
+
+    }
 }
 	
 function mostrarDetalheIndicador(
@@ -3405,48 +3425,6 @@ function scoreLabel(v) {
 /* ── Wire filters ── */
 document.getElementById('filter-perfil').addEventListener('change', render);
 document.getElementById('filter-ciclo').addEventListener('change', render);
-
-function showDimensionIndicators(dimKey){
-
-    const modal = document.getElementById('dimModal');
-    const title = document.getElementById('modalTitle');
-    const body  = document.getElementById('modalBody');
-
-    title.textContent = DIMS[dimKey].label;
-
-    const cols = numericCols
-    .filter(c => c.dim === dimKey)
-    .filter((col, index, arr) =>
-        arr.findIndex(
-            x =>
-                normalizarTexto(x.label) ===
-                normalizarTexto(col.label)
-        ) === index
-    );
-
-    if(!indicadores.length){
-
-        body.innerHTML = `
-            <p>Nenhum indicador encontrado para esta dimensão.</p>
-        `;
-
-    } else {
-
-        body.innerHTML = indicadores.map((ind,i)=>`
-
-            <div class="indicador-item">
-
-                <strong>Indicador ${i+1}</strong>
-
-                ${ind.label}
-
-            </div>
-
-        `).join('');
-    }
-
-    modal.style.display = 'block';
-}
 
 function showDimensionDetails(dimKey){
 
