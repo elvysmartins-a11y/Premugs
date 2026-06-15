@@ -2094,7 +2094,7 @@ function renderRadar(rows) {
   const data    = Object.keys(DIMS).map(k => +(scores[k] || 0).toFixed(2));
 
   if (radarChartInst) radarChartInst.destroy();
-  const ctx = document.getElementById('radarChartInst');
+  const ctx = document.getElementById('radarChart');
   radarChartInst = new Chart(ctx, {
     type: 'radar',
     data: {
@@ -2727,13 +2727,13 @@ function renderCicloChart(rows){
 
     });
 
-    if(cicloChartInst){
-        cicloChartInst.destroy();
-    }
+	if(cicloChartInst && typeof cicloChartInst.destroy === 'function'){
+	    cicloChartInst.destroy();
+	}
 
     cicloChartInst =
         new Chart(
-            document.getElementById('cicloChartInst'),
+            document.getElementById('cicloChart'),
             {
                 type:'bar',
 
