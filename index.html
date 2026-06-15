@@ -1345,10 +1345,10 @@ async function loadData() {
 
     detectColumns();
 
-	console.log('colAvaliaPremugs', colAvaliaPremugs);
-	console.log('colRecomendaria', colRecomendaria);
-	console.log('colUtilidade', colUtilidade);
-	console.table(headers);
+	//console.log('colAvaliaPremugs', colAvaliaPremugs);
+	//console.log('colRecomendaria', colRecomendaria);
+	//console.log('colUtilidade', colUtilidade);
+	//console.table(headers);
 	  
 	populatePerfilFilter();
 	populateCicloFilter();
@@ -1487,6 +1487,29 @@ function detectColumns(){
 	console.log("cicloColIdx =", cicloColIdx);
 }
 
+function identificarPerfilPorColuna(colIdx){
+
+    const header =
+        headers[colIdx];
+
+    const nome =
+        normalizarTexto(header);
+
+    if(nome.includes('residente'))
+        return 'Residente';
+
+    if(nome.includes('preceptor'))
+        return 'Preceptor(a)';
+
+    if(nome.includes('tutor'))
+        return 'Tutor(a)';
+
+    if(nome.includes('coordenador'))
+        return 'Coordenador(a)';
+
+    return 'Não informado';
+}	
+	
 function exportExcel(){
 
     const wb = XLSX.utils.book_new();
@@ -1593,12 +1616,6 @@ function renderQualitativas(rows){
 	
 	});	
 
-	console.table(
-    perguntas.map(p => ({
-        idx: p.idx,
-        label: p.label
-    }))
-);
 		const grupos = {};
 
 		Object.values(perguntasAgrupadas)
@@ -1703,7 +1720,7 @@ function renderQualitativas(rows){
         .forEach(([perfil,respostas]) => {
 
             const perfilId =
-                `${pergunta.idx}-${perfil}`
+    			`${pergunta.colunas[0]}-${perfil}`
                 .replace(/\s+/g,'-')
                 .replace(/[^\w-]/g,'');
 
