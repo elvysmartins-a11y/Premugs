@@ -1507,26 +1507,10 @@ function identificarPerfilPorColuna(colIdx){
     if(!col)
         return 'Não informado';
 
-    let perfil =
-        Array.isArray(col.perfil)
-            ? col.perfil[0]
-            : col.perfil;
-
-    switch(perfil){
-
-        case 'Preceptor':
-            return 'Preceptor(a)';
-
-        case 'Tutor':
-            return 'Tutor(a)';
-
-        case 'Coordenador':
-            return 'Coordenador(a)';
-
-        default:
-            return perfil;
-    }
-}	
+    return Array.isArray(col.perfil)
+        ? col.perfil[0]
+        : col.perfil;
+}
 
 function normalizarPerfil(perfil){
 
@@ -1776,9 +1760,9 @@ function renderQualitativas(rows){
 		`;			
 		const ordemPerfis = [
 		    'Residente',
-		    'Preceptor(a)',
-		    'Tutor(a)',
-		    'Coordenador(a)'
+		    'Preceptor',
+		    'Tutor',
+		    'Coordenador'
 		];
 		
 		const perfisOrdenados =
