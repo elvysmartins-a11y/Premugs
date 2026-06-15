@@ -1165,7 +1165,10 @@ async function loadData() {
 
     detectColumns();
 
-	console.table(headers);
+	console.log({
+    colAvaliaPremugs,
+    colRecomendaria,
+    colUtilidade});
   
 	populatePerfilFilter();
 	populateCicloFilter();
@@ -1212,17 +1215,25 @@ function detectColumns(){
         const nome = normalizarTexto(h);
 
         // AVALIAÇÃO GERAL
-	    if(nome.includes("De forma geral, como você avalia o PREMUGS?")){
-			colAvaliaPremugs = i;
+		if(
+		    nome.includes("avalia") &&
+		    nome.includes("premugs")
+		){
+		    colAvaliaPremugs = i;
 		}
-	
-		if(nome.includes("Você recomendaria o PREMUGS para outros profissionais?")){
-			colRecomendaria = i;
+		
+		if(
+		    nome.includes("recomendaria") &&
+		    nome.includes("premugs")
+		){
+		    colRecomendaria = i;
 		}
-	
-		if(nome.includes("Quão útil você considera esta ferramenta de avaliação (PREMUGS Avalia) para a SMS de Florianópolis?")){
-			colUtilidade = i;
-		}
+		
+		if(
+		    nome.includes("premugs avalia")
+		){
+		    colUtilidade = i;
+		}		
 		
         // PERFIL
 		if(
