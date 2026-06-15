@@ -660,6 +660,21 @@
     }
 }	
 
+.avaliacao-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+}
+
+.avaliacao-grid .chart-card{
+    height:320px;
+}
+
+.avaliacao-grid canvas{
+    width:100% !important;
+    height:220px !important;
+}	
+	
 </style>
 </head>
 <body>
@@ -815,7 +830,7 @@
 		        </div>
 		        <div class="chart-card">
 		            <div class="chart-title">Recomendaria o PREMUGS?</div>
-		            <canvas id="recomendacaoChart"></canvas>
+				    <canvas id="recomendacaoChart"></canvas>
 		        </div>
 		        <div class="chart-card">
 		            <div class="chart-title">Utilidade do PREMUGS Avalia</div>
