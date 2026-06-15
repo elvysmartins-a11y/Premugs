@@ -1602,10 +1602,13 @@ function renderQualitativas(rows){
 	.forEach(([dimensao, perguntasDim]) => {
 	
 	    html += `
-	        <div class="dimensao-header">
-	            ${formatarNomeDimensao(dimensao)}
-	        </div>
-	    `;
+		    <div class="dimensao-header">
+		        ${formatarNomeDimensao(dimensao)}
+		        <span class="dimensao-count">
+		            (${perguntasDim.length} perguntas)
+		        </span>
+		    </div>
+		`;
 	
 	perguntasDim.forEach(pergunta => {
 
