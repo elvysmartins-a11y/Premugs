@@ -255,15 +255,17 @@
     border-radius: 10px 10px 0 0;
   }
   .kpi-label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
-  .kpi-value { font-size: 28px; font-weight: 700; color: var(--text); line-height: 1; }
-  .kpi-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+  //.kpi-value { font-size: 28px; font-weight: 700; color: var(--text); line-height: 1; }
+  //.kpi-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+  .kpi-value { font-size: 18px; font-weight: 700; color: var(--text); line-height: 1.5; }
+  .kpi-sub { font-size: 11px; color: var(--text-muted); margin-top: 8px; }
   .kpi-badge {
     display: inline-block;
     padding: 2px 8px;
     border-radius: 20px;
     font-size: 11px;
     font-weight: 600;
-    margin-top: 6px;
+    margin-top: 10px;
   }
 
   /* ── CHART SECTION ── */
@@ -2663,8 +2665,9 @@ function renderKPIs(rows) {
     { label:'Aprovação Geral', value: aprovacao.toFixed(0) + '%', sub:'bom + excelente', color: '#004B87', badge: null},	  
     { label: 'Nível 4 (Excelente)', value: pct4.toFixed(0) + '%', sub: 'das avaliações', color: '#00876A', badge: null },
     { label: 'Nível 1 (Insatisf.)', value: pct1.toFixed(0) + '%', sub: 'das avaliações', color: '#D8482F', badge: null },
-    { label: 'Perfis', value: perfis, sub: 'distintos', color: '#0087A8', badge: null },
-    { label: 'Dimensões', value: dimensoesAtivas.size, sub: 'detectadas', color: '#9B59B6', badge: null },
+	{label:'Cobertura', value:`👥 ${perfis} perfis<br> 📊 ${dimensoesAtivas.size} dimensões`, sub:'Estrutura avaliada', color:'#0087A8', badge:'Completa'},	  
+    //{ label: 'Perfis', value: perfis, sub: 'distintos', color: '#0087A8', badge: null },
+    //{ label: 'Dimensões', value: dimensoesAtivas.size, sub: 'detectadas', color: '#9B59B6', badge: null },
   ];
 
   document.getElementById('kpi-grid').innerHTML = data.map(d => `
