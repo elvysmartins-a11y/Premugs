@@ -740,6 +740,12 @@
     font-size:14px;
 }
 
+.dimensao-media{
+    font-size:13px;
+    font-weight:600;
+    color:#DCEEFF;
+}	
+
 .dimensao-header small{
     display:block;
     margin-top:3px;
@@ -2747,9 +2753,9 @@ function renderLikert(rows){
 		
 		        <span>${formatarNomeDimensao(dimensao)}</span>
 		
-				<small>
-				    Média: ${mediaDim.toFixed(2)}
-				</small>	
+		        <small class="dimensao-media">
+		            Média: ${mediaDim.toFixed(2)}
+		        </small>
 		
 		        <span id="icon-${dimensao}">
 		            ►
