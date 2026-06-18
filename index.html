@@ -953,6 +953,46 @@
     width:280px;
     height:180px;
 }	
+
+.premugs-legenda{
+
+    display:flex;
+    justify-content:center;
+    gap:30px;
+
+    margin-top:12px;
+
+    font-size:12px;
+
+    color:#64748B;
+}
+
+
+.dot{
+
+    width:10px;
+    height:10px;
+
+    border-radius:50%;
+
+    display:inline-block;
+
+    margin-right:6px;
+
+}
+
+
+.vermelho{
+    background:#e52420;
+}
+
+.amarelo{
+    background:#d67a00;
+}
+
+.verde{
+    background:#0b8457;
+}	
 	
 </style>
 </head>
@@ -1148,6 +1188,17 @@
 			    <div class="chart-canvas-wrap" style="height:280px">
 			        <canvas id="perfilDimChart"></canvas>
 			    </div>
+				<div class="premugs-legenda">
+				    <span>
+				        <i class="dot vermelho"></i>&lt; 2 crítico
+				    </span>
+				    <span>
+				        <i class="dot amarelo"></i>2–3 atenção
+				    </span>
+				    <span>
+				        <i class="dot verde"></i>&gt; 3 bom
+				    </span>
+				</div>
 			</div>		
 	    </div>
 
