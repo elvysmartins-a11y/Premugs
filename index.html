@@ -263,6 +263,7 @@
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 18px 20px;
+    overflow:hidden;	  
   }
   .chart-card.full { grid-column: 1 / -1; }
   .chart-title {
@@ -271,7 +272,7 @@
     display: flex; align-items: center; justify-content: space-between;
   }
   .chart-sub { font-size: 11px; color: var(--text-muted); margin-bottom: 14px; }
-  .chart-canvas-wrap { position: relative; width: 100%; }
+  .chart-canvas-wrap { position: relative; width: 100%; overflow:hidden;}
 
   /* ── SCORE BAR ── */
   .dim-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
@@ -3425,6 +3426,7 @@ function renderPerfilDimensaoChart(rows){
 
             options:{
                 responsive:true,
+				maintainAspectRatio:false,
 
                 plugins:{
                     legend:{
