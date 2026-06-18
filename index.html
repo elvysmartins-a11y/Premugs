@@ -2750,12 +2750,13 @@ function renderLikert(rows){
 
 	    const mediaDim =
     		scores[dimensao] || 0;
+		
 		let cor;
 		
-		if(media < 2){
+		if(mediaDim  < 2){
 		    cor = '#e52420';
 		}
-		else if(media <= 3){
+		else if(mediaDim  <= 3){
 		    cor = '#d67a00';
 		}
 		else{
