@@ -2493,16 +2493,26 @@ function populateCicloFilter() {
 /* ───────────── RENDER ───────────── */
 function render() {
   const rows = getFiltered();
+
+  // 1. KPIs
   renderKPIs(rows);
+
+  // 2. Avaliação Geral
+  renderAvaliacaoGeral(rows);
+  renderGaugePremugs(rows);	
+
+  // 3. Demais análises	
   renderDimBars(rows);
   renderRadar(rows);
   renderLikert(rows);
   renderPerfilCharts(rows);
   renderCicloChart(rows);
   renderPerfilDimensaoChart(rows);
-  renderAvaliacaoGeral(rows);
-  renderGaugePremugs(rows);	
+
+  // 4. Qualitativas	
   renderQualitativas(rows);	
+
+  // 5. Tabela	
   renderTable(rows);
 }
 
