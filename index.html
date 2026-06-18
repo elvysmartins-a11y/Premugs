@@ -740,6 +740,12 @@
     font-size:14px;
 }
 
+.dimensao-info{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}	
+
 .dimensao-media{
     font-size:13px;
     font-weight:600;
@@ -2753,14 +2759,17 @@ function renderLikert(rows){
 		
 		        <span>${formatarNomeDimensao(dimensao)}</span>
 		
-		        <small class="dimensao-media">
-		            Média: ${mediaDim.toFixed(2)}
-		        </small>
-		
-		        <span id="icon-${dimensao}">
-		            ►
-		        </span>
-		
+			    <div class="dimensao-info">
+			
+			        <small class="dimensao-media">
+			            Média: ${mediaDim.toFixed(2)}
+			        </small>
+			
+			        <span id="icon-${dimensao}">
+			            ►
+			        </span>
+			
+			    </div>		
 		    </div>
 		
 		    <div class="dimensao-body"
