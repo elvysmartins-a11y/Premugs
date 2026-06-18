@@ -198,6 +198,22 @@
 	    opacity:.9;
 	}
 
+	.btn-formulario{
+	    background:#D97706;
+	    color:white;
+	    border:none;
+	    border-radius:6px;
+	    padding:10px 18px;
+	    font-size:14px;
+	    font-weight:600;
+	    cursor:pointer;
+	    transition:.2s;
+	}
+	
+	.btn-formulario:hover{
+		background:#B45309;
+	}	
+
 	.tab-btn{
 	    /*background: var(--sms-blue);*/
 		background:#00876A;
@@ -990,6 +1006,13 @@
 		class="btn-export"
 		onclick="exportExcel()">
 			📊 Exportar Excel
+	</button>
+	<button class="btn-formulario"
+        onclick="window.open(
+            'https://forms.gle/kQBsE9uEhYcUHBUe7',
+            '_blank'
+        )">
+	    📝 PREMUGS Avalia
 	</button>	
 </div>
 
