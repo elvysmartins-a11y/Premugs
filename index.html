@@ -2729,11 +2729,16 @@ function renderLikert(rows){
     const container =
         document.getElementById('indicadoresAccordion');
 
+	const scores = dimScores(rows);
+	
     let html = '';
     let idx = 0;
 
     Object.entries(grupos).forEach(([dimensao, indicadores]) => {
 
+	    const mediaDim =
+    		scores[dimensao] || 0;
+		
 		html += `
 		<div class="dimensao-accordion">
 		
@@ -2742,7 +2747,9 @@ function renderLikert(rows){
 		
 		        <span>${formatarNomeDimensao(dimensao)}</span>
 		
-				<small> Média: ${media.toFixed(2)} </small>				
+				<small>
+				    Média: ${mediaDim.toFixed(2)}
+				</small>	
 		
 		        <span id="icon-${dimensao}">
 		            ►
