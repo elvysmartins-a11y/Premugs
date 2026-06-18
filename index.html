@@ -728,23 +728,24 @@
 }
 
 .dimensao-header{
-
     display:flex;
     justify-content:space-between;
     align-items:center;
-
     cursor:pointer;
-
     padding:14px 18px;
-
     border-radius:8px;
-
     background:#004B87;
     color:#fff;
-
     font-weight:700;
     font-size:14px;
 }
+
+.dimensao-header small{
+    display:block;
+    margin-top:3px;
+    font-size:12px;
+    color:#CBD5E1;
+}	
 
 .dimensao-header:hover{
     background:#00599f;
@@ -2740,6 +2741,8 @@ function renderLikert(rows){
 		         onclick="toggleDimensaoQuanti('${dimensao}')">
 		
 		        <span>${formatarNomeDimensao(dimensao)}</span>
+		
+				<small> Média: ${media.toFixed(2)} </small>				
 		
 		        <span id="icon-${dimensao}">
 		            ►
