@@ -2583,11 +2583,11 @@ function render() {
 function renderKPIs(rows) {
   const total = rows.length;
   const allVals = rows.flatMap(r => numericCols.map(c => parseLikert(r[c.idx])).filter(v => v !== null));
+  const avg = allVals.length ? avg_(allVals) : 0;
 	renderGauge(
 	    avg,
 	    allVals.length
-	);	
-  const avg = allVals.length ? avg_(allVals) : 0;
+	);		
   const pct4 = allVals.length ? (allVals.filter(v => v === 4).length / allVals.length * 100) : 0;
   const pct1 = allVals.length ? (allVals.filter(v => v === 1).length / allVals.length * 100) : 0;
   
