@@ -2992,11 +2992,32 @@ function renderLikert(rows){
 
             }).join('');
 
+			let corIndicador;
+
+			if(parseFloat(media) < 2){
+			
+			    corIndicador = '#e52420';
+			
+			}
+			else if(parseFloat(media) <= 3){
+			
+			    corIndicador = '#d67a00';
+			
+			}
+			else{
+			
+			    corIndicador = '#0b8457';
+			
+			}
             html += `
 
                 <div class="accordion-item">
 
                     <div class="accordion-header"
+					     style="
+					        background:${corIndicador};
+					        color:white;
+					        border-radius:8px;					
                          onclick="toggleAccordion(${idx})">
 
                         <span>${indicador}</span>
