@@ -1037,43 +1037,6 @@
 	  
 	  
 	<div id="tab-geral" class="tab-content">	  
-	    <p class="section-title">Média por Dimensão</p>
-	
-	    <!-- Dimension bars + radar side by side -->
-	    <div class="charts-grid">
-	      <div class="chart-card">
-	        <div class="chart-title">Desempenho por Dimensão</div>
-	        <div class="chart-sub">Escala Likert 1–4 · média das respostas</div>
-	        <div id="dim-bars"></div>
-	      </div>
-	      <div class="chart-card">
-	        <div class="chart-title">Radar Multidimensional</div>
-	        <div class="chart-sub">Visão comparativa das seis dimensões</div>
-	        <div class="chart-canvas-wrap" style="height:280px">
-	          <canvas id="radarChart" role="img" aria-label="Radar chart das dimensões de avaliação PREMUGS">Radar das dimensões avaliativas.</canvas>
-	        </div>
-	      </div>
-	    </div>
-	  
-		<p class="section-title">Comparação entre Ciclos</p>
-	    <div class="charts-grid">
-			<div class="chart-card">
-				<div class="chart-title">Média Geral por Ciclo</div>
-				<div class="chart-sub">Comparativo dos ciclos identificados na planilha</div>
-				<div class="chart-canvas-wrap" style="height:280px">
-					<canvas id="cicloChart"></canvas>
-				</div>
-			</div>
-	
-			<div class="chart-card">
-			    <div class="chart-title">Média por dimensão e perfil</div>
-			    <div class="chart-sub">Como cada perfil avalia cada dimensão do programa</div>
-			    <div class="chart-canvas-wrap" style="height:280px">
-			        <canvas id="perfilDimChart"></canvas>
-			    </div>
-			</div>		
-	    </div>
-
 		<p class="section-title">Avaliação Geral</p>
 		<div class="card-gauge">
 		    <div class="gauge-info">
@@ -1113,6 +1076,44 @@
 		        </div>
 		    </div>
 		</div>		
+		
+		<p class="section-title">Média por Dimensão</p>
+
+		<!-- Dimension bars + radar side by side -->
+	    <div class="charts-grid">
+	      <div class="chart-card">
+	        <div class="chart-title">Desempenho por Dimensão</div>
+	        <div class="chart-sub">Escala Likert 1–4 · média das respostas</div>
+	        <div id="dim-bars"></div>
+	      </div>
+	      <div class="chart-card">
+	        <div class="chart-title">Radar Multidimensional</div>
+	        <div class="chart-sub">Visão comparativa das seis dimensões</div>
+	        <div class="chart-canvas-wrap" style="height:280px">
+	          <canvas id="radarChart" role="img" aria-label="Radar chart das dimensões de avaliação PREMUGS">Radar das dimensões avaliativas.</canvas>
+	        </div>
+	      </div>
+	    </div>
+	  
+		<p class="section-title">Comparação entre Ciclos</p>
+	    <div class="charts-grid">
+			<div class="chart-card">
+				<div class="chart-title">Média Geral por Ciclo</div>
+				<div class="chart-sub">Comparativo dos ciclos identificados na planilha</div>
+				<div class="chart-canvas-wrap" style="height:280px">
+					<canvas id="cicloChart"></canvas>
+				</div>
+			</div>
+	
+			<div class="chart-card">
+			    <div class="chart-title">Média por dimensão e perfil</div>
+			    <div class="chart-sub">Como cada perfil avalia cada dimensão do programa</div>
+			    <div class="chart-canvas-wrap" style="height:280px">
+			        <canvas id="perfilDimChart"></canvas>
+			    </div>
+			</div>		
+	    </div>
+
 	</div>
 
 	<div id="tab-distribuicao" class="tab-content" style="display:none">	  
