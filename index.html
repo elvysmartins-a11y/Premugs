@@ -258,8 +258,8 @@
   .kpi-label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; text-align:center;}
   //.kpi-value { font-size: 28px; font-weight: 700; color: var(--text); line-height: 1; }
   //.kpi-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-  .kpi-value { font-size: 16px; font-weight: 400; color: var(--text); line-height: 1.5; text-align:center;}
-  .kpi-sub { font-size: 11px; color: var(--text-muted); margin-top: 8px; text-align:center;}
+  .kpi-value { font-size: 30px; font-weight: 700; color: var(--text); line-height: 1.2; text-align:center; margin-top:8px; margin-bottom:8px;}
+  .kpi-sub { font-size: 12px; color: var(--text-muted); margin-top: 6px; text-align:center;}
   .kpi-badge {
     display: inline-block;
     padding: 2px 8px;
@@ -267,9 +267,23 @@
     font-size: 11px;
     font-weight: 600;
     margin-top: 10px;
+	border-radius:14px;
 	text-align:center;
   }
+ .kpi-progress{
+     height:6px;
+     background:#E5E7EB;
+     border-radius:999px;
+     overflow:hidden;
+     margin-top:10px;
+ }
+ .kpi-progress-fill{
+     height:100%;
+     border-radius:999px;
+     transition:width .6s ease;
+ }	
 
+	
   /* ── CHART SECTION ── */
   .charts-grid {
     display: grid;
@@ -998,21 +1012,6 @@
     background:#0b8457;
 }	
 
-.kpi-progress{
-    height:6px;
-    background:#E5E7EB;
-    border-radius:999px;
-    overflow:hidden;
-    margin-top:10px;
-}
-
-.kpi-progress-fill{
-    height:100%;
-    border-radius:999px;
-    transition:width .6s ease;
-}	
-	
-	
 </style>
 </head>
 <body>
