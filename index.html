@@ -2637,6 +2637,7 @@ function renderKPIs(rows) {
   const pct4 = allVals.length ? (allVals.filter(v => v === 4).length / allVals.length * 100) : 0;
   const pct3 = allVals.length ? (allVals.filter(v => v === 3).length / allVals.length * 100) : 0;
   const pct2 = allVals.length ? (allVals.filter(v => v === 2).length / allVals.length * 100) : 0;
+  const pctAtencao = pct2 + pct3;
   const pct1 = allVals.length ? (allVals.filter(v => v === 1).length / allVals.length * 100) : 0;
   
   const nivel4 = allVals.filter(v => v === 4).length;
@@ -2682,7 +2683,7 @@ function renderKPIs(rows) {
     { label: '👍 Aprovação Geral', value: aprovacao.toFixed(0) + '%', sub:'bom + excelente', color: '#004B87', badge: null },	  
 	{ label: '📊 Cobertura', value:`👥 ${perfis} perfis<br> 📊 ${dimensoesAtivas.size} dimensões`, sub:'Estrutura avaliada', color:'#0087A8', badge:'Completa'},	  
     { label: '⭐ Pontos excelência', value: pct4.toFixed(0) + '%', sub: 'das avaliações', color: '#00876A', badge: null },
-    { label: '⚠️ Pontos de atenção', value:`Bom = ${pct3.toFixed(0)} '%'<br> Adequado = ${pct2.toFixed(0)} '%'`, sub: null, color: '#00876A', badge: null },
+    { label: '⚠️ Pontos de atenção', value: pctAtencao.toFixed(0) + '%', sub: `Bom = ${pct3.toFixed(0)} '%'<br> Adequado = ${pct2.toFixed(0)} '%'`, color: '#00876A', badge: null },
     { label: '🚨 Pontos críticos', value: pct1.toFixed(0) + '%', sub: 'das avaliações', color: '#D8482F', badge: null },
     { label: '📝 Respostas', value: total, sub: 'respondentes', color: '#3B5FCC', badge: null },
   ];
