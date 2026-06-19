@@ -2635,6 +2635,8 @@ function renderKPIs(rows) {
 	    allVals.length
 	);		
   const pct4 = allVals.length ? (allVals.filter(v => v === 4).length / allVals.length * 100) : 0;
+  const pct3 = allVals.length ? (allVals.filter(v => v === 3).length / allVals.length * 100) : 0;
+  const pct2 = allVals.length ? (allVals.filter(v => v === 2).length / allVals.length * 100) : 0;
   const pct1 = allVals.length ? (allVals.filter(v => v === 1).length / allVals.length * 100) : 0;
   
   const nivel4 = allVals.filter(v => v === 4).length;
