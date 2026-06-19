@@ -2680,6 +2680,8 @@ function renderKPIs(rows) {
     { label:'Aprovação Geral', value: aprovacao.toFixed(0) + '%', sub:'bom + excelente', color: '#004B87', badge: null },	  
 	{label:'Cobertura', value:`👥 ${perfis} perfis<br> 📊 ${dimensoesAtivas.size} dimensões`, sub:'Estrutura avaliada', color:'#0087A8', badge:'Completa'},	  
     { label: 'Excelente', value: pct4.toFixed(0) + '%', sub: 'das avaliações', color: '#00876A', badge: null },
+    { label: 'Bom', value: pct3.toFixed(0) + '%', sub: 'das avaliações', color: '#00876A', badge: null },
+    { label: 'Adequado', value: pct2.toFixed(0) + '%', sub: 'das avaliações', color: '#00876A', badge: null },
     { label: 'Insatisfatório', value: pct1.toFixed(0) + '%', sub: 'das avaliações', color: '#D8482F', badge: null },
     { label: 'Respostas', value: total, sub: 'respondentes', color: '#3B5FCC', badge: null },
   ];
