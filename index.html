@@ -2677,10 +2677,10 @@ function renderKPIs(rows) {
 
   const data = [
     { label: 'Média Geral', value: avg.toFixed(2), sub: 'escala 1–4', color: '#00876A', badge: scoreLabel(avg) },
-    { label:'Aprovação Geral', value: aprovacao.toFixed(0) + '%', sub:'bom + excelente', color: '#004B87', badge: scoreAprovacaoGeral(aprovacao) },	  
+    { label:'Aprovação Geral', value: aprovacao.toFixed(0) + '%', sub:'bom + excelente', color: '#004B87', badge: null },	  
 	{label:'Cobertura', value:`👥 ${perfis} perfis<br> 📊 ${dimensoesAtivas.size} dimensões`, sub:'Estrutura avaliada', color:'#0087A8', badge:'Completa'},	  
-    { label: 'Excelente', value: pct4.toFixed(0) + '%', sub: 'das avaliações', color: '#00876A', badge: scoreAvaliacaoExcelente(pct4) },
-    { label: 'Insatisfatório', value: pct1.toFixed(0) + '%', sub: 'das avaliações', color: '#D8482F', badge: scoreAvaliacaoInsatisfatoria(pct1) },
+    { label: 'Excelente', value: pct4.toFixed(0) + '%', sub: 'das avaliações', color: '#00876A', badge: null },
+    { label: 'Insatisfatório', value: pct1.toFixed(0) + '%', sub: 'das avaliações', color: '#D8482F', badge: null },
     { label: 'Respostas', value: total, sub: 'respondentes', color: '#3B5FCC', badge: null },
   ];
 
@@ -3989,25 +3989,6 @@ function scoreLabel(v) {
   if (v >= 2.5) return 'Bom';
   if (v >= 1.5) return 'Adequado';
   return 'Insatisfatório';
-}
-
-function scoreAprovacaoGeral(v) {
-  if (v >= 90) return 'Excelente';
-  if (v >= 70) return 'Bom';
-  if (v >= 50) return 'Adequado';
-  return 'Insatisfatório';
-}
-
-function scoreAvaliacaoExcelente(v) {
-  if (v >= 90) return 'Bom';
-  if (v >= 70) return 'Atenção';
-  return 'Crítico';
-}
-	
-function scoreAvaliacaoInsatisfatoria(v) {
-  if (v > 90) return 'Crítico';
-  if (v > 70) return 'Atenção';
-  return 'Bom';
 }
 
 /* ── Wire filters ── */
