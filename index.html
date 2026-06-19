@@ -2681,7 +2681,7 @@ function renderKPIs(rows) {
   const data = [
     { label: '📈 Média Geral', value: avg.toFixed(2), sub: 'escala 1–4', color: '#00876A', badge: scoreLabel(avg) },
     { label: '👍 Aprovação Geral', value: aprovacao.toFixed(0) + '%', sub:'bom + excelente', color: '#004B87', badge: null },	  
-	{ label: '📊 Cobertura', value:`👥 ${perfis} perfis<br> 📊 ${dimensoesAtivas.size} dimensões`, color:'#0087A8', badge:'Completa'},	  
+	{ label: '📊 Cobertura', value:`Completa`, sub:`👥 ${perfis} perfis<br> 📊 ${dimensoesAtivas.size} dimensões`, color:'#0087A8', badge: null},	  
     { label: '⭐ Excelência', value: pct4.toFixed(0) + '%', sub: 'das avaliações', color: '#00876A', badge: null },
     { label: '⚠️ Atenção', value: pctAtencao.toFixed(0) + '%', sub: `Bom = ${pct3.toFixed(0)} '%'<br> Adequado = ${pct2.toFixed(0)} '%'`, color: '#00876A', badge: null },
     { label: '🚨 Críticos', value: pct1.toFixed(0) + '%', sub: 'das avaliações', color: '#D8482F', badge: null },
