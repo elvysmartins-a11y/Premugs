@@ -2675,12 +2675,12 @@ function renderKPIs(rows) {
         : 0;
 
   const data = [
-    { label: 'Respostas', value: total, sub: 'respondentes', color: '#3B5FCC', badge: null },
     { label: 'Média Geral', value: avg.toFixed(2), sub: 'escala 1–4', color: '#00876A', badge: scoreLabel(avg) },
     { label:'Aprovação Geral', value: aprovacao.toFixed(0) + '%', sub:'bom + excelente', color: '#004B87', badge: null},	  
     { label: 'Nível 4 (Excelente)', value: pct4.toFixed(0) + '%', sub: 'das avaliações', color: '#00876A', badge: null },
     { label: 'Nível 1 (Insatisf.)', value: pct1.toFixed(0) + '%', sub: 'das avaliações', color: '#D8482F', badge: null },
 	{label:'Cobertura', value:`👥 ${perfis} perfis<br> 📊 ${dimensoesAtivas.size} dimensões`, sub:'Estrutura avaliada', color:'#0087A8', badge:'Completa'},	  
+    { label: 'Respostas', value: total, sub: 'respondentes', color: '#3B5FCC', badge: null },
     //{ label: 'Perfis', value: perfis, sub: 'distintos', color: '#0087A8', badge: null },
     //{ label: 'Dimensões', value: dimensoesAtivas.size, sub: 'detectadas', color: '#9B59B6', badge: null },
   ];
