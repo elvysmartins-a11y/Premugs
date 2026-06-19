@@ -934,28 +934,21 @@
     align-items:center;
     gap:28px;
     margin-top:16px;
-}
-
-.gauge-legenda span{
-
-    width:10px;
-    height:10px;
-
-    border-radius:50%;
-
-    display:inline-block;
-
-    margin-left:15px;
-    margin-right:5px;
+    flex-wrap:nowrap;	
 }
 
 .leg-item{
     display:flex;
     align-items:center;
     gap:8px;
+    white-space:nowrap;
+}
+
+.leg-item span:last-child{
+    white-space:nowrap;
     font-size:14px;
     color:#475569;
-}
+}	
 
 .lg-red,
 .lg-yellow,
@@ -963,7 +956,7 @@
     width:10px;
     height:10px;
     border-radius:50%;
-    display:inline-block;
+    flex-shrink:0;
 }	
 	
 .lg-red{
