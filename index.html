@@ -257,8 +257,8 @@
   .kpi-label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
   //.kpi-value { font-size: 28px; font-weight: 700; color: var(--text); line-height: 1; }
   //.kpi-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-  .kpi-value { font-size: 16px; font-weight: 400; color: var(--text); line-height: 1.5; position: center;}
-  .kpi-sub { font-size: 11px; color: var(--text-muted); margin-top: 8px; position: center;}
+  .kpi-value { font-size: 16px; font-weight: 400; color: var(--text); line-height: 1.5;}
+  .kpi-sub { font-size: 11px; color: var(--text-muted); margin-top: 8px;}
   .kpi-badge {
     display: inline-block;
     padding: 2px 8px;
@@ -995,6 +995,23 @@
 .verde{
     background:#0b8457;
 }	
+
+.kpi-progress{
+    width:100%;
+    height:6px;
+    background:#E5E7EB;
+    border-radius:999px;
+    overflow:hidden;
+    margin-top:10px;
+    margin-bottom:8px;
+}
+
+.kpi-progress-fill{
+    height:100%;
+    border-radius:999px;
+    transition:.4s;	
+}	
+	
 	
 </style>
 </head>
@@ -2660,8 +2677,7 @@ function renderKPIs(rows) {
 
   const data = [
     { label: 'Respostas', value: total, sub: 'respondentes', color: '#3B5FCC', badge: null },
-    { label: 'Média Geral', value: avg.toFixed(2), sub: 'escala 1–4', color: '#00876A',
-      badge: scoreLabel(avg) },
+    { label: 'Média Geral', value: avg.toFixed(2), sub: 'escala 1–4', color: '#00876A', badge: scoreLabel(avg) },
     { label:'Aprovação Geral', value: aprovacao.toFixed(0) + '%', sub:'bom + excelente', color: '#004B87', badge: null},	  
     { label: 'Nível 4 (Excelente)', value: pct4.toFixed(0) + '%', sub: 'das avaliações', color: '#00876A', badge: null },
     { label: 'Nível 1 (Insatisf.)', value: pct1.toFixed(0) + '%', sub: 'das avaliações', color: '#D8482F', badge: null },
@@ -2670,14 +2686,47 @@ function renderKPIs(rows) {
     //{ label: 'Dimensões', value: dimensoesAtivas.size, sub: 'detectadas', color: '#9B59B6', badge: null },
   ];
 
-  document.getElementById('kpi-grid').innerHTML = data.map(d => `
-    <div class="kpi-card" style="--accent-color:${d.color}">
-      <div class="kpi-label">${d.label}</div>
-      <div class="kpi-value">${d.value}</div>
-      <div class="kpi-sub">${d.sub}</div>
-      ${d.badge ? `<span class="kpi-badge" style="background:${d.color}20;color:${d.color}">${d.badge}</span>` : ''}
-    </div>
-  `).join('');
+	document.getElementById('kpi-grid').innerHTML = data.map(d => `
+		<div class="kpi-card" style="--accent-color:${d.color}">
+		    <div class="kpi-label">
+		        ${d.label}
+		    </div>
+		    <div class="kpi-value">
+		        ${d.value}
+		    </div>
+		    <div class="kpi-sub">
+		        ${d.sub}
+		    </div>
+		    ${d.label === 'Média Geral' ? `
+		        <div class="kpi-progress">
+		            <div class="kpi-progress-fill"
+		                 style="
+		                    width:${progresso}%;
+		                    background:${d.color};
+		                 ">
+		            </div>
+		        </div>
+		    ` : ''}
+		    ${d.badge ?
+		        `<span class="kpi-badge"
+		               style="
+		                    background:${d.color}20;
+		                    color:${d.color};
+		               ">
+		            ${d.badge}
+		        </span>`
+		        : ''
+		    }
+		</div>
+	`).join('');	
+  //document.getElementById('kpi-grid').innerHTML = data.map(d => `
+  //  <div class="kpi-card" style="--accent-color:${d.color}">
+  //    <div class="kpi-label">${d.label}</div>
+  //    <div class="kpi-value">${d.value}</div>
+  //    <div class="kpi-sub">${d.sub}</div>
+  //    ${d.badge ? `<span class="kpi-badge" style="background:${d.color}20;color:${d.color}">${d.badge}</span>` : ''}
+  //  </div>
+  //`).join('');
 }
 
 /* ── Dimension bars ── */
@@ -3764,6 +3813,7 @@ function renderTable(rows) {
   tbody.innerHTML = sample.map((row,rowIndex) => {
     const numVals = numericCols.map(c => parseLikert(row[c.idx])).filter(v => v !== null);
     const avg = numVals.length ? avg_(numVals) : null;
+    const progresso = (avg / 4) * 100;	  
     const cells = showCols.map(i => `<td>${row[i] || '—'}</td>`).join('');
     const avgCell = avg !== null
       ? `<td><span class="score-pill sp-${Math.round(avg)}">${avg.toFixed(2)}</span></td>`
