@@ -1134,21 +1134,31 @@
 	  
 	<div id="tab-geral" class="tab-content">	  
 		<p class="section-title">Avaliação Geral</p>
-		<div class="card-gauge">
-		    <div class="gauge-info">
-		        <h3>Índice Geral PREMUGS</h3>
-		        <p id="gaugeSubtitulo"></p>
-		        <div class="gauge-legenda">
-		            <span class="lg-red"></span>
-		            &lt; 2 crítico
-		            <span class="lg-yellow"></span>
-		            2–3 atenção
-		            <span class="lg-green"></span>
-		            &gt; 3 bom
-		        </div>
-		    </div>
-		    <div id="premugsGauge"></div>
+	    <div class="charts-grid">
+	      <div class="chart-card">
+				<div class="card-gauge">
+				    <div class="gauge-info">
+				        <h3>Índice Geral PREMUGS</h3>
+				        <p id="gaugeSubtitulo"></p>
+				        <div class="gauge-legenda">
+				            <span class="lg-red"></span>
+				            &lt; 2 crítico
+				            <span class="lg-yellow"></span>
+				            2–3 atenção
+				            <span class="lg-green"></span>
+				            &gt; 3 bom
+				        </div>
+				    </div>
+				    <div id="premugsGauge"></div>
+				</div>
+				<div class="chart-card">
+					<div class="chart-title">Utilidade da Ferramenta PREMUGS Avalia</div>
+					<div id="utilidadeResumo" class="chart-metric"></div>
+					<div id="utilidadeScore"></div>
+			  	</div>
+			</div>
 		</div>
+
 		<div class="chart-card full">
 		    <div class="chart-title">Avaliação do PREMUGS e do PREMUGS do Avalia</div>
 		    <div class="chart-sub">Percepção global do programa e da ferramenta de avaliação</div>
@@ -1164,11 +1174,6 @@
 				     <div class="donut-center">
 				        <canvas id="recomendacaoChart"></canvas>
 				    </div>
-		        </div>
-		        <div class="chart-card">
-		            <div class="chart-title">Utilidade da Ferramenta PREMUGS Avalia</div>
-					<div id="utilidadeResumo" class="chart-metric"></div>
-		            <div id="utilidadeScore"></div>
 		        </div>
 		    </div>
 		</div>		
