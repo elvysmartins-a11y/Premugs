@@ -7,7 +7,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>	
-<script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.1.1/wordcloud2.min.js"></script>	
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.2.2/wordcloud2.min.js"></script>	
 <style>
   :root {
     --sms-blue: #004B87;
@@ -1262,7 +1262,11 @@
 		<div class="chart-card">
 		    <div class="chart-title">Nuvem de Palavras</div>
 		    <div class="chart-sub">Termos mais citados nas respostas abertas</div>
-		    <div id="wordCloud" style="height:350px;width:100%;"></div>
+			<canvas
+		        id="wordCloud"
+		        width="1200"
+		        height="450">
+		    </canvas>
 		</div>		
 	    <div class="chart-card full">
 	        <div class="chart-title">Comentários dos participantes</div>
@@ -1722,6 +1726,10 @@ function renderWordCloud(rows){
         .sort((a,b)=>b[1]-a[1])
         .slice(0,100);
 
+	const canvas =	document.getElementById('wordCloud');
+	canvas.width=1200;
+	canvas.height=450;
+	
     WordCloud(
         document.getElementById(
             'wordCloud'
@@ -2743,8 +2751,8 @@ function render() {
   renderPerfilDimensaoChart(rows);
 
   // 4. Qualitativas	
-  renderWordCloud(rows);
   renderQualitativas(rows);	
+  renderWordCloud(rows);
 
   // 5. Tabela	
   renderTable(rows);
