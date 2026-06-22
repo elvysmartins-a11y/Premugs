@@ -7,6 +7,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>	
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.1.1/wordcloud2.min.js"></script>	
 <style>
   :root {
     --sms-blue: #004B87;
@@ -1258,6 +1259,11 @@
 
 	<div id="tab-qualitativas" class="tab-content" style="display:none">
 	    <p class="section-title">💬 Respostas Qualitativas</p>
+		<div class="chart-card">
+		    <div class="chart-title">Nuvem de Palavras</div>
+		    <div class="chart-sub">Termos mais citados nas respostas abertas</div>
+		    <div id="wordCloud" style="height:350px;width:100%;"></div>
+		</div>		
 	    <div class="chart-card full">
 	        <div class="chart-title">Comentários dos participantes</div>
 	        <div class="chart-sub">Respostas em texto livre agrupadas por pergunta</div>
@@ -1562,6 +1568,30 @@ let perfilDimChartInst = null;
 let colAvaliaPremugs = -1;
 let colRecomendaria = -1;
 let colUtilidade = -1;	
+
+const stopWords=[
+'para',
+'com',
+'mais',
+'muito',
+'uma',
+'que',
+'como',
+'não',
+'foi',
+'dos',
+'das',
+'ser',
+'ter',
+'tem',
+'por',
+'pra',
+'isso',
+'essa',
+'esta',
+'nos',
+'nas'
+];	
 	
 /* ───────────── DATA LOAD ───────────── */
 async function loadData() {
@@ -1642,6 +1672,53 @@ function showTab(tab, btn = null){
 
     },100);
 }
+
+function renderWordCloud(rows){
+
+	const palavras = {};
+    rows.forEach(r=>{
+        const comentario =
+            (
+                r[colunaQualitativa]
+                || ''
+            ).toLowerCase();
+        comentario
+        .replace(/[^\w\s]/g,'')
+        .split(/\s+/)
+        .forEach(p=>{
+            if(p.length<4 ||
+			   stopWords.includes(p))
+                return;
+            palavras[p] =
+                (palavras[p]||0)+1;
+        });
+    });
+    const lista = Object.entries(palavras);
+    WordCloud(
+        document.getElementById('wordCloud'),
+        {
+            list:lista,
+            gridSize:10,
+            weightFactor:4,
+            fontFamily:'Arial',
+            color:function(){
+                const cores=[
+                    '#0B8457',
+                    '#3367D6',
+                    '#D97706',
+                    '#7C3AED'
+                ];
+                return cores[
+                    Math.floor(
+                        Math.random()*cores.length
+                    )
+                ];
+            },
+            rotateRatio:0,
+            backgroundColor:'#ffffff'
+        }
+    );
+}	
 	
 /* ── Auto-detect key columns ── */
 function detectColumns(){
@@ -2636,6 +2713,7 @@ function render() {
   renderPerfilDimensaoChart(rows);
 
   // 4. Qualitativas	
+  renderWordCloud(rows);
   renderQualitativas(rows);	
 
   // 5. Tabela	
