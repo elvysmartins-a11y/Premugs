@@ -1675,32 +1675,64 @@ function showTab(tab, btn = null){
 
 function renderWordCloud(rows){
 
-	const palavras = {};
-    rows.forEach(r=>{
-        const comentario =
-            (
-                r[colunaQualitativa]
-                || ''
-            ).toLowerCase();
-        comentario
-        .replace(/[^\w\s]/g,'')
-        .split(/\s+/)
-        .forEach(p=>{
-            if(p.length<4 ||
-			   stopWords.includes(p))
-                return;
-            palavras[p] =
-                (palavras[p]||0)+1;
+    const palavras = {};
+    const perguntasAgrupadas = {};
+    headers.forEach((h,idx)=>{
+        if(!isQualitativa(h))
+            return;
+        const chave =
+            normalizarTexto(h);
+        if(!perguntasAgrupadas[chave]){
+            perguntasAgrupadas[chave]={
+                label:h,
+                colunas:[]
+            };
+        }
+        perguntasAgrupadas[chave]
+            .colunas.push(idx);
+
+    });
+
+	Object.values(perguntasAgrupadas)
+    .forEach(pergunta=>{
+        pergunta.colunas.forEach(colIdx=>{
+            rows.forEach(r=>{
+                const comentario =
+                    String(
+                        r[colIdx] || ''
+                    )
+                    .toLowerCase();
+                comentario
+                    .replace(/[^\wÀ-ÿ\s]/g,'')
+                    .split(/\s+/)
+                    .forEach(p=>{
+                        if(
+                            p.length<4 ||
+                            stopWords.includes(p)
+                        )
+                        return;
+                        palavras[p]=
+                            (palavras[p]||0)+1;
+                    });
+            });
         });
     });
-    const lista = Object.entries(palavras);
+    const lista =
+        Object.entries(palavras)
+        .sort((a,b)=>b[1]-a[1])
+        .slice(0,100);
+
     WordCloud(
-        document.getElementById('wordCloud'),
+        document.getElementById(
+            'wordCloud'
+        ),
         {
             list:lista,
             gridSize:10,
-            weightFactor:4,
-            fontFamily:'Arial',
+            weightFactor:5,
+            fontFamily:'Inter',
+            rotateRatio:0,
+            backgroundColor:'#ffffff',
             color:function(){
                 const cores=[
                     '#0B8457',
@@ -1710,12 +1742,10 @@ function renderWordCloud(rows){
                 ];
                 return cores[
                     Math.floor(
-                        Math.random()*cores.length
+                        Math.random()*4
                     )
                 ];
-            },
-            rotateRatio:0,
-            backgroundColor:'#ffffff'
+            }
         }
     );
 }	
