@@ -2896,7 +2896,7 @@ function renderDimBars(rows) {
 
     return `
       <div class="dim-row"
-           onclick="showDimensionDetails('${key}')">
+           onclick="toggleDimensaoResumo('${key}')">
 
         <div class="dim-label">
           ${cfg.label}
@@ -2913,6 +2913,15 @@ function renderDimBars(rows) {
              style="color:${cfg.color}">
           ${s.toFixed(2)}
         </div>
+
+	    <div
+	        class="dim-body"
+	        id="body-${key}"
+	        style="display:none">
+	
+	        ${renderIndicadoresDaDimensao(key, rows)}
+	
+	    </div>
 
       </div>
     `;
