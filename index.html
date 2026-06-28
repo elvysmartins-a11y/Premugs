@@ -2895,24 +2895,32 @@ function renderDimBars(rows) {
     const pct = (s / 4 * 100).toFixed(1);
 
     return `
-      <div class="dim-row"
-           onclick="toggleDimensaoResumo('${key}')">
-
-        <div class="dim-label">
-          ${cfg.label}
-        </div>
-
-        <div class="dim-bar-bg">
-          <div class="dim-bar-fill"
-               style="width:${pct}%;
-               background:${cfg.color}">
-          </div>
-        </div>
-
-        <div class="dim-score"
-             style="color:${cfg.color}">
-          ${s.toFixed(2)}
-        </div>
+		<div class="dim-row">
+		
+		    <div class="dim-header"
+		         onclick="toggleDimensaoResumo('${key}')">
+		
+		        <div class="dim-label">
+		            ${cfg.label}
+		        </div>
+		
+		        <div class="dim-bar-bg">
+		            <div class="dim-bar-fill"
+		                 style="
+		                    width:${pct}%;
+		                    background:${s >= 3
+		                        ? '#0f8a5f'
+		                        : s >= 2
+		                            ? '#d98b00'
+		                            : '#d64545'}">
+		            </div>
+		        </div>
+		
+		        <div class="dim-score">
+		            ${s.toFixed(2)}/4.0
+		        </div>
+		
+		    </div>
 
 	    <div
 	        class="dim-body"
