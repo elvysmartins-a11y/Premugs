@@ -2928,6 +2928,26 @@ function renderDimBars(rows) {
   }).join('');
 }
 
+function renderIndicadoresDaDimensao(dim, rows){
+
+    const indicadores = getIndicadoresDaDimensao(dim, rows);
+
+    return indicadores.map(ind => `
+        <div class="indicador-card">
+
+            <div class="indicador-titulo">
+                ${ind.nome}
+            </div>
+
+            <div class="indicador-media">
+                ${ind.media.toFixed(1)}
+            </div>
+
+        </div>
+    `).join('');
+
+}	
+
 function renderDimensoes(rows){
 
     const scores = dimScores(rows);
