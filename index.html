@@ -2756,6 +2756,7 @@ function render() {
 
   // 3. Demais análises	
   renderDimBars(rows);
+  renderDimensoes(rows);
   renderRadar(rows);
   renderLikert(rows);
   renderPerfilCharts(rows);
@@ -2918,6 +2919,140 @@ function renderDimBars(rows) {
   }).join('');
 }
 
+function renderDimensoes(rows){
+
+    const scores = dimScores(rows);
+
+    const container =
+        document.getElementById("dim-bars");
+
+    let html = "";
+
+    Object.keys(DIMS).forEach(dim=>{
+
+        const media =
+            scores[dim] || 0;
+
+        const indicadores =
+            INDICADORES[dim];
+
+        html += `
+
+        <div class="dim-card">
+
+            <div
+                class="dim-header"
+                onclick="toggleDim('${dim}')">
+
+                <div>
+
+                    <strong>
+                        ${DIMS[dim].label}
+                    </strong>
+
+                </div>
+
+                <div>
+
+                    ${media.toFixed(2)}/4.0
+
+                </div>
+
+            </div>
+
+            <div class="progress">
+
+                <div
+                    class="progress-fill"
+                    style="
+                        width:${media/4*100}%;
+                        background:${DIMS[dim].color}
+                    ">
+                </div>
+
+            </div>
+
+            <div
+                class="dim-body"
+                id="body-${dim}"
+                style="display:none">
+
+                ${renderIndicadores(dim,rows)}
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+    container.innerHTML = html;
+
+}	
+
+function renderPerguntas(perguntas,rows){
+
+    return perguntas.map(col=>{
+
+        const respostas =
+            rows
+            .map(r=>parseLikert(r[col.idx]))
+            .filter(v=>v!==null);
+
+        const media =
+            respostas.length
+                ? avg_(respostas)
+                : 0;
+
+        return `
+
+        <div class="pergunta">
+
+            <div>
+
+                ${col.label}
+
+            </div>
+
+            <div>
+
+                ${media.toFixed(1)}/4
+
+            </div>
+
+            <div class="progress">
+
+                <div
+                    class="progress-fill"
+                    style="width:${media/4*100}%">
+
+                </div>
+
+            </div>
+
+        </div>
+
+        `;
+
+    }).join("");
+
+}	
+
+function toggleDim(dim){
+
+    const el =
+        document.getElementById(
+            `body-${dim}`
+        );
+
+    el.style.display =
+        el.style.display==="none"
+            ? "block"
+            : "none";
+
+}	
+	
 /* ── Radar ── */
 function renderRadar(rows) {
   const scores = dimScores(rows);
