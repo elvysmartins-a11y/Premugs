@@ -2991,6 +2991,51 @@ function renderDimensoes(rows){
 
 }	
 
+function renderIndicadores(dim,rows){
+
+    const grupos = {};
+
+    const cols =
+        numericCols.filter(c=>c.dim===dim);
+
+    cols.forEach(col=>{
+
+        const indicador =
+            getIndicadorNome(col.label);
+
+        if(!grupos[indicador])
+            grupos[indicador]=[];
+
+        grupos[indicador].push(col);
+
+    });
+
+    return Object.entries(grupos)
+
+    .map(([indicador,perguntas])=>{
+
+        return `
+
+        <div class="indicador-card">
+
+            <h4>
+
+                ${indicador}
+
+            </h4>
+
+            ${renderPerguntas(perguntas,rows)}
+
+        </div>
+
+        `;
+
+    })
+
+    .join("");
+
+}	
+	
 function renderPerguntas(perguntas,rows){
 
     return perguntas.map(col=>{
