@@ -1769,6 +1769,12 @@ function renderWordCloud(rows){
         }
     );
 }	
+
+function getCorDesempenho(score) {
+    if (score < 2) return "#d64545";      // vermelho - crítico
+    if (score < 3) return "#f4b400";      // amarelo - atenção
+    return "#0f9d58";                     // verde - bom
+}	
 	
 /* ── Auto-detect key columns ── */
 function detectColumns(){
@@ -2908,17 +2914,14 @@ function renderDimBars(rows) {
 		            <div class="dim-bar-fill"
 		                 style="
 		                    width:${pct}%;
-		                    background:${s >= 3
-		                        ? '#0f8a5f'
-		                        : s >= 2
-		                            ? '#d98b00'
-		                            : '#d64545'}">
+		                    background:${getCorDesempenho(s)}">
 		            </div>
 		        </div>
 		
-		        <div class="dim-score">
-		            ${s.toFixed(2)}/4.0
-		        </div>
+		        <div class="dim-score"
+				     style="color:${getCorDesempenho(s)}">
+				    ${s.toFixed(2)}/4.0
+				</div>
 		
 		    </div>
 
