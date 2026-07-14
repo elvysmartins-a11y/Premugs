@@ -3018,7 +3018,7 @@ function renderDimensoes(rows){
                     class="progress-fill"
                     style="
                         width:${media/4*100}%;
-                        background:${DIMS[dim].color}
+                        background:${getScoreColor(media)}
                     ">
                 </div>
 
@@ -3173,7 +3173,7 @@ function renderPerguntas(dim, perguntas, rows){
                     class="progress-fill"
                     style="
                         width:${media/4*100}%;
-                        background:${DIMS[dim].color};
+                        background:${getScoreColor(media)}
                     ">
 
                 </div>
@@ -3186,6 +3186,19 @@ function renderPerguntas(dim, perguntas, rows){
 
     }).join("");
 
+}
+	
+function getScoreColor(score){
+
+    if(score < 2){
+        return "#E52521";   // vermelho
+    }
+
+    if(score < 3){
+        return "#D88400";   // laranja
+    }
+
+    return "#138A5A";       // verde
 }	
 
 function toggleDim(dim){
