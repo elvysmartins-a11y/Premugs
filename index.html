@@ -3121,13 +3121,11 @@ function renderIndicadores(dim,rows){
 
         <div class="indicador-card">
 
-            <h4>
-
-                ${indicador}
-
-            </h4>
-
-            ${renderPerguntas(perguntas,rows)}
+			<h4 style="color:${DIMS[dim].color}">
+			    ${indicador}
+			</h4>
+			
+            ${renderPerguntas(dim, perguntas, rows)}
 
         </div>
 
@@ -3173,7 +3171,10 @@ function renderPerguntas(perguntas,rows){
 
                 <div
                     class="progress-fill"
-                    style="width:${media/4*100}%">
+                    style="
+                        width:${media/4*100}%;
+                        background:${DIMS[dim].color};
+                    ">
 
                 </div>
 
